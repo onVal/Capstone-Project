@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Capstone</string>
+    <string name="menu_title">Action</string>
 </resources>
