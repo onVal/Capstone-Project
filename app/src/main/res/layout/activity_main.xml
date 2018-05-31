@@ -14,9 +14,9 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/main_fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="@dimen/fab_normal_size"
+        android:layout_height="@dimen/fab_normal_size"
+        android:layout_marginBottom="@dimen/default_fab_margin"
         android:onClick="record"
         android:layout_gravity="bottom|center"
         />

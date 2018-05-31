@@ -8,10 +8,6 @@ import android.view.View;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-
-//    @BindView(R.id.main_fab)
-//    private FloatingActionButton fab;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,5 +19,4 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, RecordActivity.class);
         startActivity(intent);
     }
-
 }
