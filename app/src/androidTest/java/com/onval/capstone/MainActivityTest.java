@@ -26,7 +26,7 @@ public class MainActivityTest {
     @Test
     public void fabShouldOpenRecordActivity() {
         activityTestRule.launchActivity(null);
-        
+
         onView(withId(R.id.main_fab))
                 .perform(click());
 
