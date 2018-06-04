@@ -37,10 +37,6 @@ public class MainFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         categories.setLayoutManager(layoutManager);
 
-//        DividerItemDecoration dividerItemDecoration =
-//                new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-//        categories.addItemDecoration(dividerItemDecoration);
-
         return view;
     }
 }
