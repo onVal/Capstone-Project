@@ -2,7 +2,6 @@ package com.onval.capstone;
 
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
@@ -21,11 +20,13 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @LargeTest
 public class MainActivityTest {
     @Rule
-    public ActivityTestRule<MainActivity> activityTestRule =
-            new IntentsTestRule<>(MainActivity.class, false, true);
+    public IntentsTestRule<MainActivity> activityTestRule =
+            new IntentsTestRule<>(MainActivity.class, false, false);
 
     @Test
     public void fabShouldOpenRecordActivity() {
+        activityTestRule.launchActivity(null);
+        
         onView(withId(R.id.main_fab))
                 .perform(click());
 
