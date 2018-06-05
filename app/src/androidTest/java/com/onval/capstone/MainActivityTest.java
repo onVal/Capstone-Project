@@ -33,4 +33,14 @@ public class MainActivityTest {
         intended(hasComponent(RecordActivity.class.getName()));
         onView(withId(R.id.timer)).check(matches(isDisplayed()));
     }
+
+    @Test
+    public void addCategoryShouldOpenDialog() {
+        activityTestRule.launchActivity(null);
+
+//        onView(withId(R.id.add_category))
+//                .perform(click());
+
+
+    }
 }
