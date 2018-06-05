@@ -24,12 +24,10 @@
         android:theme="@style/LightTheme.Toolbar"
         app:popupTheme="@style/LightTheme.OverflowPopup"/>
 
-    <fragment
-        android:id="@+id/main_fragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        android:name="com.onval.capstone.MainFragment"
         />
 </LinearLayout>
 
