@@ -63,6 +63,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:background="@drawable/ic_cloud_autoupload_on"/>
+        tools:background="@drawable/ic_cloud_upload_on"/>
 
 </android.support.constraint.ConstraintLayout>

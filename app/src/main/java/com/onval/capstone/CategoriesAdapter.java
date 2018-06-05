@@ -64,13 +64,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("History");
                     categorySubtext.setText("63 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
                     break;
                 case 2:
                     colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Memos");
                     categorySubtext.setText("28 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
                     break;
                 case 3:
                     colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
@@ -81,13 +81,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Programming");
                     categorySubtext.setText("14 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
                     break;
                 case 5:
                     colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Logic");
                     categorySubtext.setText("40 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
                     break;
                 case 6:
                     colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
