@@ -17,10 +17,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setCustomTitle(R.layout.actionbar_title);
-
-//        FloatingActionButton fab = findViewById(R.id.main_fab);
-//        fab.setBackground(ContextCompat.getDrawable(this, R.mipmap.ic_launcher_round));
-
     }
 
     @OnClick(R.id.main_fab)
@@ -34,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
-        LayoutInflater inflator = LayoutInflater.from(this);
-        View view = inflator.inflate(resource, null);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(resource, null);
 
         ((TextView)view.findViewById(R.id.title)).setText(getTitle());
         actionBar.setCustomView(view);

@@ -62,13 +62,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     colorLabel.setBackgroundColor(Color.rgb(15, 126, 200));
                     categoryName.setText("History");
                     categorySubtext.setText("63 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_queue_black_24dp));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
                     break;
                 case 2:
                     colorLabel.setBackgroundColor(Color.rgb(225, 0, 202));
                     categoryName.setText("Memos");
                     categorySubtext.setText("28 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_queue_black_24dp));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
                     break;
                 case 3:
                     colorLabel.setBackgroundColor(Color.rgb(30, 70, 235));
@@ -79,7 +79,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     colorLabel.setBackgroundColor(Color.rgb(2, 170, 67));
                     categoryName.setText("Programming");
                     categorySubtext.setText("14 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_queue_black_24dp));
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
                     break;
 
             }
