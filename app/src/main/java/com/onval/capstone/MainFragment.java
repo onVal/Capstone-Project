@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
 public class MainFragment extends Fragment {
     private Context context;
 
