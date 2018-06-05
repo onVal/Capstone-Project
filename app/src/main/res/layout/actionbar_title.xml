@@ -9,7 +9,7 @@
         android:layout_marginStart="10dp"
         android:textSize="30sp"
         android:maxLines="1"
-        android:textColor="#fff"
+        android:textColor="@android:color/white"
         android:fontFamily="@font/earthorbiter"
         />
 
