@@ -10,7 +10,7 @@
         android:textSize="30sp"
         android:maxLines="1"
         android:textColor="#fff"
-        android:fontFamily="@font/ll_pixel_3"
+        android:fontFamily="@font/earthorbiter"
         />
 
 </FrameLayout>
