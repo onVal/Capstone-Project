@@ -36,7 +36,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     //TODO: this is a mock method for now, needs proper implementation
     @Override
     public int getItemCount() {
-        return 5;
+        return 3;
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -52,34 +52,47 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         //TODO: this is a mock method for now, needs proper implementation
         public void bind(int position) {
+            String[] allColors = context.getResources().getStringArray(R.array.category_colors);
+
             switch (position) {
                 case 0:
-                    colorLabel.setBackgroundColor(Color.rgb(255, 40, 40));
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Mathematics");
                     categorySubtext.setText("79 recordings");
                     break;
                 case 1:
-                    colorLabel.setBackgroundColor(Color.rgb(15, 126, 200));
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("History");
                     categorySubtext.setText("63 recordings");
                     autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
                     break;
                 case 2:
-                    colorLabel.setBackgroundColor(Color.rgb(225, 0, 202));
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Memos");
                     categorySubtext.setText("28 recordings");
                     autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
                     break;
                 case 3:
-                    colorLabel.setBackgroundColor(Color.rgb(30, 70, 235));
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Software Engineering");
                     categorySubtext.setText("33 recordings");
                     break;
                 case 4:
-                    colorLabel.setBackgroundColor(Color.rgb(2, 170, 67));
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
                     categoryName.setText("Programming");
                     categorySubtext.setText("14 recordings");
                     autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
+                    break;
+                case 5:
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
+                    categoryName.setText("Logic");
+                    categorySubtext.setText("40 recordings");
+                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_autoupload_on));
+                    break;
+                case 6:
+                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
+                    categoryName.setText("Chinese II");
+                    categorySubtext.setText("100.000.000 recordings");
                     break;
 
             }
