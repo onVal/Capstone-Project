@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_pattern"
     tools:context=".MainActivity">
 
@@ -16,12 +17,17 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/main_fab"
+        android:src="@drawable/ic_fab_dot"
 
-        android:layout_width="@dimen/fab_normal_size"
-        android:layout_height="@dimen/fab_normal_size"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
         android:layout_marginBottom="@dimen/default_fab_margin"
-        android:onClick="record"
         android:layout_gravity="bottom|center"
+
+        android:onClick="record"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="6dp"
+
         />
 
 </FrameLayout>

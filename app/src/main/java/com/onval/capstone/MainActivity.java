@@ -3,8 +3,6 @@ package com.onval.capstone;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -20,8 +18,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setCustomTitle(R.layout.actionbar_title);
 
-        FloatingActionButton fab = findViewById(R.id.main_fab);
-        fab.setBackground(ContextCompat.getDrawable(this, R.mipmap.ic_launcher_round));
+//        FloatingActionButton fab = findViewById(R.id.main_fab);
+//        fab.setBackground(ContextCompat.getDrawable(this, R.mipmap.ic_launcher_round));
 
     }
 
