@@ -63,6 +63,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+
+        android:backgroundTint="@color/colorAccent"
         tools:background="@drawable/ic_cloud_upload_on"/>
 
 </android.support.constraint.ConstraintLayout>
