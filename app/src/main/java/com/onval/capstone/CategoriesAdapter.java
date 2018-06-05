@@ -36,7 +36,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     //TODO: this is a mock method for now, needs proper implementation
     @Override
     public int getItemCount() {
-        return 3;
+        return 5;
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
