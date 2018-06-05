@@ -15,6 +15,8 @@ import android.widget.TextView;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+    FragmentTransaction ft;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,11 +26,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
+        ft = getSupportFragmentManager().beginTransaction();
+
         //TODO: Cursor = getData()
         //TODO: if (Cursor is empty) -> open EmptyActivity
         //TODO: else -> open MainFragment
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_container, new MainFragment());
+        if (false) //TODO: if cursor is empty
+            ft.add(R.id.fragment_container, MainFragment.newInstance(null));
+        else
+            ft.add(R.id.fragment_container, EmptyFragment.newInstance());
         ft.commit();
     }
 

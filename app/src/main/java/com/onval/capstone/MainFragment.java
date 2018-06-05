@@ -2,6 +2,7 @@ package com.onval.capstone;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,10 @@ public class MainFragment extends Fragment {
 
     public MainFragment() {
         // Required empty public constructor
+    }
+
+    public static MainFragment newInstance(Cursor cursor) {
+        return new MainFragment();
     }
 
     @Override
