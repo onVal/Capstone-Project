@@ -1,8 +1,9 @@
 <resources>
-    <style name="LightTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorForeground">@android:color/white</item>
     </style>
 
     <style name="LightTheme.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">

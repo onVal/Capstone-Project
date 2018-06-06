@@ -22,7 +22,7 @@
         android:elevation="4dp"
 
         android:theme="@style/LightTheme.Toolbar"
-        app:popupTheme="@style/LightTheme.OverflowPopup"/>
+        />
 
     <FrameLayout
         android:id="@+id/fragment_container"
