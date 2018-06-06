@@ -12,7 +12,11 @@
     <style name="LightTheme.OverflowPopup" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:background">@android:color/white</item>
         <item name="android:textColor">@android:color/black</item>
+    </style>
 
+    <style name="LightTheme.TextAppearance">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
 

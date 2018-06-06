@@ -9,6 +9,7 @@
 
     <!-- Empty fragment messages -->
     <string name="no_categories_msg_1">Click </string>
-    <string name="no_categories_msg_2">to add a new category…</string>
-    <string name="no_categories_msg_3">…or start recording right now!</string>
+    <string name="no_categories_msg_2">to add a new category,</string>
+    <string name="no_categories_msg_3">or start recording right away.</string>
+
 </resources>
