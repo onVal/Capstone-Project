@@ -31,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Cursor = getData()
         //TODO: if (Cursor is empty) -> open EmptyActivity
         //TODO: else -> open MainFragment
-        if (false) //TODO: if cursor is empty
-            ft.add(R.id.fragment_container, MainFragment.newInstance(null));
+
+        if (true) //TODO: if cursor is empty
+            ft.replace(R.id.fragment_container, MainFragment.newInstance(null));
         else
-            ft.add(R.id.fragment_container, EmptyFragment.newInstance());
+            ft.replace(R.id.fragment_container, EmptyFragment.newInstance());
         ft.commit();
     }
 
