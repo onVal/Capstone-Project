@@ -11,14 +11,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
     private Context context;
+    private List<Category> categories;
 
-    public CategoriesAdapter(Context context) {
+    public CategoriesAdapter(Context context, List<Category> categories) {
         this.context = context;
+        this.categories = categories;
     }
 
     @NonNull
@@ -33,10 +37,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         holder.bind(position);
     }
 
-    //TODO: this is a mock method for now, needs proper implementation
     @Override
     public int getItemCount() {
-        return 5;
+        return (categories == null) ? 0 : categories.size();
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -52,53 +55,16 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         //TODO: this is a mock method for now, needs proper implementation
         public void bind(int position) {
-            String[] allColors = context.getResources().getStringArray(R.array.category_colors);
+            Category category = categories.get(position);
 
-            switch (position) {
-                case 0:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("Mathematics");
-                    categorySubtext.setText("79 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off));
+            colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
+            categoryName.setText(category.getName());
+            categorySubtext.setText(category.getRecordings() + " recordings");
 
-                    break;
-                case 1:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("History");
-                    categorySubtext.setText("63 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
-                    break;
-                case 2:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("Memos");
-                    categorySubtext.setText("28 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off));
-                    break;
-                case 3:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("Software Engineering");
-                    categorySubtext.setText("33 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
-                    break;
-                case 4:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("Programming");
-                    categorySubtext.setText("14 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
-                    break;
-                case 5:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("Logic");
-                    categorySubtext.setText("40 recordings");
-                    autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off));
-                    break;
-                case 6:
-                    colorLabel.setBackgroundColor(Color.parseColor(allColors[position]));
-                    categoryName.setText("Chinese II");
-                    categorySubtext.setText("100.000.000 recordings");
-                    break;
-
-            }
+            if (category.isAutoUploading()) // todo: i would need to check if g.drive is enabled as well
+                autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
+            else
+                autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off));
         }
     }
 }

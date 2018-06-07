@@ -1,8 +1,8 @@
 package com.onval.capstone;
 
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 
 public class MainFragment extends Fragment {
     private Context context;
+    private CategoriesViewModel viewModel;
 
     @BindView(R.id.categories) RecyclerView categories;
 
@@ -23,7 +24,7 @@ public class MainFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static MainFragment newInstance(Cursor cursor) {
+    public static MainFragment newInstance() {
         return new MainFragment();
     }
 
@@ -33,9 +34,11 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         context = getContext();
+        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+
         ButterKnife.bind(this, view);
 
-        CategoriesAdapter adapter = new CategoriesAdapter(context);
+        CategoriesAdapter adapter = new CategoriesAdapter(context, viewModel.getData().getValue());
         categories.setAdapter(adapter);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);

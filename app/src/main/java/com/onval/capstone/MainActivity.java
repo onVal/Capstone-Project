@@ -1,5 +1,6 @@
 package com.onval.capstone;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -15,7 +16,8 @@ import android.widget.TextView;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-    FragmentTransaction ft;
+    private FragmentTransaction ft;
+    private CategoriesViewModel categoriesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
         ft = getSupportFragmentManager().beginTransaction();
 
-        //TODO: Cursor = getData()
-        //TODO: if (Cursor is empty) -> open EmptyActivity
-        //TODO: else -> open MainFragment
+        categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-        if (true) //TODO: if cursor is empty
-            ft.replace(R.id.fragment_container, MainFragment.newInstance(null));
+        if (!categoriesViewModel.getData().getValue().isEmpty())
+            ft.replace(R.id.fragment_container, MainFragment.newInstance());
         else
             ft.replace(R.id.fragment_container, EmptyFragment.newInstance());
         ft.commit();
