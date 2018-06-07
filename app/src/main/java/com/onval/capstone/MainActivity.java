@@ -16,8 +16,6 @@ import android.widget.TextView;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-    private FragmentTransaction ft;
-    private CategoriesViewModel categoriesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
-        ft = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        CategoriesViewModel categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
         if (!categoriesViewModel.getData().getValue().isEmpty())
             ft.replace(R.id.fragment_container, MainFragment.newInstance());

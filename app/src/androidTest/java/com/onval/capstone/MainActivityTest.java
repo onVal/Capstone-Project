@@ -33,12 +33,4 @@ public class MainActivityTest {
         intended(hasComponent(RecordActivity.class.getName()));
         onView(withId(R.id.timer)).check(matches(isDisplayed()));
     }
-
-//    @Test
-//    public void listElementShouldOpenCategoryFragment() {
-//        activityTestRule.launchActivity(null);
-//
-//        onView(withId(R.id.main_fab))
-//                .perform(click());
-//    }
 }

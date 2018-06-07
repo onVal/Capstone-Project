@@ -2,6 +2,7 @@ package com.onval.capstone;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -18,11 +19,11 @@ import butterknife.ButterKnife;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
     private Context context;
-    private List<Category> categories;
+    private List<Category> data;
 
-    public CategoriesAdapter(Context context, List<Category> categories) {
+    public CategoriesAdapter(Context context, List<Category> data) {
         this.context = context;
-        this.categories = categories;
+        this.data = data;
     }
 
     @NonNull
@@ -39,7 +40,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     @Override
     public int getItemCount() {
-        return (categories == null) ? 0 : categories.size();
+        return (data == null) ? 0 : data.size();
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -48,23 +49,29 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         @BindView(R.id.category_subtext) TextView categorySubtext;
         @BindView(R.id.autoupload_icon) ImageView autouploadIcon;
 
+        final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
+        final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
+
+
         CategoryViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        //TODO: this is a mock method for now, needs proper implementation
         public void bind(int position) {
-            Category category = categories.get(position);
+            Category category = data.get(position);
 
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());
-            categorySubtext.setText(category.getRecordings() + " recordings");
 
-            if (category.isAutoUploading()) // todo: i would need to check if g.drive is enabled as well
-                autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on));
+            int recordingNumber = category.getRecordings();
+            String subtext = recordingNumber + ((recordingNumber == 1 ) ? " recording" : " recordings");
+            categorySubtext.setText(subtext);
+
+            if (category.isAutoUploading()) // todo: i need to check if g.drive is enabled as well
+                autouploadIcon.setImageDrawable(cloudAutouploadingIconOn);
             else
-                autouploadIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off));
+                autouploadIcon.setImageDrawable(cloudAutouploadingIconOff);
         }
     }
 }
