@@ -4,4 +4,5 @@
     android:id="@+id/categories"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainFragment" />
+    android:layout_margin="8dp"
+    tools:context=".CategoriesFragment" />

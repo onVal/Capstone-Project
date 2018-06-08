@@ -14,18 +14,18 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainFragment extends Fragment {
+public class CategoriesFragment extends Fragment {
     private Context context;
     private CategoriesViewModel viewModel;
 
     @BindView(R.id.categories) RecyclerView categories;
 
-    public MainFragment() {
+    public CategoriesFragment() {
         // Required empty public constructor
     }
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static CategoriesFragment newInstance() {
+        return new CategoriesFragment();
     }
 
     @Override

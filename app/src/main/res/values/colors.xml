@@ -3,6 +3,8 @@
     <color name="colorPrimary">#595959</color>
     <color name="colorPrimaryDark">#484848</color>
     <color name="colorAccent">#ff6e40</color>
+    <color name="colorSubtext">#666</color>
+
 
     <string-array name="category_colors">
         <item>#ff1744</item>

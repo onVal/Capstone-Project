@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         CategoriesViewModel categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
         if (!categoriesViewModel.getData().getValue().isEmpty())
-            ft.replace(R.id.fragment_container, MainFragment.newInstance());
+            ft.replace(R.id.fragment_container, CategoriesFragment.newInstance());
         else
             ft.replace(R.id.fragment_container, EmptyFragment.newInstance());
         ft.commit();
