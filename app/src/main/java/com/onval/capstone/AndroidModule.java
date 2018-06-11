@@ -1,19 +1,22 @@
 package com.onval.capstone;
 
+import android.content.Context;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class AndroidModule {
-    public AndroidModule() {
+    private Context context;
 
+    public AndroidModule(Context context) {
+        this.context = context;
     }
 
-//    public AppCompatActivity getActivity() {
-////        return getActivity();
-//    }
-
-//    @Provides
-//    public CategoriesViewModel getCategoriesViewModel() {
-//        return ViewModelProviders.of(getActivity()).get(CategoriesViewModel.class);
-//    }
+    @Provides @Singleton
+    public Context provideContext() {
+        return context;
+    }
 }
