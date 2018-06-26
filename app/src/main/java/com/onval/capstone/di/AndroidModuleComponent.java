@@ -1,4 +1,4 @@
-package com.onval.capstone;
+package com.onval.capstone.di;
 
 import android.content.Context;
 
@@ -10,5 +10,4 @@ import dagger.Component;
 @Singleton
 public interface AndroidModuleComponent {
     Context context();
-
 }

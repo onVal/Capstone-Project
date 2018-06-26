@@ -1,4 +1,4 @@
-package com.onval.capstone;
+package com.onval.capstone.di;
 
 import android.content.Context;
 

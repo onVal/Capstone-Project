@@ -8,17 +8,24 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import butterknife.OnClick;
+import dagger.android.AndroidInjection;
 
 public class MainActivity extends AppCompatActivity {
+    @Inject
+    FakeData data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -29,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         CategoriesViewModel categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+
+        Log.d("derp", data.msg);
 
         if (!categoriesViewModel.getData().getValue().isEmpty())
             ft.replace(R.id.fragment_container, CategoriesFragment.newInstance());

@@ -11,13 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoriesFragment extends Fragment {
-    @Inject Context context;
+    Context context;
     private CategoriesViewModel viewModel;
 
     @BindView(R.id.categories) RecyclerView categories;
@@ -35,14 +33,8 @@ public class CategoriesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        AndroidModuleComponent component =
-                DaggerAndroidModuleComponent.builder()
-                        .androidModule(new AndroidModule(getContext()))
-                        .build();
-
-        context = component.context();
-
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        context = getContext();
 
         ButterKnife.bind(this, view);
 
