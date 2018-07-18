@@ -1,6 +1,7 @@
 package com.onval.capstone;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -21,7 +22,7 @@ import dagger.android.AndroidInjection;
 
 public class MainActivity extends AppCompatActivity {
     @Inject
-    FakeData data;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         CategoriesViewModel categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-        Log.d("derp", data.msg);
+        Log.d("derp", "This is the best injected context: " + context.getPackageName());
 
         if (!categoriesViewModel.getData().getValue().isEmpty())
             ft.replace(R.id.fragment_container, CategoriesFragment.newInstance());
