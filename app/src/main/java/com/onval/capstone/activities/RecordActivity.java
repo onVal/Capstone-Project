@@ -1,7 +1,9 @@
-package com.onval.capstone;
+package com.onval.capstone.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.onval.capstone.R;
 
 public class RecordActivity extends AppCompatActivity {
 

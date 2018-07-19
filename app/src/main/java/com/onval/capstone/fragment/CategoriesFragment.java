@@ -1,4 +1,4 @@
-package com.onval.capstone;
+package com.onval.capstone.fragment;
 
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -11,14 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.onval.capstone.adapter.CategoriesAdapter;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
+import com.onval.capstone.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoriesFragment extends Fragment {
-    private Context context;
+    Context context;
     private CategoriesViewModel viewModel;
 
-    @BindView(R.id.categories) RecyclerView categories;
+    @BindView(R.id.categories) public RecyclerView categories;
 
     public CategoriesFragment() {
         // Required empty public constructor
@@ -33,8 +37,8 @@ public class CategoriesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        context = getContext();
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        context = getContext();
 
         ButterKnife.bind(this, view);
 

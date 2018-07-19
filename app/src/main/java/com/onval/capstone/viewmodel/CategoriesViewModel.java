@@ -1,9 +1,12 @@
-package com.onval.capstone;
+package com.onval.capstone.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+
+import com.onval.capstone.Category;
+import com.onval.capstone.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +28,7 @@ public class CategoriesViewModel extends AndroidViewModel {
         categories.add(new Category(colors[0], "Mathematics", 78, false));
         categories.add(new Category(colors[1], "History", 18, false));
         categories.add(new Category(colors[2], "Programming", 28, true));
-        categories.add(new Category(colors[3], "Hitler", 55, false));
+        categories.add(new Category(colors[3], "Operating Systems", 55, false));
         categories.add(new Category(colors[4], "Chinese", 1, true));
         categories.add(new Category(colors[5], "Statistics", 21, false));
         categories.add(new Category(colors[6], "Algebra", 32, true));

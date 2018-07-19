@@ -12,7 +12,7 @@
     android:orientation="vertical"
 
     android:background="@drawable/bg_pattern"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"

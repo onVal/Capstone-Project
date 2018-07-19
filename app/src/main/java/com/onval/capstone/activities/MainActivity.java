@@ -1,4 +1,4 @@
-package com.onval.capstone;
+package com.onval.capstone.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -13,12 +13,19 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import com.onval.capstone.fragment.CategoriesFragment;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
+import com.onval.capstone.fragment.EmptyFragment;
+import com.onval.capstone.R;
+
 import butterknife.OnClick;
+import dagger.android.AndroidInjection;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
