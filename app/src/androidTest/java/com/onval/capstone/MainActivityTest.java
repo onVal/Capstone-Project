@@ -4,6 +4,9 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.onval.capstone.activities.MainActivity;
+import com.onval.capstone.activities.RecordActivity;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

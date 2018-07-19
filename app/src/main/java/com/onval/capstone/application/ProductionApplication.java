@@ -1,4 +1,4 @@
-package com.onval.capstone;
+package com.onval.capstone.application;
 
 import android.app.Activity;
 import android.app.Application;
@@ -15,7 +15,7 @@ public class ProductionApplication extends Application
         implements HasActivityInjector {
 
     @Inject
-    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    public DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 
     @Override
     public void onCreate() {

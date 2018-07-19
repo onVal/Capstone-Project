@@ -1,7 +1,6 @@
-package com.onval.capstone;
+package com.onval.capstone.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -9,20 +8,20 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import javax.inject.Inject;
+import com.onval.capstone.fragment.CategoriesFragment;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
+import com.onval.capstone.fragment.EmptyFragment;
+import com.onval.capstone.R;
 
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 
 public class MainActivity extends AppCompatActivity {
-    @Inject
-    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         CategoriesViewModel categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
-
-        Log.d("derp", "This is the best injected context: " + context.getPackageName());
 
         if (!categoriesViewModel.getData().getValue().isEmpty())
             ft.replace(R.id.fragment_container, CategoriesFragment.newInstance());

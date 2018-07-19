@@ -1,6 +1,6 @@
 package com.onval.capstone.di;
 
-import com.onval.capstone.ProductionApplication;
+import com.onval.capstone.application.ProductionApplication;
 
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;

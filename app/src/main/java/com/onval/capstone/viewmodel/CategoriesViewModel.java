@@ -1,9 +1,12 @@
-package com.onval.capstone;
+package com.onval.capstone.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+
+import com.onval.capstone.Category;
+import com.onval.capstone.R;
 
 import java.util.ArrayList;
 import java.util.List;

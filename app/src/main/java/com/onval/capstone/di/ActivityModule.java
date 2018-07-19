@@ -2,7 +2,7 @@ package com.onval.capstone.di;
 
 import android.app.Activity;
 
-import com.onval.capstone.MainActivity;
+import com.onval.capstone.activities.MainActivity;
 
 import javax.inject.Singleton;
 
