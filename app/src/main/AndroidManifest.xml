@@ -18,7 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.RecordActivity" />
-        <activity android:name=".activities.RecordingsActivity" />
+        <activity android:name=".activities.RecordingsActivity"
+                android:parentActivityName=".activities.MainActivity" />
     </application>
 
 </manifest>
