@@ -34,7 +34,7 @@
         android:layout_marginBottom="@dimen/default_fab_margin"
         android:layout_gravity="bottom|center"
 
-        android:src="@drawable/ic_fab_dot"
+        app:srcCompat="@drawable/ic_fab_dot"
         app:backgroundTint="@color/colorPrimary"
         app:elevation="6dp"
 

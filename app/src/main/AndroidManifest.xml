@@ -18,8 +18,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.RecordActivity" />
-        <activity android:name=".activities.RecordingsActivity"
-                android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.RecordingsActivity"
+            android:label="@string/recording_activity_title"
+            android:parentActivityName=".activities.MainActivity" />
+        <!--<activity-->
+            <!--android:name=".activities.SettingsActivity"-->
+            <!--android:label="@string/title_activity_settings"-->
+            <!--android:theme="@android:style/Theme.Black" />-->
     </application>
 
 </manifest>

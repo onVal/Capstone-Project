@@ -25,12 +25,6 @@ public class RecordingsActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.my_rec_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.showOverflowMenu();
-
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setTitle("Recordings");
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setDisplayShowHomeEnabled(true);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment())
