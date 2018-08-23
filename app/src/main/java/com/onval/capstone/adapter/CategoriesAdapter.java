@@ -1,6 +1,7 @@
 package com.onval.capstone.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -14,13 +15,15 @@ import android.widget.TextView;
 
 import com.onval.capstone.Category;
 import com.onval.capstone.R;
+import com.onval.capstone.activities.RecordingsActivity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
+public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>
+    implements View.OnClickListener {
     private Context context;
     private List<Category> data;
 
@@ -33,6 +36,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.single_category, parent, false);
+        view.setOnClickListener(this);
         return new CategoryViewHolder(view);
     }
 
@@ -44,6 +48,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     @Override
     public int getItemCount() {
         return (data == null) ? 0 : data.size();
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(context, RecordingsActivity.class);
+        context.startActivity(intent);
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
