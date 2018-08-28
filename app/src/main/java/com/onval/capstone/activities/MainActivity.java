@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.onval.capstone.fragment.CategoriesFragment;
+import com.onval.capstone.fragment.SettingsFragment;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.fragment.EmptyFragment;
 import com.onval.capstone.R;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-//                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
 

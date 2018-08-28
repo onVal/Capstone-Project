@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_sync"
+        android:title="Data sync"
+        android:summary="Wifi only or Mobile Data"
+        android:entries="@array/data_sync"
+        android:entryValues="@array/data_sync"
+        />
+
+    <ListPreference
+        android:key="pref_save_format"
+        android:title="Save Format"
+        android:summary="Choose the most appropriate save format"
+        android:entries="@array/formats"
+        android:entryValues="@array/formats"
+        />
+
+    <ListPreference
+        android:key="pref_theme"
+        android:title="Theme"
+        android:summary="Select a theme for the application"
+        android:dialogTitle="Choose application theme"
+        android:entries="@array/themes"
+        android:entryValues="@array/themes"
+        android:defaultValue="Light" />
+</PreferenceScreen>

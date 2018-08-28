@@ -22,10 +22,11 @@
             android:name=".activities.RecordingsActivity"
             android:label="@string/recording_activity_title"
             android:parentActivityName=".activities.MainActivity" />
-        <!--<activity-->
-            <!--android:name=".activities.SettingsActivity"-->
-            <!--android:label="@string/title_activity_settings"-->
-            <!--android:theme="@android:style/Theme.Black" />-->
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/SettingsTheme"
+            />
     </application>
 
 </manifest>
