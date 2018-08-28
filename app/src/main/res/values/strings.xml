@@ -1,4 +1,19 @@
 <resources>
-    <string name="app_name">Capstone</string>
-    <string name="menu_title">Action</string>
+    <string name="app_name" translatable="false">onrec</string>
+    <string name="recording_activity_title">Recordings</string>
+
+    <string name="starting_timer" translatable="false">00:00</string>
+
+    <!-- Menu -->
+    <string name="settings">Settings</string>
+    <string name="add_category">Add category</string>
+    <string name="sort_categories">Sort Categories</string>
+
+    <!-- Empty fragment messages -->
+    <string name="no_categories_msg_1">Click </string>
+    <string name="no_categories_msg_2">to add a new category,</string>
+    <string name="no_categories_msg_3">or start recording right away.</string>
+
+    <string name="title_activity_settings">Settings</string>
+
 </resources>

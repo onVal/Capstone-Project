@@ -1,10 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.onval.capstone.MainActivity">
+    tools:context="com.onval.capstone.activities.MainActivity">
+    <item
+        android:id="@+id/action_add_category"
+        android:title="@string/settings"
+        android:icon="@drawable/add_category"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_sort_categories"
+        android:title="@string/sort_categories"
+        android:icon="@drawable/sort_categories"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/action_settings"
-        android:title="@string/menu_title"
+        android:title="@string/settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
 </menu>

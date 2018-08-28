@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
 
-</android.support.constraint.ConstraintLayout>
+    android:background="@drawable/bg_pattern"
+    tools:context=".activities.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:elevation="4dp"
+
+        android:theme="@style/LightTheme.Toolbar"
+        app:popupTheme="@style/LightTheme.OverflowPopup"
+        tools:ignore="UnusedAttribute" />
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+</LinearLayout>
+
+<android.support.design.widget.FloatingActionButton
+android:id="@+id/main_fab"
+android:layout_width="@dimen/fab_size"
+android:layout_height="@dimen/fab_size"
+
+android:layout_marginBottom="@dimen/default_fab_margin"
+android:layout_gravity="bottom|center"
+
+android:src="@drawable/ic_fab_dot"
+app:backgroundTint="@color/colorPrimary"
+app:elevation="6dp"
+android:onClick="record" />
+
+</FrameLayout>

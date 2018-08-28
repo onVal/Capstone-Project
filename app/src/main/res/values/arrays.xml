@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="themes">
+        <item>Light</item>
+        <item>Dark</item>
+    </array>
+
+    <array name="formats">
+        <item>.aac</item>
+        <item>.mp3</item>
+    </array>
+
+    <array name="data_sync">
+        <item>Wifi only</item>
+        <item>Mobile Data</item>
+    </array>
+</resources>

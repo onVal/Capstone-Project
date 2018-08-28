@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_rec_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:theme="@style/LightTheme.Toolbar"
+            app:popupTheme="@style/LightTheme.OverflowPopup"
+            tools:ignore="UnusedAttribute" />
+
+        <FrameLayout
+            android:id="@+id/category_container"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent" />
+    </LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+
+        android:layout_marginBottom="@dimen/default_fab_margin"
+        android:layout_gravity="bottom|center"
+
+        app:srcCompat="@drawable/ic_fab_dot"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="6dp"
+
+        android:onClick="record"
+        />
+
+</FrameLayout>
+
