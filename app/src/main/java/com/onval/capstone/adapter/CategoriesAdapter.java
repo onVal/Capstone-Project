@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.onval.capstone.Category;
+import com.onval.capstone.TemporaryCategory;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 
@@ -25,9 +25,9 @@ import butterknife.ButterKnife;
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>
     implements View.OnClickListener {
     private Context context;
-    private List<Category> data;
+    private List<TemporaryCategory> data;
 
-    public CategoriesAdapter(Context context, List<Category> data) {
+    public CategoriesAdapter(Context context, List<TemporaryCategory> data) {
         this.context = context;
         this.data = data;
     }
@@ -72,7 +72,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         }
 
         public void bind(int position) {
-            Category category = data.get(position);
+            TemporaryCategory category = data.get(position);
 
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());

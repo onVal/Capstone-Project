@@ -1,12 +1,12 @@
 package com.onval.capstone;
 
-public class Category {
+public class TemporaryCategory {
     private String color;
     private String name;
     private int recordings;
     private boolean autoUploading;
 
-    public Category(String color, String name, int recordings, boolean autoupload) {
+    public TemporaryCategory(String color, String name, int recordings, boolean autoupload) {
         this.color = color;
         this.name = name;
         this.recordings = recordings;
