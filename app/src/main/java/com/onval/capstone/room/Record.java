@@ -3,13 +3,14 @@ package com.onval.capstone.room;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(indices = @Index(value = "category"),
+@Entity(indices = @Index(value = "category_id"),
         foreignKeys = @ForeignKey(entity = Category.class,
                                     parentColumns = "id",
-                                    childColumns = "category"))
+                                    childColumns = "category_id"))
 public class Record {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -28,7 +29,25 @@ public class Record {
     @ColumnInfo(name="cloud_status")
     private String cloudStatus;
 
-    private String category;
+    @ColumnInfo(name="category_id")
+    private int categoryId;
+
+    @Ignore
+    public Record(int id, String name, int categoryId) {
+        this(id, name, "", "", "", "", "", categoryId);
+    }
+
+    public Record(int id, String name, String duration,
+                  String recDate, String recTime, String format, String cloudStatus, int categoryId) {
+        this.id = id;
+        this.name = name;
+        this.duration = duration;
+        this.recDate = recDate;
+        this.recTime = recTime;
+        this.format = format;
+        this.cloudStatus = cloudStatus;
+        this.categoryId = categoryId;
+    }
 
     public int getId() {
         return id;
@@ -86,11 +105,12 @@ public class Record {
         this.cloudStatus = cloudStatus;
     }
 
-    public String getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 }
+
