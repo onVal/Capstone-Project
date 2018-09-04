@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -27,30 +27,18 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-
-class RecObserver implements Observer<List<Record>> {
-    boolean isCalled = false;
-    @Override
-    public void onChanged(@Nullable List<Record> records) {
-        isCalled = true;
-    }
-}
-
-class CatObserver implements Observer<List<Category>> {
-    boolean isCalled = false;
-    @Override
-    public void onChanged(@Nullable List<Category> records) {
-        isCalled = true;
-    }
-}
+import static org.mockito.Mockito.*;
 
 @RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
     private MyDao mydao;
     private AppDatabase appDb;
 
-    Observer<List<Category>> catObs;
-    Observer<List<Record>> recObs;
+    @Mock
+    private Observer<List<Category>> catObs;
+
+    @Mock
+    private Observer<List<Record>> recObs;
 
     @Rule
     public TestRule taskExec = new InstantTaskExecutorRule();
@@ -73,16 +61,14 @@ public class DatabaseTest {
     public void testLoadCategories() {
         Category math = new Category(1, "math", "green", false);
         Category prog = new Category(2, "prog", "blue", false);
-
         mydao.insertCategories(math, prog);
 
-        CatObserver obs = new CatObserver();
-
         LiveData<List<Category>> liveCategories = mydao.loadCategories();
-        liveCategories.observeForever(obs);
-        assertTrue(obs.isCalled);
+        liveCategories.observeForever(catObs);
+        verify(catObs).onChanged(any(List.class));
 
         List<Category> categories = liveCategories.getValue();
+        assertTrue("Categories can't be null", categories != null);
         assertEquals(categories.size(), 2);
         assertEquals(categories.get(0).getId(), 1);
         assertEquals(categories.get(0).getName(), "math");
@@ -101,25 +87,19 @@ public class DatabaseTest {
         Record rec3 = new Record(3, "lesson math 2", 1);
         mydao.insertRecords(rec1, rec2, rec3);
 
-        RecObserver obs = new RecObserver();
-
         LiveData<List<Record>> liveRecords = mydao.loadRecordsFromCategory(math.getId());
-        liveRecords.observeForever(obs);
-        List<Record> records;
+        liveRecords.observeForever(recObs);
+        verify(recObs).onChanged(any(List.class));
 
-        assertTrue(obs.isCalled);
-        records = liveRecords.getValue();
+        List<Record> records = liveRecords.getValue();
         assertTrue("Record can't be null", records != null);
         assertEquals(records.size(), 2);
         assertEquals(records.get(0).getName(), rec1.getName());
         assertEquals(records.get(1).getName(), rec3.getName());
 
-        obs.isCalled = false;
-        liveRecords.removeObserver(obs);
         liveRecords = mydao.loadRecordsFromCategory(prog.getId());
-        liveRecords.observeForever(obs);
+        liveRecords.observeForever(recObs);
 
-        assertTrue(obs.isCalled);
         records = liveRecords.getValue();
         assertTrue("Record can't be null", records != null);
         assertEquals(records.size(), 1);
