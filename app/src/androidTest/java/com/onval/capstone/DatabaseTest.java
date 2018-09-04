@@ -115,9 +115,10 @@ public class DatabaseTest {
         Record rec1 = new Record(1, "lesson math 1", 1);
         Record rec2 = new Record(2, "lesson prog 1", 2);
         Record rec3 = new Record(3, "lesson math 2", 1);
-        mydao.insertRecords(rec1, rec2, rec3);
+        Record rec4 = new Record(4, "lesson math 3", 1);
+        mydao.insertRecords(rec1, rec2, rec3, rec4);
 
-        assertEquals(mydao.numberOfRecordingsInCategory(math.getId()), 2);
+        assertEquals(mydao.numberOfRecordingsInCategory(math.getId()), 3);
         assertEquals(mydao.numberOfRecordingsInCategory(prog.getId()), 1);
     }
 }
