@@ -105,4 +105,19 @@ public class DatabaseTest {
         assertEquals(records.size(), 1);
         assertEquals(records.get(0).getName(), rec2.getName());
     }
+
+    @Test
+    public void testNumberOfRecordingsInCategory() {
+        Category math = new Category(1, "math", "green", false);
+        Category prog = new Category(2, "prog", "blue", false);
+        mydao.insertCategories(math, prog);
+
+        Record rec1 = new Record(1, "lesson math 1", 1);
+        Record rec2 = new Record(2, "lesson prog 1", 2);
+        Record rec3 = new Record(3, "lesson math 2", 1);
+        mydao.insertRecords(rec1, rec2, rec3);
+
+        assertEquals(mydao.numberOfRecordingsInCategory(math.getId()), 2);
+        assertEquals(mydao.numberOfRecordingsInCategory(prog.getId()), 1);
+    }
 }
