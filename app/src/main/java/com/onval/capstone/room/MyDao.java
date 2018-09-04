@@ -10,8 +10,11 @@ public interface MyDao {
     @Query("SELECT * FROM category")
     public LiveData<List<Category>> loadCategories();
 
-    @Query("SELECT * FROM record WHERE record.category = :category")
-    public LiveData<List<Record>> loadRecordsFromCategory(int category);
+    @Query("SELECT * FROM record AS R WHERE R.category_id = :categoryId")
+    public LiveData<List<Record>> loadRecordsFromCategory(int categoryId);
+
+    @Query ("SELECT COUNT(*) FROM record AS R WHERE R.category_id = :categoryId")
+    public int numberOfRecordingsInCategory(int categoryId);
 
     @Insert
     public void insertCategories(Category... category);
@@ -20,8 +23,8 @@ public interface MyDao {
     public void insertRecords(Record... record);
 
     @Delete
-    public void deleteCategories(Category... users);
+    public void deleteCategories(Category... category);
 
     @Delete
-    public void deleteRecords(Record... users);
+    public void deleteRecords(Record... record);
 }
