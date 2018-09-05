@@ -11,16 +11,16 @@ public interface MyDao {
     public LiveData<List<Category>> loadCategories();
 
     @Query("SELECT * FROM record AS R WHERE R.category_id = :categoryId")
-    public LiveData<List<Record>> loadRecordsFromCategory(int categoryId);
+    public LiveData<List<Record>> loadRecordingsFromCategory(int categoryId);
 
     @Query ("SELECT COUNT(*) FROM record AS R WHERE R.category_id = :categoryId")
-    public int numberOfRecordingsInCategory(int categoryId);
+    public LiveData<Integer> numberOfRecordingsInCategory(int categoryId);
 
     @Insert
     public void insertCategories(Category... category);
 
     @Insert
-    public void insertRecords(Record... record);
+    public void insertRecordings(Record... record);
 
     @Delete
     public void deleteCategories(Category... category);

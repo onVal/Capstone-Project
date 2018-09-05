@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
+import android.util.Log;
 
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class DatabaseTest {
 
     @Mock
     private Observer<List<Record>> recObs;
+
+    @Mock
+    private Observer<Integer> intObs;
 
     @Rule
     public TestRule taskExec = new InstantTaskExecutorRule();
@@ -59,8 +63,8 @@ public class DatabaseTest {
 
     @Test
     public void testLoadCategories() {
-        Category math = new Category(1, "math", "green", false);
-        Category prog = new Category(2, "prog", "blue", false);
+        Category math = new Category("math", "green", false);
+        Category prog = new Category("prog", "blue", false);
         mydao.insertCategories(math, prog);
 
         LiveData<List<Category>> liveCategories = mydao.loadCategories();
@@ -78,47 +82,52 @@ public class DatabaseTest {
 
     @Test
     public void testLoadRecordsFromCategory() {
-        Category math = new Category(1, "math", "green", false);
-        Category prog = new Category(2, "prog", "blue", false);
+        Category math = new Category("math", "green", false);
+        Category prog = new Category("prog", "blue", false);
         mydao.insertCategories(math, prog);
 
-        Record rec1 = new Record(1, "lesson math 1", 1);
-        Record rec2 = new Record(2, "lesson prog 1", 2);
-        Record rec3 = new Record(3, "lesson math 2", 1);
-        mydao.insertRecords(rec1, rec2, rec3);
+        Record rec1 = new Record( "lesson math 1", 1);
+        Record rec2 = new Record( "lesson prog 1", 2);
+        Record rec3 = new Record( "lesson math 2", 1);
+        mydao.insertRecordings(rec1, rec2, rec3);
 
-        LiveData<List<Record>> liveRecords = mydao.loadRecordsFromCategory(math.getId());
+        LiveData<List<Record>> liveRecords = mydao.loadRecordingsFromCategory(1);
         liveRecords.observeForever(recObs);
         verify(recObs).onChanged(any(List.class));
-
         List<Record> records = liveRecords.getValue();
+
         assertTrue("Record can't be null", records != null);
         assertEquals(records.size(), 2);
         assertEquals(records.get(0).getName(), rec1.getName());
         assertEquals(records.get(1).getName(), rec3.getName());
 
-        liveRecords = mydao.loadRecordsFromCategory(prog.getId());
+        liveRecords = mydao.loadRecordingsFromCategory(2);
         liveRecords.observeForever(recObs);
-
         records = liveRecords.getValue();
+
         assertTrue("Record can't be null", records != null);
-        assertEquals(records.size(), 1);
+        assertEquals(1, records.size());
         assertEquals(records.get(0).getName(), rec2.getName());
     }
 
     @Test
     public void testNumberOfRecordingsInCategory() {
-        Category math = new Category(1, "math", "green", false);
-        Category prog = new Category(2, "prog", "blue", false);
+        Category math = new Category("math", "green", false);
+        Category prog = new Category("prog", "blue", false);
         mydao.insertCategories(math, prog);
 
-        Record rec1 = new Record(1, "lesson math 1", 1);
-        Record rec2 = new Record(2, "lesson prog 1", 2);
-        Record rec3 = new Record(3, "lesson math 2", 1);
-        Record rec4 = new Record(4, "lesson math 3", 1);
-        mydao.insertRecords(rec1, rec2, rec3, rec4);
+        Record rec1 = new Record("lesson math 1", 1);
+        Record rec2 = new Record("lesson prog 1", 2);
+        Record rec3 = new Record("lesson math 2", 1);
+        Record rec4 = new Record("lesson math 3", 1);
+        mydao.insertRecordings(rec1, rec2, rec3, rec4);
 
-        assertEquals(mydao.numberOfRecordingsInCategory(math.getId()), 3);
-        assertEquals(mydao.numberOfRecordingsInCategory(prog.getId()), 1);
+        LiveData<Integer> liveNumber = mydao.numberOfRecordingsInCategory(1);
+        liveNumber.observeForever(intObs);
+
+        assertTrue("Number can't be null", liveNumber.getValue() != null);
+
+        int numberValue = liveNumber.getValue();
+        assertEquals(numberValue, 3);
     }
 }
