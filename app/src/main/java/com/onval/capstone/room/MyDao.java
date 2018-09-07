@@ -8,23 +8,26 @@ import java.util.List;
 @Dao
 public interface MyDao {
     @Query("SELECT * FROM category")
-    public LiveData<List<Category>> loadCategories();
+    LiveData<List<Category>> loadCategories();
+
+    @Query("SELECT COUNT(*) FROM category")
+    LiveData<Integer> numOfCategories();
 
     @Query("SELECT * FROM record AS R WHERE R.category_id = :categoryId")
-    public LiveData<List<Record>> loadRecordingsFromCategory(int categoryId);
+    LiveData<List<Record>> loadRecordingsFromCategory(int categoryId);
 
     @Query ("SELECT COUNT(*) FROM record AS R WHERE R.category_id = :categoryId")
-    public LiveData<Integer> numberOfRecordingsInCategory(int categoryId);
+    LiveData<Integer> numberOfRecordingsInCategory(int categoryId);
 
     @Insert
-    public void insertCategories(Category... category);
+    void insertCategories(Category... category);
 
     @Insert
-    public void insertRecordings(Record... record);
+    void insertRecordings(Record... record);
 
     @Delete
-    public void deleteCategories(Category... category);
+    void deleteCategories(Category... category);
 
     @Delete
-    public void deleteRecords(Record... record);
+    void deleteRecords(Record... record);
 }

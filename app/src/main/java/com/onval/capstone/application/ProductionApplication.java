@@ -3,6 +3,7 @@ package com.onval.capstone.application;
 import android.app.Activity;
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
 import com.onval.capstone.di.DaggerAppComponent;
 
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ public class ProductionApplication extends Application
     public void onCreate() {
         DaggerAppComponent.create().inject(this);
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
     }
 
     @Override

@@ -1,22 +1,25 @@
 package com.onval.capstone.activities;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.onval.capstone.fragment.CategoriesFragment;
-import com.onval.capstone.fragment.SettingsFragment;
+
+import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.fragment.EmptyFragment;
 import com.onval.capstone.R;
@@ -24,7 +27,8 @@ import com.onval.capstone.R;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Observer<Integer> {
+    CategoriesViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +40,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        CategoriesViewModel categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        if (savedInstanceState == null) {
+            viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-        if (!categoriesViewModel.getData().getValue().isEmpty())
-            ft.replace(R.id.fragment_container, CategoriesFragment.newInstance());
-        else
-            ft.replace(R.id.fragment_container, EmptyFragment.newInstance());
-        ft.commit();
+//        Category cat1 = new Category("Python", "#ff00ff", true);
+//        Category cat2 = new Category("Java", "#33ff00", false);
+//        Category cat3 = new Category("PHP", "#1100aa", false);
+//        viewModel.insertCategories(cat1, cat2, cat3);
+
+            LiveData<Integer> liveNumCategories = viewModel.getNumOfCategories();
+            liveNumCategories.observe(this, this);
+        }
     }
 
     @OnClick(R.id.main_fab)
@@ -80,5 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
         ((TextView)view.findViewById(R.id.title)).setText(getTitle());
         actionBar.setCustomView(view);
+    }
+
+    @Override
+    public void onChanged(@Nullable Integer numberOfCategories) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        assert numberOfCategories != null;
+
+        if (numberOfCategories > 0)
+            ft.replace(R.id.fragment_container, CategoriesFragment.newInstance());
+        else
+            ft.replace(R.id.fragment_container, EmptyFragment.newInstance());
+        ft.commit();
     }
 }

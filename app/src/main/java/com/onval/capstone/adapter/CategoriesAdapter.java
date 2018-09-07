@@ -13,10 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.onval.capstone.TemporaryCategory;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
+import com.onval.capstone.room.Category;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,11 +26,11 @@ import butterknife.ButterKnife;
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>
     implements View.OnClickListener {
     private Context context;
-    private List<TemporaryCategory> data;
+    private List<Category> categories;
 
-    public CategoriesAdapter(Context context, List<TemporaryCategory> data) {
+    public CategoriesAdapter(Context context) {
         this.context = context;
-        this.data = data;
+        categories = Collections.emptyList();
     }
 
     @NonNull
@@ -47,13 +48,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     @Override
     public int getItemCount() {
-        return (data == null) ? 0 : data.size();
+        return (categories == null) ? 0 : categories.size();
     }
 
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(context, RecordingsActivity.class);
         context.startActivity(intent);
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+        notifyDataSetChanged();
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -65,21 +71,20 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
         final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
 
-
         CategoryViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(int position) {
-            TemporaryCategory category = data.get(position);
+        void bind(int position) {
+            Category category = categories.get(position);
 
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());
 
-            int recordingNumber = category.getRecordings();
-            String subtext = recordingNumber + ((recordingNumber == 1 ) ? " recording" : " recordings");
-            categorySubtext.setText(subtext);
+//            int recordingNumber = category.getRecordings();
+//            String subtext = recordingNumber + ((recordingNumber == 1 ) ? " recording" : " recordings");
+//            categorySubtext.setText(subtext);
 
             if (category.isAutoUploading()) // todo: i need to check if g.drive is enabled as well
                 autouploadIcon.setImageDrawable(cloudAutouploadingIconOn);
