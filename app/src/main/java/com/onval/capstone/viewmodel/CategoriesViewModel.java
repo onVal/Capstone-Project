@@ -26,15 +26,6 @@ public class CategoriesViewModel extends AndroidViewModel {
 //                .getResources().getStringArray(R.array.category_colors);
 
         return repository.getCategories();
-
-//        categories.add(new TemporaryCategory(colors[0], "Mathematics", 78, false));
-//        categories.add(new TemporaryCategory(colors[1], "History", 18, false));
-//        categories.add(new TemporaryCategory(colors[2], "Programming", 28, true));
-//        categories.add(new TemporaryCategory(colors[3], "Operating Systems", 55, false));
-//        categories.add(new TemporaryCategory(colors[4], "Chinese", 1, true));
-//        categories.add(new TemporaryCategory(colors[5], "Statistics", 21, false));
-//        categories.add(new TemporaryCategory(colors[6], "Algebra", 32, true));
-
     }
 
     public void insertCategories(Category... categories) {
@@ -43,5 +34,9 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getNumOfCategories() {
         return repository.getNumOfCategories();
+    }
+
+    public LiveData<Integer> getRecNumberInCategory(int categoryId) {
+        return repository.getRecNumberInCategory(categoryId);
     }
 }

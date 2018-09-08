@@ -1,5 +1,8 @@
 package com.onval.capstone.adapter;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,9 +31,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     implements View.OnClickListener {
     private Context context;
     private List<Category> categories;
+    private CategoriesViewModel viewModel;
 
-    public CategoriesAdapter(Context context) {
+    public CategoriesAdapter(Context context, CategoriesViewModel viewModel) {
         this.context = context;
+        this.viewModel = viewModel;
         categories = Collections.emptyList();
     }
 
@@ -82,9 +88,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());
 
-//            int recordingNumber = category.getRecordings();
-//            String subtext = recordingNumber + ((recordingNumber == 1 ) ? " recording" : " recordings");
-//            categorySubtext.setText(subtext);
+            LiveData<Integer> recordings = viewModel.getRecNumberInCategory(category.getId());
+            recordings.observeForever((Integer r)->{
+                    String subtext = r + ((r == 1) ? " recording" : " recordings");
+                    categorySubtext.setText(subtext);
+            });
 
             if (category.isAutoUploading()) // todo: i need to check if g.drive is enabled as well
                 autouploadIcon.setImageDrawable(cloudAutouploadingIconOn);

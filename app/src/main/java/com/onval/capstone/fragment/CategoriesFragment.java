@@ -53,19 +53,14 @@ public class CategoriesFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        CategoriesAdapter adapter = new CategoriesAdapter(context);
+        CategoriesAdapter adapter = new CategoriesAdapter(context, viewModel);
         categories.setAdapter(adapter);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         categories.setLayoutManager(layoutManager);
 
         liveCategories.observe(this,
-                new Observer<List<Category>>() {
-                    @Override
-                    public void onChanged(@Nullable List<Category> cats) {
-                        adapter.setCategories(cats != null ? cats : Collections.EMPTY_LIST);
-                    }
-                });
+                cats -> adapter.setCategories(cats != null ? cats : Collections.EMPTY_LIST));
 
 //        Category category = new Category("Physics", "#00ff00", false);
 //        viewModel.insertCategories(category);
