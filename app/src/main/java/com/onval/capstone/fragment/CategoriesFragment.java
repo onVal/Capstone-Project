@@ -62,9 +62,6 @@ public class CategoriesFragment extends Fragment {
         liveCategories.observe(this,
                 cats -> adapter.setCategories(cats != null ? cats : Collections.EMPTY_LIST));
 
-//        Category category = new Category("Physics", "#00ff00", false);
-//        viewModel.insertCategories(category);
-
         return view;
     }
 }

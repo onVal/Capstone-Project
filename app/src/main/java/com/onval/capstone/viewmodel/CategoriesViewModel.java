@@ -29,8 +29,8 @@ public class CategoriesViewModel extends AndroidViewModel {
         return repository.getCategories();
     }
 
-    public void insertCategories(Category categories) throws SQLiteConstraintException {
-        repository.insertCategories(categories);
+    public void insertCategory(Category category) {
+        repository.insertCategories(category);
     }
 
     public LiveData<Integer> getNumOfCategories() {
