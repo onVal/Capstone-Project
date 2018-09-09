@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.onval.capstone.fragment.AddCategoryDialogFragment;
 import com.onval.capstone.fragment.CategoriesFragment;
 
-import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.fragment.EmptyFragment;
 import com.onval.capstone.R;
@@ -28,7 +29,9 @@ import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 
 public class MainActivity extends AppCompatActivity implements Observer<Integer> {
-    CategoriesViewModel viewModel;
+    private static final String ADD_CATEGORY_TAG = "ADD_CATEGORY";
+    private CategoriesViewModel viewModel;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
+        fm = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
             viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
@@ -69,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_add_category:
+                AddCategoryDialogFragment addCatFragment = new AddCategoryDialogFragment();
+                addCatFragment.show(fm, ADD_CATEGORY_TAG);
+                break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
@@ -91,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
 
     @Override
     public void onChanged(@Nullable Integer numberOfCategories) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = fm.beginTransaction();
 
         assert numberOfCategories != null;
 

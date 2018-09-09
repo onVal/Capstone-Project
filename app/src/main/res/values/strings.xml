@@ -16,4 +16,6 @@
 
     <string name="title_activity_settings">Settings</string>
 
+    <!-- Error messages -->
+    <string name="cant_insert_cat">ERROR: This name is already taken.</string>
 </resources>

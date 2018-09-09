@@ -3,6 +3,7 @@ package com.onval.capstone.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.database.sqlite.SQLiteConstraintException;
 
 import com.onval.capstone.MyRepository;
 import com.onval.capstone.R;
@@ -28,7 +29,7 @@ public class CategoriesViewModel extends AndroidViewModel {
         return repository.getCategories();
     }
 
-    public void insertCategories(Category... categories) {
+    public void insertCategories(Category categories) throws SQLiteConstraintException {
         repository.insertCategories(categories);
     }
 

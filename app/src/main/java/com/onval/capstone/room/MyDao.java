@@ -19,8 +19,11 @@ public interface MyDao {
     @Query ("SELECT COUNT(*) FROM record AS R WHERE R.category_id = :categoryId")
     LiveData<Integer> numberOfRecordingsInCategory(int categoryId);
 
+    @Insert(onConflict =  OnConflictStrategy.IGNORE)
+    long insertCategory(Category category);
+
     @Insert
-    void insertCategories(Category... category);
+    void insertCategories(Category... categories);
 
     @Insert
     void insertRecordings(Record... record);
