@@ -41,7 +41,6 @@ public class AddCategoryDialogFragment extends DialogFragment {
                 .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
-
     }
 
     class AddCategoriesListener implements OnClickListener {

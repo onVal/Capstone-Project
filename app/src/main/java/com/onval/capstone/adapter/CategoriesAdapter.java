@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -22,10 +23,13 @@ import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>
     implements View.OnClickListener {
@@ -65,7 +69,23 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+
+        SharedPreferences prefs = context.getSharedPreferences(
+                context.getString(R.string.prefs), Context.MODE_PRIVATE);
+
+        boolean sortByName = prefs.getBoolean(context.getString(R.string.sort_by_name), false);
+        sortCategoriesByName();
         notifyDataSetChanged();
+    }
+
+    public void sortCategoriesByName() {
+        Collections.sort(categories,
+                (c1, c2) -> c1.getName().compareTo(c2.getName()));
+    }
+
+    public void sortCategoriesById() {
+        Collections.sort(categories,
+                (c1, c2) -> c1.getId() - (c2.getId()));
     }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {

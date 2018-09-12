@@ -9,12 +9,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_sort_categories"
-        android:title="@string/sort_categories"
-        android:icon="@drawable/sort_categories"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_settings"
         android:title="@string/settings"
         android:orderInCategory="100"

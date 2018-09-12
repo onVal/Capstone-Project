@@ -16,7 +16,6 @@ public class Category {
     private boolean autoUploading;
 
     public Category(String name, String color, boolean autoUploading) {
-//        this.id = id;
         this.name = name;
         this.color = color;
         this.autoUploading = autoUploading;

@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -12,9 +13,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,11 +51,6 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         if (savedInstanceState == null) {
             viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-//        Category cat1 = new Category("Python", "#ff00ff", true);
-//        Category cat2 = new Category("Java", "#33ff00", false);
-//        Category cat3 = new Category("PHP", "#1100aa", false);
-//        viewModel.insertCategories(cat1, cat2, cat3);
-
             LiveData<Integer> liveNumCategories = viewModel.getNumOfCategories();
             liveNumCategories.observe(this, this);
         }
@@ -67,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -77,9 +75,12 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
                 AddCategoryDialogFragment addCatFragment = new AddCategoryDialogFragment();
                 addCatFragment.show(fm, ADD_CATEGORY_TAG);
                 break;
+
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
         return true;

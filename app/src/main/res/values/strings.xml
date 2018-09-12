@@ -8,6 +8,8 @@
     <string name="settings">Settings</string>
     <string name="add_category">Add category</string>
     <string name="sort_categories">Sort Categories</string>
+    <string name="sort_by_name">Sort by name</string>
+    <string name="sort_by_recordings">Sort by recordings</string>
 
     <!-- Empty fragment messages -->
     <string name="no_categories_msg_1">Click </string>
@@ -22,4 +24,6 @@
     <!-- Shared preferences -->
     <string name="prefs">shared-preferences</string>
     <string name="next_color">next-color</string>
+    <string name="sort_pref">sort-prefs</string>
+
 </resources>
