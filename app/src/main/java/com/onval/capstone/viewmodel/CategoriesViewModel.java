@@ -33,6 +33,10 @@ public class CategoriesViewModel extends AndroidViewModel {
         repository.insertCategories(category);
     }
 
+    public void deleteCategories(Category... categories) {
+        repository.deleteCategories(categories);
+    }
+
     public LiveData<Integer> getNumOfCategories() {
         return repository.getNumOfCategories();
     }

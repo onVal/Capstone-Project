@@ -29,7 +29,7 @@ public interface MyDao {
     void insertRecordings(Record... recordings);
 
     @Delete
-    void deleteCategories(List<Category> categories);
+    void deleteCategories(Category... categories);
 
     @Delete
     void deleteRecords(List<Record> recordings);

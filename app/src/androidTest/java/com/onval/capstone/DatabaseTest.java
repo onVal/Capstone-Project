@@ -143,9 +143,9 @@ public class DatabaseTest {
 
         List<Category> categories = liveCategories.getValue();
         assertEquals (2, categories.size());
-        mydao.deleteCategories(Arrays.asList(categories.get(0)));
+        mydao.deleteCategories(categories.get(0));
         assertEquals (1, liveCategories.getValue().size());
-        mydao.deleteCategories(Arrays.asList(categories.get(1)));
+        mydao.deleteCategories(categories.get(1));
         assertEquals (0, liveCategories.getValue().size());
     }
 }
