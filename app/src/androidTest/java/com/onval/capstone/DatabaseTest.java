@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -128,5 +129,23 @@ public class DatabaseTest {
 
         int numberValue = liveNumber.getValue();
         assertEquals(numberValue, 3);
+    }
+
+    @Test
+    public void testDeleteCategories() {
+        Category math = new Category("math", "green", false);
+        Category prog = new Category("prog", "blue", false);
+        mydao.insertCategory(math);
+        mydao.insertCategory(prog);
+
+        LiveData<List<Category>> liveCategories = mydao.loadCategories();
+        liveCategories.observeForever(catObs);
+
+        List<Category> categories = liveCategories.getValue();
+        assertEquals (2, categories.size());
+        mydao.deleteCategories(Arrays.asList(categories.get(0)));
+        assertEquals (1, liveCategories.getValue().size());
+        mydao.deleteCategories(Arrays.asList(categories.get(1)));
+        assertEquals (0, liveCategories.getValue().size());
     }
 }

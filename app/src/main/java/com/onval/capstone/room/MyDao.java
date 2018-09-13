@@ -26,11 +26,11 @@ public interface MyDao {
     void insertCategories(Category... categories);
 
     @Insert
-    void insertRecordings(Record... record);
+    void insertRecordings(Record... recordings);
 
     @Delete
-    void deleteCategories(Category... category);
+    void deleteCategories(List<Category> categories);
 
     @Delete
-    void deleteRecords(Record... record);
+    void deleteRecords(List<Record> recordings);
 }
