@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onval.capstone">
 
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:name=".application.ProductionApplication"
         android:allowBackup="true"
@@ -27,6 +29,8 @@
             android:label="@string/title_activity_settings"
             android:theme="@style/SettingsTheme"
             />
+
+        <service android:name=".service.RecordService" />
     </application>
 
 </manifest>
