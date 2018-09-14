@@ -15,8 +15,7 @@ public class Category {
     @ColumnInfo(name = "auto_upload")
     private boolean autoUploading;
 
-    public Category(int id, String name, String color, boolean autoUploading) {
-        this.id = id;
+    public Category(String name, String color, boolean autoUploading) {
         this.name = name;
         this.color = color;
         this.autoUploading = autoUploading;

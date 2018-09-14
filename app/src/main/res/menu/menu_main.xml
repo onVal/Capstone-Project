@@ -4,14 +4,8 @@
     tools:context="com.onval.capstone.activities.MainActivity">
     <item
         android:id="@+id/action_add_category"
-        android:title="@string/settings"
+        android:title="@string/add_category"
         android:icon="@drawable/add_category"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_sort_categories"
-        android:title="@string/sort_categories"
-        android:icon="@drawable/sort_categories"
         app:showAsAction="ifRoom" />
 
     <item

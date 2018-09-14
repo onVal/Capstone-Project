@@ -33,13 +33,12 @@ public class Record {
     private int categoryId;
 
     @Ignore
-    public Record(int id, String name, int categoryId) {
-        this(id, name, "", "", "", "", "", categoryId);
+    public Record(String name, int categoryId) {
+        this(name, "", "", "", "", "", categoryId);
     }
 
-    public Record(int id, String name, String duration,
+    public Record(String name, String duration,
                   String recDate, String recTime, String format, String cloudStatus, int categoryId) {
-        this.id = id;
         this.name = name;
         this.duration = duration;
         this.recDate = recDate;
