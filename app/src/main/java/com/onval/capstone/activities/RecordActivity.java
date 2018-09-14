@@ -6,29 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.onval.capstone.R;
 import com.onval.capstone.service.RecordBinder;
 import com.onval.capstone.service.RecordService;
-
-import java.io.IOException;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class RecordActivity extends AppCompatActivity {
     private boolean isBound = false;
@@ -49,7 +38,7 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(getApplicationContext(), RecordService.class);
+        Intent intent = new Intent(this, RecordService.class);
         startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
