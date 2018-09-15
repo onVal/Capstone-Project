@@ -38,27 +38,29 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, RecordService.class);
-        startService(intent);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_RECORD_AUDIO_PERMISSION:
                 permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                startAndBindRecordService();
                 break;
         }
         if (!permissionToRecordAccepted ) finish();
 
     }
 
+    private void startAndBindRecordService() {
+        Intent intent = new Intent(this, RecordService.class);
+        startService(intent);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     public void recordButton(View view) {
-
-
             if (isBound && service.isPlaying())
                 service.pauseRecording();
             else

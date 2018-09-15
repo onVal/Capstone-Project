@@ -2,13 +2,17 @@ package com.onval.capstone.service;
 
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
 
@@ -16,12 +20,10 @@ import com.onval.capstone.activities.RecordActivity;
 import java.io.IOException;
 
 public class RecordService extends IntentService {
-    public static final String START_RECORDING = "start-recording";
-    public static final String PAUSE_RECORDING = "pause=recording";
-
     private MediaRecorder recorder;
     private static final int NOTIFICATION_ID = 1;
-    private Notification foregroundNotification;
+    private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
+    private Notification foregroundNotification = new Notification();
     private boolean isPlaying = false;
 
     public RecordService() {
@@ -54,11 +56,10 @@ public class RecordService extends IntentService {
     private void initializeNotification() {
         Intent intent = new Intent(this, RecordActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        foregroundNotification = new Notification.Builder(this)
-                .setContentTitle("Recording")
-                .setContentText("Hello")
-                .setContentText("The app is recording...")
-                .setSmallIcon(R.drawable.exo_notification_small_icon)
+        foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("Record")
+                .setContentText("You are recording a voice memo")
+                .setSmallIcon(R.drawable.ic_mic_black_24dp)
                 .setContentIntent(pendingIntent)
                 .build();
     }
