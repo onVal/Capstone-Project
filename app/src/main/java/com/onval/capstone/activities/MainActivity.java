@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
     private static final String ADD_CATEGORY_TAG = "ADD_CATEGORY";
     private CategoriesViewModel viewModel;
     private FragmentManager fm;
+    private LiveData<Integer> liveNumCategories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         if (savedInstanceState == null) {
             viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-            LiveData<Integer> liveNumCategories = viewModel.getNumOfCategories();
-            liveNumCategories.observe(this, this);
+            liveNumCategories = viewModel.getNumOfCategories();
+            liveNumCategories.observeForever(this);
         }
     }
 
