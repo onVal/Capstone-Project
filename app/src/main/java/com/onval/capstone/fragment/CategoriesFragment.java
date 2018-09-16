@@ -91,7 +91,7 @@ public class CategoriesFragment extends Fragment {
 
         inflater.inflate(R.menu.menu_cat, menu);
         menu.findItem(R.id.action_sort_by_name).setTitle(
-                (sortByName) ? "Sort manually" : getString(R.string.sort_by_name));
+                (sortByName) ? getString(R.string.sort_by_creation) : getString(R.string.sort_by_name));
     }
 
 
@@ -112,7 +112,7 @@ public class CategoriesFragment extends Fragment {
         boolean sortByName = prefs.getBoolean(getString(R.string.sort_by_name), false);
 
         prefs.edit().putBoolean(getString(R.string.sort_by_name), !sortByName).apply();
-        item.setTitle((sortByName) ? getString(R.string.sort_by_name) : "Sort manually");
+        item.setTitle((sortByName) ? getString(R.string.sort_by_name) : getString(R.string.sort_by_creation));
 
         if (sortByName)
             adapter.sortCategoriesById();

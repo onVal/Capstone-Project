@@ -22,10 +22,11 @@ import com.onval.capstone.service.RecordService;
 public class RecordActivity extends AppCompatActivity {
     private boolean isBound = false;
     private RecordService service;
+    Intent intentService = new Intent(this, RecordService.class);
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
 
     @Override
@@ -36,37 +37,31 @@ public class RecordActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
             case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 startAndBindRecordService();
                 break;
         }
-        if (!permissionToRecordAccepted ) finish();
+        if (!permissionToRecordAccepted) finish();
 
     }
 
     private void startAndBindRecordService() {
-        Intent intent = new Intent(this, RecordService.class);
-        startService(intent);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        startService(intentService);
+        bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void recordButton(View view) {
-            if (isBound && service.isPlaying())
-                service.pauseRecording();
-            else
-                service.startRecording();
+        if (isBound && service.isPlaying())
+            service.pauseRecording();
+        else
+            service.startRecording();
 
-            upgradeRecordDrawable(view);
+        upgradeRecordDrawable(view);
     }
 
     private void upgradeRecordDrawable(View view) {
@@ -80,8 +75,7 @@ public class RecordActivity extends AppCompatActivity {
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder binder) {
+        public void onServiceConnected(ComponentName className, IBinder binder) {
             RecordBinder recordBinder = (RecordBinder) binder;
             service = (RecordService) recordBinder.getService();
             isBound = true;
@@ -92,5 +86,4 @@ public class RecordActivity extends AppCompatActivity {
             isBound = false;
         }
     };
-
 }

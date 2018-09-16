@@ -23,9 +23,6 @@ public class CategoriesViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Category>> getCategories() {
-//        String[] colors = application.getBaseContext()
-//                .getResources().getStringArray(R.array.category_colors);
-
         return repository.getCategories();
     }
 

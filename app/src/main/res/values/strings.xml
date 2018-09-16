@@ -9,6 +9,8 @@
     <string name="add_category">Add category</string>
     <string name="sort_categories">Sort Categories</string>
     <string name="sort_by_name">Sort by name</string>
+    <string name="sort_by_creation">Sort by creation</string>
+
     <string name="sort_by_recordings">Sort by recordings</string>
 
     <!-- Empty fragment messages -->

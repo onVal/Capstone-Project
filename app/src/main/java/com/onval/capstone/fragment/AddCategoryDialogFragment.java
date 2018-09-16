@@ -32,7 +32,7 @@ public class AddCategoryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         editText = new EditText(getActivity());
-        editText.setTextColor(Color.parseColor("#000000"));
+        editText.setTextColor(Color.BLACK);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         builder.setTitle(R.string.add_category)
