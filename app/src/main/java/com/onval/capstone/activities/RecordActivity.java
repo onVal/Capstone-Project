@@ -22,7 +22,7 @@ import com.onval.capstone.service.RecordService;
 public class RecordActivity extends AppCompatActivity {
     private boolean isBound = false;
     private RecordService service;
-    Intent intentService = new Intent(this, RecordService.class);
+    Intent intentService;
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -32,6 +32,7 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        intentService = new Intent(this, RecordService.class);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_record);
     }
@@ -43,16 +44,12 @@ public class RecordActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_RECORD_AUDIO_PERMISSION:
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                startAndBindRecordService();
+                startService(intentService);
+                bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
                 break;
         }
         if (!permissionToRecordAccepted) finish();
 
-    }
-
-    private void startAndBindRecordService() {
-        startService(intentService);
-        bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void recordButton(View view) {
