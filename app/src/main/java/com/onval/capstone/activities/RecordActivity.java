@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,14 +35,12 @@ public class RecordActivity extends AppCompatActivity {
 
     private boolean isBound = false;
     private RecordService service;
-    Intent intentService;
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
     public class TimerReceiver extends ResultReceiver {
-
         TimerReceiver(Handler handler) {
             super(handler);
         }
@@ -68,7 +68,7 @@ public class RecordActivity extends AppCompatActivity {
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
         if (permissionToRecordAccepted) {
-            intentService = new Intent(this, RecordService.class);
+            Intent intentService = new Intent(this, RecordService.class);
             intentService.putExtra("timer", new TimerReceiver(new Handler()));
             startService(intentService);
             bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -78,16 +78,18 @@ public class RecordActivity extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void recordButton(View view) {
-        if (isBound && service.isPlaying()) {
+        if (isBound && service.isPlaying())
             service.pauseRecording();
-        }
-        else {
-            service.startRecording();
-
-        }
+        else
+            service.resumeRecording();
 
         upgradeRecordDrawable(view);
+    }
+
+    public void stopRecording(View view) {
+        service.stopRecording();
     }
 
     private void upgradeRecordDrawable(View view) {
@@ -98,11 +100,6 @@ public class RecordActivity extends AppCompatActivity {
             fab.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
         }
     }
-
-//    private void resetTimer() {
-//        timeAtLastPause = 0;
-//        currentTimeMillis = 0;
-//    }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override

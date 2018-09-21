@@ -28,4 +28,9 @@
     <string name="next_color">next-color</string>
     <string name="sort_pref">sort-prefs</string>
 
+
+   <!--Content description -->
+    <string name="stop_content_desc">Stop</string>
+    <string name="stop_recording">STOP RECORDING</string>
+
 </resources>
