@@ -5,12 +5,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
-import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,16 +19,14 @@ import android.support.v4.app.NotificationCompat;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
 
-
 import java.io.IOException;
 
-import javax.net.ssl.HandshakeCompletedListener;
 
 public class RecordService extends IntentService {
     private MediaRecorder recorder;
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
-    private Notification foregroundNotification = new Notification();
+    private Notification foregroundNotification;
     private boolean isPlaying = false;
     private ResultReceiver timerReceiver;
     private Handler handler;
@@ -84,6 +78,8 @@ public class RecordService extends IntentService {
     }
 
     private void initializeNotification() {
+        createNotificationChannel();
+
         Intent intent = new Intent(this, RecordActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
@@ -91,7 +87,19 @@ public class RecordService extends IntentService {
                 .setContentText("You are recording a voice memo")
                 .setSmallIcon(R.drawable.ic_mic_black_24dp)
                 .setContentIntent(pendingIntent)
+                .setVibrate(new long[] {0L})
                 .build();
+        }
+
+    private void createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                    "Record", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.enableVibration(false);
+            channel.setImportance(NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     public void startRecording() {
@@ -110,7 +118,6 @@ public class RecordService extends IntentService {
             stopForeground(true);
             isPlaying = false;
             handler.removeCallbacks(timerRunnable);
-
         }
     }
 
