@@ -11,9 +11,12 @@ import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.ResultReceiver;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
@@ -23,23 +26,44 @@ import com.onval.capstone.activities.RecordActivity;
 
 import java.io.IOException;
 
+import javax.net.ssl.HandshakeCompletedListener;
+
 public class RecordService extends IntentService {
     private MediaRecorder recorder;
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
     private Notification foregroundNotification = new Notification();
     private boolean isPlaying = false;
-    public boolean isReady = false;
+    private ResultReceiver timerReceiver;
+    private Handler handler;
+    private Bundle bundle;
+
+    private long currentTimeMillis, startTime, timeAtLastPause;
+
 
     public RecordService() {
         super("RecordService");
     }
 
+    private Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeAtLastPause;
+            bundle.putLong("current-time", currentTimeMillis);
+            timerReceiver.send(0, bundle);
+            handler.postDelayed(this, 1000);
+        }
+    };
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         initializeRecorder();
         initializeNotification();
-        isReady = true;
+        timerReceiver = intent.getExtras().getParcelable("timer");
+        handler = new Handler(Looper.getMainLooper());
+        bundle = new Bundle();
+
+        startRecording();
     }
 
     private void initializeRecorder() {
@@ -75,6 +99,8 @@ public class RecordService extends IntentService {
             recorder.start();
             startForeground(NOTIFICATION_ID, foregroundNotification);
             isPlaying = true;
+            startTime = SystemClock.uptimeMillis();
+            handler.post(timerRunnable);
         }
     }
 
@@ -83,6 +109,8 @@ public class RecordService extends IntentService {
             recorder.stop();
             stopForeground(true);
             isPlaying = false;
+            handler.removeCallbacks(timerRunnable);
+
         }
     }
 

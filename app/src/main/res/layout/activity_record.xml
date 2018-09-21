@@ -13,7 +13,7 @@
         android:id="@+id/record_fab"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        app:srcCompat="@drawable/ic_fab_dot"
+        app:srcCompat="@drawable/ic_pause_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

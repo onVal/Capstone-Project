@@ -35,13 +35,22 @@ public class RecordActivity extends AppCompatActivity {
     private RecordService service;
     Intent intentService;
 
-    Handler handler;
-    private long currentTimeMillis, startTime, timeAtLastPause;
-
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
+    public class TimerReceiver extends ResultReceiver {
+
+        TimerReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            long currentTimeMillis = resultData.getLong("current-time");
+            timerTextView.setText(timeFormatFromMills(currentTimeMillis));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +69,9 @@ public class RecordActivity extends AppCompatActivity {
 
         if (permissionToRecordAccepted) {
             intentService = new Intent(this, RecordService.class);
+            intentService.putExtra("timer", new TimerReceiver(new Handler()));
             startService(intentService);
             bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
-            handler = new Handler();
         }
         else
             finish();
@@ -72,13 +81,10 @@ public class RecordActivity extends AppCompatActivity {
     public void recordButton(View view) {
         if (isBound && service.isPlaying()) {
             service.pauseRecording();
-            handler.removeCallbacks(timerRunnable);
-
         }
         else {
             service.startRecording();
-            startTime = SystemClock.uptimeMillis();
-            handler.post(timerRunnable);
+
         }
 
         upgradeRecordDrawable(view);
@@ -93,10 +99,10 @@ public class RecordActivity extends AppCompatActivity {
         }
     }
 
-    private void resetTimer() {
-        timeAtLastPause = 0;
-        currentTimeMillis = 0;
-    }
+//    private void resetTimer() {
+//        timeAtLastPause = 0;
+//        currentTimeMillis = 0;
+//    }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -104,29 +110,11 @@ public class RecordActivity extends AppCompatActivity {
             RecordBinder recordBinder = (RecordBinder) binder;
             service = (RecordService) recordBinder.getService();
             isBound = true;
-
-            while (!service.isReady) {
-                //Polling is bad but c'mon, it's just a few millis
-            }
-
-            service.startRecording();
-            startTime = SystemClock.uptimeMillis();
-            handler.post(timerRunnable);
-
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             isBound = false;
-        }
-    };
-
-    private Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeAtLastPause;
-            timerTextView.setText(timeFormatFromMills(currentTimeMillis));
-            handler.postDelayed(this, 1000);
         }
     };
 
