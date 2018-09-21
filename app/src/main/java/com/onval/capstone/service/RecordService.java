@@ -5,11 +5,15 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
@@ -25,6 +29,7 @@ public class RecordService extends IntentService {
     private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
     private Notification foregroundNotification = new Notification();
     private boolean isPlaying = false;
+    public boolean isReady = false;
 
     public RecordService() {
         super("RecordService");
@@ -34,6 +39,7 @@ public class RecordService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         initializeRecorder();
         initializeNotification();
+        isReady = true;
     }
 
     private void initializeRecorder() {

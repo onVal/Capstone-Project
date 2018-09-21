@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -75,7 +76,6 @@ public class RecordActivity extends AppCompatActivity {
 
         }
         else {
-            Log.d("THREAD", "should be ui thread ->" + Thread.currentThread().toString());
             service.startRecording();
             startTime = SystemClock.uptimeMillis();
             handler.post(timerRunnable);
@@ -104,6 +104,15 @@ public class RecordActivity extends AppCompatActivity {
             RecordBinder recordBinder = (RecordBinder) binder;
             service = (RecordService) recordBinder.getService();
             isBound = true;
+
+            while (!service.isReady) {
+                //Polling is bad but c'mon, it's just a few millis
+            }
+
+            service.startRecording();
+            startTime = SystemClock.uptimeMillis();
+            handler.post(timerRunnable);
+
         }
 
         @Override
@@ -115,7 +124,6 @@ public class RecordActivity extends AppCompatActivity {
     private Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.d("THREAD", "should be another thread ->" + Thread.currentThread().toString());
             currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeAtLastPause;
             timerTextView.setText(timeFormatFromMills(currentTimeMillis));
             handler.postDelayed(this, 1000);
@@ -124,9 +132,15 @@ public class RecordActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private String timeFormatFromMills(long millis) {
-        int mm = (int) (millis / 1000) / 60;
-        int ss = (int) (millis / 1000) % 60;
+        int seconds = (int) (millis / 1000);
 
-        return String.format("%02d:%02d", mm, ss);
+        int hh = seconds / 3600;
+        int mm = seconds / 60 % 60;
+        int ss = seconds % 60;
+
+        if (hh == 0)
+            return String.format("%02d:%02d", mm, ss);
+
+        return String.format("%02d:%02d:%02d", hh, mm, ss);
     }
 }
