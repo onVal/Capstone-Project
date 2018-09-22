@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -19,11 +18,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
+import com.onval.capstone.fragment.ChooseCategoryDialogFragment;
 import com.onval.capstone.service.RecordBinder;
 import com.onval.capstone.service.RecordService;
 
@@ -32,6 +31,7 @@ import butterknife.ButterKnife;
 
 public class RecordActivity extends AppCompatActivity {
     @BindView(R.id.timer) TextView timerTextView;
+    @BindView(R.id.record_fab) FloatingActionButton fab;
 
     private boolean isBound = false;
     private RecordService service;
@@ -39,6 +39,8 @@ public class RecordActivity extends AppCompatActivity {
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+
+    private static final String SAVE_RECORDING_TAG = "SAVE_RECORDING";
 
     public class TimerReceiver extends ResultReceiver {
         TimerReceiver(Handler handler) {
@@ -89,7 +91,13 @@ public class RecordActivity extends AppCompatActivity {
     }
 
     public void stopRecording(View view) {
-        service.stopRecording();
+        if (isBound) {
+            service.pauseRecording();
+            upgradeRecordDrawable(fab);
+
+            ChooseCategoryDialogFragment chooseCategory = new ChooseCategoryDialogFragment();
+            chooseCategory.show(getSupportFragmentManager(), "derp");
+        }
     }
 
     private void upgradeRecordDrawable(View view) {

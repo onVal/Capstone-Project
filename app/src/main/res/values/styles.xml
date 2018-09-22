@@ -29,7 +29,6 @@
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:textColor">#000</item>
-
     </style>
 
 </resources>

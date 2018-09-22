@@ -19,8 +19,8 @@ import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 public class AddCategoryDialogFragment extends DialogFragment {
-    EditText editText;
-    CategoriesViewModel viewModel;
+    private EditText editText;
+    private CategoriesViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class AddCategoryDialogFragment extends DialogFragment {
         }
     }
 
-    String fetchNextColor() {
+    private String fetchNextColor() {
         String[] colors = getContext().getResources().getStringArray(R.array.category_colors);
 
         SharedPreferences prefs = getContext().getSharedPreferences(
