@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import com.onval.capstone.MyRepository;
 import com.onval.capstone.R;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.room.Record;
 
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public void insertCategory(Category category) {
         repository.insertCategories(category);
+    }
+
+    public void insertRecording(Record recording) {
+        repository.insertRecording(recording);
     }
 
     public void deleteCategories(Category... categories) {

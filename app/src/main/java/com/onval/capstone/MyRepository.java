@@ -46,9 +46,9 @@ public class MyRepository {
         new CategoriesInsertAsyncTask().execute(category);
     }
 
-//    public void insertRecordings(final Record... recs) {
-//        new RecordingsAsyncTask().execute(recs);
-//    }
+    public void insertRecording(final Record recs) {
+        new RecordingsAsyncTask().execute(recs);
+    }
 
     public void deleteCategories(final Category... categories) {
         new CategoriesDeleteAsyncTask().execute(categories);
@@ -79,11 +79,11 @@ public class MyRepository {
         }
     }
 
-//    private static class RecordingsAsyncTask extends AsyncTask<Record, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Record... recs) {
-//                dao.get().insertRecordings(recs);
-//            return null;
-//        }
-//    }
+    private class RecordingsAsyncTask extends AsyncTask<Record, Void, Void> {
+        @Override
+        protected Void doInBackground(Record... recs) {
+                dao.insertRecordings(recs[0]);
+            return null;
+        }
+    }
 }
