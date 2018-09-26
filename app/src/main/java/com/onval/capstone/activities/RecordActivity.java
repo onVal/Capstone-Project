@@ -18,23 +18,36 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
 import com.onval.capstone.fragment.ChooseCategoryDialogFragment;
+import com.onval.capstone.fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.service.RecordBinder;
 import com.onval.capstone.service.RecordService;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecordActivity extends AppCompatActivity {
+public class RecordActivity extends AppCompatActivity
+        implements SaveRecordingDialogFragment.OnSaveCallback {
     @BindView(R.id.timer) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
 
     private boolean isBound = false;
     private RecordService service;
+
+    private Date currentDate;
+
+    private Bundle recInfoBundle;
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -60,6 +73,7 @@ public class RecordActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_record);
         ButterKnife.bind(this);
+        recInfoBundle = new Bundle();
     }
 
     @Override
@@ -74,6 +88,7 @@ public class RecordActivity extends AppCompatActivity {
             intentService.putExtra("timer", new TimerReceiver(new Handler()));
             startService(intentService);
             bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
+            currentDate = Calendar.getInstance().getTime();
         }
         else
             finish();
@@ -95,7 +110,10 @@ public class RecordActivity extends AppCompatActivity {
             service.pauseRecording();
             upgradeRecordDrawable(fab);
 
+            prepareRecordingInfoBundle();
+
             ChooseCategoryDialogFragment chooseCategory = new ChooseCategoryDialogFragment();
+            chooseCategory.setArguments(recInfoBundle);
             chooseCategory.show(getSupportFragmentManager(), "derp");
         }
     }
@@ -107,6 +125,18 @@ public class RecordActivity extends AppCompatActivity {
             int drawableId = (service.isPlaying()) ? R.drawable.ic_pause_white_24dp : R.drawable.ic_fab_dot;
             fab.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
         }
+    }
+
+    private void prepareRecordingInfoBundle() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String formattedDate = dateFormat.format(currentDate);
+
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+        String formattedTime = timeFormat.format(currentDate);
+
+        recInfoBundle.putString("REC_START_TIME", formattedTime);
+        recInfoBundle.putString("REC_DATE", formattedDate);
+        recInfoBundle.putString("REC_DURATION", timeFormatFromMills(service.getTimeElapsed()));
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -122,6 +152,11 @@ public class RecordActivity extends AppCompatActivity {
             isBound = false;
         }
     };
+
+    @Override
+    public void onSaveRecording() {
+        service.stopRecording();
+    }
 
     @SuppressLint("DefaultLocale")
     private String timeFormatFromMills(long millis) {

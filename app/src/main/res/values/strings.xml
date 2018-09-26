@@ -31,6 +31,6 @@
 
    <!--Content description -->
     <string name="stop_content_desc">Stop</string>
-    <string name="stop_recording">STOP RECORDING</string>
+    <string name="stop_recording">STOP</string>
 
 </resources>

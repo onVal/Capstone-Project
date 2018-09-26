@@ -26,17 +26,22 @@ import java.io.IOException;
 
 
 public class RecordService extends IntentService {
-    private MediaRecorder recorder;
+    public static final String DEFAULT_REC_NAME = "/audiorecord.mp4";
+
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
     private Notification foregroundNotification;
+
+    private MediaRecorder recorder;
+
     private boolean isPlaying = false;
     private ResultReceiver timerReceiver;
     private Handler handler;
     private Bundle bundle;
 
-    private long currentTimeMillis, startTime, timeAtLastPause;
+    private String fileName;
 
+    private long currentTimeMillis, startTime, timeElapsed;
 
     public RecordService() {
         super("RecordService");
@@ -45,7 +50,7 @@ public class RecordService extends IntentService {
     private Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeAtLastPause;
+            currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeElapsed;
             bundle.putLong("current-time", currentTimeMillis);
             timerReceiver.send(0, bundle);
             handler.postDelayed(this, 1000);
@@ -63,9 +68,13 @@ public class RecordService extends IntentService {
         startRecording();
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
     private void initializeRecorder() {
-        String fileName = getExternalCacheDir().getAbsolutePath();
-        fileName += "/audiorecordtest.mp4";
+        fileName = getExternalCacheDir().getAbsolutePath();
+        fileName += DEFAULT_REC_NAME;
 
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -77,6 +86,7 @@ public class RecordService extends IntentService {
             recorder.prepare();
         } catch (IOException exc) {
             exc.printStackTrace();
+
         }
     }
 
@@ -130,7 +140,7 @@ public class RecordService extends IntentService {
         recorder.pause();
         isPlaying = false;
         handler.removeCallbacks(timerRunnable);
-        timeAtLastPause = currentTimeMillis;
+        timeElapsed = currentTimeMillis;
     }
 
     private void startChrono() {
@@ -142,6 +152,15 @@ public class RecordService extends IntentService {
     public boolean isPlaying() {
         return isPlaying;
     }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getTimeElapsed() {
+        return timeElapsed;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

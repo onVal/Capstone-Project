@@ -19,13 +19,17 @@ import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 public class ChooseCategoryDialogFragment extends DialogFragment {
 
-    RecyclerView categories;
-    CategoriesViewModel viewModel;
-    MiniCategoriesAdapter adapter;
+    private RecyclerView categories;
+    private CategoriesViewModel viewModel;
+    private MiniCategoriesAdapter adapter;
+    private Bundle recInfoBundle;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        recInfoBundle = getArguments();
+
         categories = (RecyclerView) LayoutInflater.from(getContext()).inflate(R.layout.category_list_mini, null);
         adapter = new MiniCategoriesAdapter(getContext());
         categories.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -52,10 +56,11 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             int categoryId = adapter.getSelectedCategoryId();
-            SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
-            saveRecording.show(getActivity().getSupportFragmentManager(), "derpo");
+            recInfoBundle.putInt("CATEGORY_ID", categoryId);
 
-//            viewModel.insertCategory(categoryToInsert);
+            SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
+            saveRecording.setArguments(recInfoBundle);
+            saveRecording.show(getActivity().getSupportFragmentManager(), "derpo");
         }
     }
 }
