@@ -27,6 +27,8 @@ public class RecordingsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.my_rec_toolbar);
         setSupportActionBar(toolbar);
 
+        int categoryId = getIntent().getExtras().getInt("CATEGORY_ID");
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment())
                 .commit();

@@ -170,6 +170,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     selectItem(position);
                 else {
                     Intent intent = new Intent(context, RecordingsActivity.class);
+                    intent.putExtra("CATEGORY_ID", category.getId());
                     context.startActivity(intent);
                 }
             });

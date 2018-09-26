@@ -27,6 +27,10 @@ public class CategoriesViewModel extends AndroidViewModel {
         return repository.getCategories();
     }
 
+    public LiveData<List<Record>> getRecordingsFromCategory(int categoryId) {
+        return repository.getRecordingsFromCategory(categoryId);
+    }
+
     public void insertCategory(Category category) {
         repository.insertCategories(category);
     }

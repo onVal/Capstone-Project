@@ -80,9 +80,6 @@ public class SaveRecordingDialogFragment extends DialogFragment {
             String recDate = recInfoBundle.getString("REC_DATE");
             int categoryId = recInfoBundle.getInt("CATEGORY_ID");
 
-            //stop recording
-            // rename file
-
             Record recording = new Record(recName, recDuration, recDate, recStartTime, ".wav", null, categoryId);
             viewModel.insertRecording(recording);
             callback.onSaveRecording();
