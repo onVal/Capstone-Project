@@ -18,9 +18,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.onval.capstone.R;
 import com.onval.capstone.fragment.ChooseCategoryDialogFragment;
@@ -36,6 +36,8 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.onval.capstone.service.RecordService.DEFAULT_REC_NAME;
 
 public class RecordActivity extends AppCompatActivity
         implements SaveRecordingDialogFragment.OnSaveCallback {
@@ -154,9 +156,23 @@ public class RecordActivity extends AppCompatActivity
     };
 
     @Override
-    public void onSaveRecording() {
+    public void onSaveRecording(String name) {
         service.stopRecording();
+        assignNameToRecording(name);
+
+        String msg = "The recording " + name + " has been created.";
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+
     }
+
+    public void assignNameToRecording(String newRecName) {
+        String externalPath = getExternalCacheDir().getAbsolutePath();
+        File rec = new File(externalPath + DEFAULT_REC_NAME);
+        File newName = new File(externalPath + "/" + newRecName + ".mp4");
+        boolean success = rec.renameTo(newName);
+    }
+
 
     @SuppressLint("DefaultLocale")
     private String timeFormatFromMills(long millis) {

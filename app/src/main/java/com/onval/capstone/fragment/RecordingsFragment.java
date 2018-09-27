@@ -60,7 +60,6 @@ public class RecordingsFragment extends Fragment {
         LiveData<List<Record>> liveRecordings = viewModel.getRecordingsFromCategory(categoryId);
         liveRecordings.observe(this, (records -> adapter.setRecordings(records)));
 
-
         return view;
     }
 }

@@ -11,16 +11,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.widget.EditText;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
-
-import java.io.File;
-
-import static com.onval.capstone.service.RecordService.DEFAULT_REC_NAME;
 
 public class SaveRecordingDialogFragment extends DialogFragment {
     private EditText editText;
@@ -30,7 +25,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     private Context context;
 
     public interface OnSaveCallback {
-        void onSaveRecording();
+        void onSaveRecording(String name);
     }
 
     @Override
@@ -63,12 +58,6 @@ public class SaveRecordingDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    public void renameRecording(String newRecName) {
-        String externalPath = context.getExternalCacheDir().getAbsolutePath();
-        File rec = new File(externalPath + DEFAULT_REC_NAME);
-        File newName = new File(externalPath + "/" + newRecName + ".mp4");
-        boolean success = rec.renameTo(newName);
-    }
 
     class SaveRecordingListener implements DialogInterface.OnClickListener {
 
@@ -82,8 +71,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
 
             Record recording = new Record(recName, recDuration, recDate, recStartTime, ".wav", null, categoryId);
             viewModel.insertRecording(recording);
-            callback.onSaveRecording();
-            renameRecording(recName);
+            callback.onSaveRecording(recName);
         }
     }
 }
