@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RecordActivity" />
+        <activity android:name=".activities.RecordActivity"
+                 android:launchMode="singleTask" />
         <activity
             android:name=".activities.RecordingsActivity"
             android:label="@string/recording_activity_title"

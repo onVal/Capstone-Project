@@ -178,7 +178,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         private void selectItem(Integer position) {
             if (selectedPositions.contains(position)) {
-                selectedPositions.remove((Integer) position);
+                selectedPositions.remove(position);
                 layout.setBackgroundColor(Color.WHITE);
             } else {
                 selectedPositions.add(position);

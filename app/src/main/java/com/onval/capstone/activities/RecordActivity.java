@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.onval.capstone.service.RecordService.DEFAULT_REC_NAME;
 
@@ -44,38 +46,29 @@ public class RecordActivity extends AppCompatActivity
     @BindView(R.id.timer) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
 
+    public static final String TIMER_RECEIVER_EXTRA = "timer-receiver";
+    private static final String CC_FRAGMENT_TAG = "choose-category";
+
     private boolean isBound = false;
     private RecordService service;
-
-    private Date currentDate;
+    private final ServiceConnection serviceConnection = new MyServiceConnection();
 
     private Bundle recInfoBundle;
+    private boolean couldBind;
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissions   = {Manifest.permission.RECORD_AUDIO};
 
     private static final String SAVE_RECORDING_TAG = "SAVE_RECORDING";
-
-    public class TimerReceiver extends ResultReceiver {
-        TimerReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            long currentTimeMillis = resultData.getLong("current-time");
-            timerTextView.setText(timeFormatFromMills(currentTimeMillis));
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_record);
         ButterKnife.bind(this);
-        recInfoBundle = new Bundle();
     }
 
     @Override
@@ -86,17 +79,32 @@ public class RecordActivity extends AppCompatActivity
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
         if (permissionToRecordAccepted) {
-            Intent intentService = new Intent(this, RecordService.class);
-            intentService.putExtra("timer", new TimerReceiver(new Handler()));
-            startService(intentService);
-            bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
-            currentDate = Calendar.getInstance().getTime();
+            Intent intentService = new Intent(getApplicationContext(), RecordService.class);
+            intentService.putExtra(TIMER_RECEIVER_EXTRA, new TimerReceiver(new Handler()));
+
+            getApplication().startService(intentService);
+            getApplication().bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
+
+            Log.d("derpi", "COULD-BIND: " + couldBind);
         }
         else
             finish();
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(isBound)
+            getApplication().unbindService(serviceConnection);
+    }
+
+    @OnClick(R.id.record_fab)
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void recordButton(View view) {
         if (isBound && service.isPlaying())
@@ -107,6 +115,7 @@ public class RecordActivity extends AppCompatActivity
         upgradeRecordDrawable(view);
     }
 
+    @OnClick(R.id.stop_recording)
     public void stopRecording(View view) {
         if (isBound) {
             service.pauseRecording();
@@ -116,7 +125,7 @@ public class RecordActivity extends AppCompatActivity
 
             ChooseCategoryDialogFragment chooseCategory = new ChooseCategoryDialogFragment();
             chooseCategory.setArguments(recInfoBundle);
-            chooseCategory.show(getSupportFragmentManager(), "derp");
+            chooseCategory.show(getSupportFragmentManager(), CC_FRAGMENT_TAG);
         }
     }
 
@@ -130,30 +139,19 @@ public class RecordActivity extends AppCompatActivity
     }
 
     private void prepareRecordingInfoBundle() {
+        Date currentDate = service.getCurrentDate();
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String formattedDate = dateFormat.format(currentDate);
 
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
         String formattedTime = timeFormat.format(currentDate);
 
+        recInfoBundle = new Bundle();
         recInfoBundle.putString("REC_START_TIME", formattedTime);
         recInfoBundle.putString("REC_DATE", formattedDate);
         recInfoBundle.putString("REC_DURATION", timeFormatFromMills(service.getTimeElapsed()));
     }
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder binder) {
-            RecordBinder recordBinder = (RecordBinder) binder;
-            service = (RecordService) recordBinder.getService();
-            isBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            isBound = false;
-        }
-    };
 
     @Override
     public void onSaveRecording(String name) {
@@ -162,17 +160,14 @@ public class RecordActivity extends AppCompatActivity
 
         String msg = "The recording " + name + " has been created.";
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-
-
     }
 
-    public void assignNameToRecording(String newRecName) {
+    private void assignNameToRecording(String newRecName) {
         String externalPath = getExternalCacheDir().getAbsolutePath();
         File rec = new File(externalPath + DEFAULT_REC_NAME);
         File newName = new File(externalPath + "/" + newRecName + ".mp4");
         boolean success = rec.renameTo(newName);
     }
-
 
     @SuppressLint("DefaultLocale")
     private String timeFormatFromMills(long millis) {
@@ -186,5 +181,31 @@ public class RecordActivity extends AppCompatActivity
             return String.format("%02d:%02d", mm, ss);
 
         return String.format("%02d:%02d:%02d", hh, mm, ss);
+    }
+
+    private class MyServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            RecordBinder recordBinder = (RecordBinder) binder;
+            service = (RecordService) recordBinder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            isBound = false;
+        }
+    }
+
+    public class TimerReceiver extends ResultReceiver {
+        TimerReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            long currentTimeMillis = resultData.getLong("current-time");
+            timerTextView.setText(timeFormatFromMills(currentTimeMillis));
+        }
     }
 }

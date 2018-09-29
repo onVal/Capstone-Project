@@ -23,6 +23,10 @@ import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.onval.capstone.activities.RecordActivity.TIMER_RECEIVER_EXTRA;
 
 
 public class RecordService extends IntentService {
@@ -33,11 +37,15 @@ public class RecordService extends IntentService {
     private Notification foregroundNotification;
 
     private MediaRecorder recorder;
+    private Date currentDate;
+
 
     private boolean isPlaying = false;
     private ResultReceiver timerReceiver;
     private Handler handler;
     private Bundle bundle;
+
+    private boolean hasStarted;
 
     private String fileName;
 
@@ -59,13 +67,23 @@ public class RecordService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        initializeRecorder();
-        initializeNotification();
-        timerReceiver = intent.getExtras().getParcelable("timer");
-        handler = new Handler(Looper.getMainLooper());
-        bundle = new Bundle();
+        if (!hasStarted) {
+            initializeRecorder();
+            initializeNotification();
+            timerReceiver = intent.getExtras().getParcelable(TIMER_RECEIVER_EXTRA);
+            handler = new Handler(Looper.getMainLooper());
+            bundle = new Bundle();
 
-        startRecording();
+            startRecording();
+            hasStarted = true;
+
+            currentDate = Calendar.getInstance().getTime();
+        }
+
+    }
+
+    public Date getCurrentDate() {
+        return currentDate;
     }
 
     public String getFileName() {
@@ -170,7 +188,9 @@ public class RecordService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (recorder != null)
+        if (recorder != null) {
             recorder.release();
+            recorder = null;
+        }
     }
 }
