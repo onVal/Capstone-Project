@@ -3,10 +3,10 @@ package com.onval.capstone.service;
 import android.app.Service;
 import android.os.Binder;
 
-public class RecordBinder extends Binder {
+public class RecordingBinder extends Binder {
     private Service service;
 
-    RecordBinder(Service service) {
+    RecordingBinder(Service service) {
         this.service = service;
     }
 

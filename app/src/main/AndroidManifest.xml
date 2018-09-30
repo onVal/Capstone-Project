@@ -32,7 +32,7 @@
             android:theme="@style/SettingsTheme"
             />
 
-        <service android:name=".service.RecordService" />
+        <service android:name=".service.RecordingService" />
     </application>
 
 </manifest>

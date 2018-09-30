@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -26,8 +25,8 @@ import android.widget.Toast;
 import com.onval.capstone.R;
 import com.onval.capstone.fragment.ChooseCategoryDialogFragment;
 import com.onval.capstone.fragment.SaveRecordingDialogFragment;
-import com.onval.capstone.service.RecordBinder;
-import com.onval.capstone.service.RecordService;
+import com.onval.capstone.service.RecordingBinder;
+import com.onval.capstone.service.RecordingService;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -38,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.onval.capstone.service.RecordService.DEFAULT_REC_NAME;
+import static com.onval.capstone.service.RecordingService.DEFAULT_REC_NAME;
 
 public class RecordActivity extends AppCompatActivity
         implements SaveRecordingDialogFragment.OnSaveCallback {
@@ -50,7 +49,7 @@ public class RecordActivity extends AppCompatActivity
     private static final String CURRENT_TIME_KEY = "current-time";
     private static final String CC_FRAGMENT_TAG = "choose-category";
 
-    private RecordService service;
+    private RecordingService service;
     private final ServiceConnection serviceConnection = new MyServiceConnection();
     private boolean isBound = false;
     private TimerReceiver timerReceiver;
@@ -93,7 +92,7 @@ public class RecordActivity extends AppCompatActivity
     }
 
     private void kickStartService() {
-        Intent intentService = new Intent(this, RecordService.class);
+        Intent intentService = new Intent(this, RecordingService.class);
         intentService.putExtra(TIMER_RECEIVER_EXTRA, timerReceiver);
 
         startService(intentService);
@@ -195,8 +194,8 @@ public class RecordActivity extends AppCompatActivity
     private class MyServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
-            RecordBinder recordBinder = (RecordBinder) binder;
-            service = (RecordService) recordBinder.getService();
+            RecordingBinder recordingBinder = (RecordingBinder) binder;
+            service = (RecordingService) recordingBinder.getService();
             isBound = true;
 
             if (!service.isPlaying()) {

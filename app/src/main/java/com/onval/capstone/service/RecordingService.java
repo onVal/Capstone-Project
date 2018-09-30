@@ -9,11 +9,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -28,41 +25,25 @@ import java.util.Date;
 import static com.onval.capstone.activities.RecordActivity.TIMER_RECEIVER_EXTRA;
 
 
-public class RecordService extends Service {
+public class RecordingService extends Service {
     public static final String DEFAULT_REC_NAME = "/audiorecord.mp4";
 
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
     private Notification foregroundNotification;
 
+    private RecordingTimer timer;
     private MediaRecorder recorder;
     private Date startDate;
 
-
     private boolean isPlaying = false;
-    private ResultReceiver timerReceiver;
-    private Handler handler;
-    private Bundle bundle;
 
     private boolean hasStarted;
-
     private String fileName;
 
-    private long currentTimeMillis, startTime, timeElapsed;
-
-    public RecordService() {
+    public RecordingService() {
         super();
     }
-
-    private Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeElapsed;
-            bundle.putLong("current-time", currentTimeMillis);
-            timerReceiver.send(0, bundle);
-            handler.postDelayed(this, 1000);
-        }
-    };
 
     @Override
     public void onCreate() {
@@ -73,24 +54,17 @@ public class RecordService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        timerReceiver = intent.getExtras().getParcelable(TIMER_RECEIVER_EXTRA);
-        handler = new Handler();
-        bundle = new Bundle();
+        ResultReceiver timerReceiver = intent.getExtras().getParcelable(TIMER_RECEIVER_EXTRA);
 
         if (!hasStarted) {
+            timer = new RecordingTimer(timerReceiver);
             startRecording();
             startDate = Calendar.getInstance().getTime();
             hasStarted = true;
+        } else {
+            timer.setReceiver(timerReceiver);
         }
         return Service.START_STICKY;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     private void initializeRecorder() {
@@ -139,20 +113,20 @@ public class RecordService extends Service {
     private void startRecording() {
         recorder.start();
         startForeground(NOTIFICATION_ID, foregroundNotification);
-        startChrono();
+        startTimer();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void resumeRecording() {
         recorder.resume();
-        startChrono();
+        startTimer();
     }
 
     public void stopRecording() {
         recorder.stop();
         stopForeground(true);
         isPlaying = false;
-        handler.removeCallbacks(timerRunnable);
+        timer.removeCallback();
 
     }
 
@@ -160,13 +134,11 @@ public class RecordService extends Service {
     public void pauseRecording() {
         recorder.pause();
         isPlaying = false;
-        handler.removeCallbacks(timerRunnable);
-        timeElapsed = currentTimeMillis;
+        timer.pauseTimer();
     }
 
-    private void startChrono() {
-        startTime = SystemClock.uptimeMillis();
-        handler.post(timerRunnable);
+    private void startTimer() {
+        timer.startTimer();
         isPlaying = true;
     }
 
@@ -174,18 +146,26 @@ public class RecordService extends Service {
         return isPlaying;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
     public long getStartTime() {
-        return startTime;
+        return timer.getStartTime();
     }
 
     public long getTimeElapsed() {
-        return timeElapsed;
+        return timer.getTimeElapsed();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new RecordBinder(this);
+        return new RecordingBinder(this);
     }
 
     @Override
