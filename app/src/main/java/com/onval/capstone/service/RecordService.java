@@ -1,18 +1,17 @@
 package com.onval.capstone.service;
 
 import android.annotation.TargetApi;
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -29,7 +28,7 @@ import java.util.Date;
 import static com.onval.capstone.activities.RecordActivity.TIMER_RECEIVER_EXTRA;
 
 
-public class RecordService extends IntentService {
+public class RecordService extends Service {
     public static final String DEFAULT_REC_NAME = "/audiorecord.mp4";
 
     private static final int NOTIFICATION_ID = 1;
@@ -37,7 +36,7 @@ public class RecordService extends IntentService {
     private Notification foregroundNotification;
 
     private MediaRecorder recorder;
-    private Date currentDate;
+    private Date startDate;
 
 
     private boolean isPlaying = false;
@@ -52,7 +51,7 @@ public class RecordService extends IntentService {
     private long currentTimeMillis, startTime, timeElapsed;
 
     public RecordService() {
-        super("RecordService");
+        super();
     }
 
     private Runnable timerRunnable = new Runnable() {
@@ -66,24 +65,28 @@ public class RecordService extends IntentService {
     };
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-        if (!hasStarted) {
-            initializeRecorder();
-            initializeNotification();
-            timerReceiver = intent.getExtras().getParcelable(TIMER_RECEIVER_EXTRA);
-            handler = new Handler(Looper.getMainLooper());
-            bundle = new Bundle();
-
-            startRecording();
-            hasStarted = true;
-
-            currentDate = Calendar.getInstance().getTime();
-        }
-
+    public void onCreate() {
+        super.onCreate();
+        initializeRecorder();
+        initializeNotification();
     }
 
-    public Date getCurrentDate() {
-        return currentDate;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        timerReceiver = intent.getExtras().getParcelable(TIMER_RECEIVER_EXTRA);
+        handler = new Handler();
+        bundle = new Bundle();
+
+        if (!hasStarted) {
+            startRecording();
+            startDate = Calendar.getInstance().getTime();
+            hasStarted = true;
+        }
+        return Service.START_STICKY;
+    }
+
+    public Date getStartDate() {
+        return startDate;
     }
 
     public String getFileName() {
@@ -120,7 +123,7 @@ public class RecordService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {0L})
                 .build();
-        }
+    }
 
     private void createNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
