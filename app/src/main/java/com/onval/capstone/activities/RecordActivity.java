@@ -73,6 +73,8 @@ public class RecordActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             CharSequence cs = savedInstanceState.getCharSequence(CURRENT_TIME_KEY);
             timerTextView.setText(cs);
+        } else {
+            timerTextView.setText(getString(R.string.starting_timer));
         }
     }
 

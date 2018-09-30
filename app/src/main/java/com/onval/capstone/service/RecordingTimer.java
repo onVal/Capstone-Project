@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
 
-public class RecordingTimer {
+class RecordingTimer {
     private ResultReceiver receiver;
     private Handler handler;
     private Bundle bundle;
@@ -39,7 +39,6 @@ public class RecordingTimer {
 
     void removeCallback() {
         handler.removeCallbacks(timerRunnable);
-
     }
 
     void pauseTimer() {
@@ -47,11 +46,11 @@ public class RecordingTimer {
         timeElapsed = currentTimeMillis;
     }
 
-    public long getStartTime() {
+    long getStartTime() {
         return startTime;
     }
 
-    public long getTimeElapsed() {
+    long getTimeElapsed() {
         return timeElapsed;
     }
 }
