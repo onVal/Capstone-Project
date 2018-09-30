@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -21,9 +20,6 @@ import com.onval.capstone.activities.RecordActivity;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-
-import static com.onval.capstone.activities.RecordActivity.TIMER_RECEIVER_EXTRA;
-
 
 public class RecordingService extends Service {
     public static final String DEFAULT_REC_NAME = "/audiorecord.mp4";
@@ -54,15 +50,11 @@ public class RecordingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        ResultReceiver timerReceiver = intent.getExtras().getParcelable(TIMER_RECEIVER_EXTRA);
-
         if (!hasStarted) {
-            timer = new RecordingTimer(timerReceiver);
+            timer = new RecordingTimer(this);
             startRecording();
             startDate = Calendar.getInstance().getTime();
             hasStarted = true;
-        } else {
-            timer.setReceiver(timerReceiver);
         }
         return Service.START_STICKY;
     }

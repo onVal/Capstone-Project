@@ -1,14 +1,16 @@
 package com.onval.capstone.service;
 
-import android.os.Bundle;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
-import android.os.ResultReceiver;
 import android.os.SystemClock;
+import android.support.v4.content.LocalBroadcastManager;
+
+import static com.onval.capstone.activities.RecordActivity.UPDATE_TIMER_ACTION;
 
 class RecordingTimer {
-    private ResultReceiver receiver;
     private Handler handler;
-    private Bundle bundle;
+    private Context context;
 
     private long currentTimeMillis, startTime, timeElapsed;
 
@@ -16,20 +18,16 @@ class RecordingTimer {
         @Override
         public void run() {
             currentTimeMillis = SystemClock.uptimeMillis() - startTime + timeElapsed;
-            bundle.putLong("current-time", currentTimeMillis);
-            receiver.send(0, bundle);
+            Intent intent = new Intent(UPDATE_TIMER_ACTION);
+            intent.putExtra("current-time", currentTimeMillis);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             handler.postDelayed(this, 1000);
         }
     };
 
-    RecordingTimer(ResultReceiver receiver) {
-        this.receiver = receiver;
+    RecordingTimer(Context context) {
+        this.context = context;
         handler = new Handler();
-        bundle = new Bundle();
-    }
-
-    void setReceiver(ResultReceiver receiver) {
-        this.receiver = receiver;
     }
 
     void startTimer() {

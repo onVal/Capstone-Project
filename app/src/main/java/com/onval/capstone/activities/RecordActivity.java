@@ -2,11 +2,14 @@ package com.onval.capstone.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.icu.lang.UCharacter;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,6 +19,7 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -45,16 +49,17 @@ public class RecordActivity extends AppCompatActivity
     @BindView(R.id.timer_tv) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
 
-    public static final String TIMER_RECEIVER_EXTRA = "timer-receiver";
+    public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
     private static final String CURRENT_TIME_KEY = "current-time";
     private static final String CC_FRAGMENT_TAG = "choose-category";
 
     private RecordingService service;
     private final ServiceConnection serviceConnection = new MyServiceConnection();
     private boolean isBound = false;
-    private TimerReceiver timerReceiver;
 
     private Bundle recInfoBundle;
+
+    private BroadcastReceiver receiver = new TimerBroadcastReceiver();
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -65,10 +70,12 @@ public class RecordActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        timerReceiver = new TimerReceiver(new Handler());
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_record);
         ButterKnife.bind(this);
+
+        IntentFilter filter = new IntentFilter(UPDATE_TIMER_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
         if (savedInstanceState != null) {
             CharSequence cs = savedInstanceState.getCharSequence(CURRENT_TIME_KEY);
@@ -95,8 +102,6 @@ public class RecordActivity extends AppCompatActivity
 
     private void kickStartService() {
         Intent intentService = new Intent(this, RecordingService.class);
-        intentService.putExtra(TIMER_RECEIVER_EXTRA, timerReceiver);
-
         startService(intentService);
         bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -110,6 +115,7 @@ public class RecordActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         if(isBound)
             unbindService(serviceConnection);
     }
@@ -212,14 +218,11 @@ public class RecordActivity extends AppCompatActivity
         }
     }
 
-    public class TimerReceiver extends ResultReceiver {
-        TimerReceiver(Handler handler) {
-            super(handler);
-        }
+    public class TimerBroadcastReceiver extends BroadcastReceiver {
+        public TimerBroadcastReceiver() { }
 
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            long currentTimeMillis = resultData.getLong("current-time");
+        public void onReceive(Context context, Intent intent) {
+            long currentTimeMillis = intent.getExtras().getLong("current-time");
             String currentTime = timeFormatFromMills(currentTimeMillis);
             timerTextView.setText(currentTime);
         }
