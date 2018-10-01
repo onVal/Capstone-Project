@@ -25,6 +25,9 @@ public interface MyDao {
     @Insert
     void insertCategories(Category... categories);
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long insertRecording(Record recording);
+
     @Insert
     void insertRecordings(Record... recordings);
 

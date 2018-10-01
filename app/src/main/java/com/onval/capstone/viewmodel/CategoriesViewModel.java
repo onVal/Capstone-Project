@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteConstraintException;
 
 import com.onval.capstone.MyRepository;
 import com.onval.capstone.R;
+import com.onval.capstone.fragment.SaveRecordingDialogFragment;
+import com.onval.capstone.fragment.SaveRecordingDialogFragment.OnSaveCallback;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.Record;
 
@@ -20,7 +22,7 @@ public class CategoriesViewModel extends AndroidViewModel {
     public CategoriesViewModel(Application application) {
         super(application);
         this.application = application;
-        repository = new MyRepository(application);
+        repository = new MyRepository(application, null);
     }
 
     public LiveData<List<Category>> getCategories() {
@@ -49,5 +51,9 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getRecNumberInCategory(int categoryId) {
         return repository.getRecNumberInCategory(categoryId);
+    }
+
+    public void setOnSaveCallback(OnSaveCallback callback) {
+        repository = new MyRepository(application, callback);
     }
 }

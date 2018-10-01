@@ -171,9 +171,10 @@ public class RecordActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveRecording(String name) {
+    public void onSaveRecording(long id, String name) {
         service.stopRecording();
-        assignNameToRecording(name);
+        String physicalName = id + "_" + name; //ex. 4_WednesdayMemo
+        assignNameToRecording(physicalName);
 
         String msg = "The recording " + name + " has been created.";
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

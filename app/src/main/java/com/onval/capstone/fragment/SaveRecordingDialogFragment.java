@@ -25,7 +25,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     private Context context;
 
     public interface OnSaveCallback {
-        void onSaveRecording(String name);
+        void onSaveRecording(long id, String name);
     }
 
     @Override
@@ -39,6 +39,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        viewModel.setOnSaveCallback(callback);
         recInfoBundle = getArguments();
     }
 
@@ -71,7 +72,6 @@ public class SaveRecordingDialogFragment extends DialogFragment {
 
             Record recording = new Record(recName, recDuration, recDate, recStartTime, ".wav", null, categoryId);
             viewModel.insertRecording(recording);
-            callback.onSaveRecording(recName);
         }
     }
 }

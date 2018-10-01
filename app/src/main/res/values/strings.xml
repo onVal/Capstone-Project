@@ -21,7 +21,7 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Error messages -->
-    <string name="cant_insert_cat">ERROR: This name is already taken.</string>
+    <string name="cant_insert">ERROR: This name is already taken.</string>
 
     <!-- Shared preferences -->
     <string name="prefs">shared-preferences</string>
