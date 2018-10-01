@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
 
@@ -76,7 +77,7 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             int categoryId = adapter.getSelectedCategoryId();
-            recInfoBundle.putInt("CATEGORY_ID", categoryId);
+            recInfoBundle.putInt(CATEGORY_ID, categoryId);
 
             SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
             saveRecording.setArguments(recInfoBundle);

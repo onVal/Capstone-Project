@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -40,6 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.service.RecordingService.DEFAULT_REC_NAME;
 import static com.onval.capstone.service.RecordingTimer.CURRENT_TIME_EXTRA;
 
@@ -58,6 +60,8 @@ public class RecordActivity extends AppCompatActivity
 
     private static final String CURRENT_TIME_KEY = "current-time";
     private static final String CC_FRAGMENT_TAG = "choose-category";
+
+    @Nullable Integer categoryId;
 
     private Intent intentService;
     private RecordingService service;
@@ -82,6 +86,9 @@ public class RecordActivity extends AppCompatActivity
 
         registerTimerReceiver();
         registerUIReceiver();
+
+        Bundle extras = getIntent().getExtras();
+        categoryId = (extras != null) ? extras.getInt(CATEGORY_ID) : null;
     }
 
     @Override
@@ -149,10 +156,18 @@ public class RecordActivity extends AppCompatActivity
             service.pauseRecording();
             prepareRecordingInfoBundle();
 
-            ChooseCategoryDialogFragment chooseCategory = new ChooseCategoryDialogFragment();
-            chooseCategory.setArguments(recInfoBundle);
-            chooseCategory.show(getSupportFragmentManager(), CC_FRAGMENT_TAG);
-        }
+            if (categoryId == null) {
+                ChooseCategoryDialogFragment chooseCategory = new ChooseCategoryDialogFragment();
+                chooseCategory.setArguments(recInfoBundle);
+                chooseCategory.show(getSupportFragmentManager(), CC_FRAGMENT_TAG);
+            } else {
+                recInfoBundle.putInt(CATEGORY_ID, categoryId);
+
+                SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
+                saveRecording.setArguments(recInfoBundle);
+                saveRecording.show(getSupportFragmentManager(), "derpo");
+            }
+         }
     }
 
     private void prepareRecordingInfoBundle() {

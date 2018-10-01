@@ -17,6 +17,8 @@ import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
+import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
+
 public class SaveRecordingDialogFragment extends DialogFragment {
     private EditText editText;
     private CategoriesViewModel viewModel;
@@ -68,7 +70,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
             String recDuration = recInfoBundle.getString("REC_DURATION");
             String recStartTime = recInfoBundle.getString("REC_START_TIME");
             String recDate = recInfoBundle.getString("REC_DATE");
-            int categoryId = recInfoBundle.getInt("CATEGORY_ID");
+            int categoryId = recInfoBundle.getInt(CATEGORY_ID);
 
             Record recording = new Record(recName, recDuration, recDate, recStartTime, ".wav", null, categoryId);
             viewModel.insertRecording(recording);
