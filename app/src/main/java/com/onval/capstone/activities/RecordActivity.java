@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.onval.capstone.DeleteRecordingDialogFragment;
 import com.onval.capstone.R;
 import com.onval.capstone.fragment.ChooseCategoryDialogFragment;
 import com.onval.capstone.fragment.SaveRecordingDialogFragment;
@@ -43,7 +44,8 @@ import static com.onval.capstone.service.RecordingService.DEFAULT_REC_NAME;
 import static com.onval.capstone.service.RecordingTimer.CURRENT_TIME_EXTRA;
 
 public class RecordActivity extends AppCompatActivity
-        implements SaveRecordingDialogFragment.OnSaveCallback {
+        implements SaveRecordingDialogFragment.OnSaveCallback,
+                DeleteRecordingDialogFragment.OnDeleteCallback {
 
     @BindView(R.id.timer_tv) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
@@ -176,9 +178,21 @@ public class RecordActivity extends AppCompatActivity
         String msg = "The recording " + name + " has been created.";
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
+        resetService();
+    }
+
+    @Override
+    public void onDeleteRecording() {
+        resetService();
+        Toast.makeText(this, "The recording has been deleted.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetService() {
         unbindService(serviceConnection);
         stopService(intentService);
+        isBound = false;
         service = null; //I can't rely on onServiceDisconnected callback
+        fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fab_dot));
         timerTextView.setText(getString(R.string.starting_timer));
     }
 

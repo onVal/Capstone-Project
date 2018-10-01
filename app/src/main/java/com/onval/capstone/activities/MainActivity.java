@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -13,11 +12,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,8 +28,9 @@ import com.onval.capstone.R;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 
+import static com.onval.capstone.fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
+
 public class MainActivity extends AppCompatActivity implements Observer<Integer> {
-    private static final String ADD_CATEGORY_TAG = "ADD_CATEGORY";
     private CategoriesViewModel viewModel;
     private FragmentManager fm;
     private LiveData<Integer> liveNumCategories;
@@ -53,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
             viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
             liveNumCategories = viewModel.getNumOfCategories();
-            liveNumCategories.observeForever(this);
+            liveNumCategories.observe(this, this);
         }
     }
 

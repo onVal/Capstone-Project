@@ -33,4 +33,7 @@
     <string name="stop_content_desc">Stop</string>
     <string name="stop_recording">STOP</string>
 
+    <!-- Alert dialog -->
+    <string name="choose_category">Choose category...</string>
+
 </resources>

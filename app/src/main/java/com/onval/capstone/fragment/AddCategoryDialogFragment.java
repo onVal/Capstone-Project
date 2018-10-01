@@ -19,6 +19,8 @@ import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 public class AddCategoryDialogFragment extends DialogFragment {
+    public static final String ADD_CATEGORY_TAG = "ADD_CATEGORY";
+
     private EditText editText;
     private CategoriesViewModel viewModel;
 
