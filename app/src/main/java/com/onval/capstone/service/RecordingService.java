@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
@@ -20,6 +21,10 @@ import com.onval.capstone.activities.RecordActivity;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+
+import static com.onval.capstone.activities.RecordActivity.PAUSE_ACTION;
+import static com.onval.capstone.activities.RecordActivity.PLAY_ACTION;
+import static com.onval.capstone.activities.RecordActivity.RESET_ACTION;
 
 public class RecordingService extends Service {
     public static final String DEFAULT_REC_NAME = "/audiorecord.mp4";
@@ -55,6 +60,14 @@ public class RecordingService extends Service {
             startRecording();
             startDate = Calendar.getInstance().getTime();
             hasStarted = true;
+        } else {
+            updateTimerTV();
+
+            if (isPlaying) {
+                updateUIButton(PAUSE_ACTION);
+            } else {
+                updateUIButton(PLAY_ACTION);
+            }
         }
         return Service.START_STICKY;
     }
@@ -102,16 +115,26 @@ public class RecordingService extends Service {
         }
     }
 
-    private void startRecording() {
+    private void updateTimerTV() {
+        timer.updateTimer();
+    }
+    private void updateUIButton(String action) {
+        Intent intent = new Intent(action);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    public void startRecording() {
         recorder.start();
         startForeground(NOTIFICATION_ID, foregroundNotification);
         startTimer();
+        updateUIButton(PAUSE_ACTION);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void resumeRecording() {
         recorder.resume();
         startTimer();
+        updateUIButton(PAUSE_ACTION);
     }
 
     public void stopRecording() {
@@ -119,6 +142,7 @@ public class RecordingService extends Service {
         stopForeground(true);
         isPlaying = false;
         timer.removeCallback();
+        updateUIButton(RESET_ACTION);
 
     }
 
@@ -127,6 +151,8 @@ public class RecordingService extends Service {
         recorder.pause();
         isPlaying = false;
         timer.pauseTimer();
+        updateUIButton(PLAY_ACTION);
+
     }
 
     private void startTimer() {

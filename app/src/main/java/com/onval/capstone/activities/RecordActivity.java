@@ -9,11 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.icu.lang.UCharacter;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -42,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.onval.capstone.service.RecordingService.DEFAULT_REC_NAME;
+import static com.onval.capstone.service.RecordingTimer.CURRENT_TIME_EXTRA;
 
 public class RecordActivity extends AppCompatActivity
         implements SaveRecordingDialogFragment.OnSaveCallback {
@@ -50,22 +49,27 @@ public class RecordActivity extends AppCompatActivity
     @BindView(R.id.record_fab) FloatingActionButton fab;
 
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
+
+    public static final String PAUSE_ACTION = "com.onval.capstone.PAUSE";
+    public static final String PLAY_ACTION = "com.onval.capstone.PLAY";
+    public static final String RESET_ACTION = "com.onval.capstone.RESET";
+
     private static final String CURRENT_TIME_KEY = "current-time";
     private static final String CC_FRAGMENT_TAG = "choose-category";
 
+    private Intent intentService;
     private RecordingService service;
     private final ServiceConnection serviceConnection = new MyServiceConnection();
     private boolean isBound = false;
 
     private Bundle recInfoBundle;
 
-    private BroadcastReceiver receiver = new TimerBroadcastReceiver();
+    private BroadcastReceiver timerReceiver = new TimerBroadcastReceiver();
+    private BroadcastReceiver uiReceiver = new UIBroadcastReceiver();
 
     private boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private final String[] permissions   = {Manifest.permission.RECORD_AUDIO};
-
-    private static final String SAVE_RECORDING_TAG = "SAVE_RECORDING";
+    private final String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +78,8 @@ public class RecordActivity extends AppCompatActivity
         setContentView(R.layout.activity_record);
         ButterKnife.bind(this);
 
-        IntentFilter filter = new IntentFilter(UPDATE_TIMER_ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
-
-        if (savedInstanceState != null) {
-            CharSequence cs = savedInstanceState.getCharSequence(CURRENT_TIME_KEY);
-            timerTextView.setText(cs);
-        } else {
-            timerTextView.setText(getString(R.string.starting_timer));
-        }
+        registerTimerReceiver();
+        registerUIReceiver();
     }
 
     @Override
@@ -101,21 +98,32 @@ public class RecordActivity extends AppCompatActivity
     }
 
     private void kickStartService() {
-        Intent intentService = new Intent(this, RecordingService.class);
+        intentService = new Intent(this, RecordingService.class);
         startService(intentService);
         bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putCharSequence(CURRENT_TIME_KEY, timerTextView.getText());
+    private void registerUIReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(PAUSE_ACTION);
+        filter.addAction(PLAY_ACTION);
+        filter.addAction(RESET_ACTION);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(uiReceiver, filter);
+    }
+
+    private void registerTimerReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UPDATE_TIMER_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(timerReceiver, filter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(timerReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(uiReceiver);
+
         if(isBound)
             unbindService(serviceConnection);
     }
@@ -123,34 +131,25 @@ public class RecordActivity extends AppCompatActivity
     @OnClick(R.id.record_fab)
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void recordButton(View view) {
-        if (service.isPlaying() && isBound)
-            service.pauseRecording();
-        else
-            service.resumeRecording();
-
-        upgradeRecordDrawable(view);
+        if (service == null) {
+            kickStartService();
+        } else {
+            if (service.isPlaying() && isBound)
+                service.pauseRecording();
+            else
+                service.resumeRecording();
+        }
     }
 
     @OnClick(R.id.stop_recording)
     public void stopRecording(View view) {
         if (isBound) {
             service.pauseRecording();
-            upgradeRecordDrawable(fab);
-
             prepareRecordingInfoBundle();
 
             ChooseCategoryDialogFragment chooseCategory = new ChooseCategoryDialogFragment();
             chooseCategory.setArguments(recInfoBundle);
             chooseCategory.show(getSupportFragmentManager(), CC_FRAGMENT_TAG);
-        }
-    }
-
-    private void upgradeRecordDrawable(View view) {
-        if (view instanceof FloatingActionButton) {
-            FloatingActionButton fab = (FloatingActionButton) view;
-
-            int drawableId = (service.isPlaying()) ? R.drawable.ic_pause_white_24dp : R.drawable.ic_fab_dot;
-            fab.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
         }
     }
 
@@ -176,13 +175,18 @@ public class RecordActivity extends AppCompatActivity
 
         String msg = "The recording " + name + " has been created.";
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+        unbindService(serviceConnection);
+        stopService(intentService);
+        service = null; //I can't rely on onServiceDisconnected callback
+        timerTextView.setText(getString(R.string.starting_timer));
     }
 
     private void assignNameToRecording(String newRecName) {
         String externalPath = getExternalCacheDir().getAbsolutePath();
         File rec = new File(externalPath + DEFAULT_REC_NAME);
         File newName = new File(externalPath + "/" + newRecName + ".mp4");
-        boolean success = rec.renameTo(newName);
+        rec.renameTo(newName);
     }
 
     @SuppressLint("DefaultLocale")
@@ -205,10 +209,6 @@ public class RecordActivity extends AppCompatActivity
             RecordingBinder recordingBinder = (RecordingBinder) binder;
             service = (RecordingService) recordingBinder.getService();
             isBound = true;
-
-            if (!service.isPlaying()) {
-                upgradeRecordDrawable(fab);
-            }
         }
 
         @Override
@@ -218,13 +218,34 @@ public class RecordActivity extends AppCompatActivity
         }
     }
 
-    public class TimerBroadcastReceiver extends BroadcastReceiver {
-        public TimerBroadcastReceiver() { }
-
+    private class TimerBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
-            long currentTimeMillis = intent.getExtras().getLong("current-time");
+            long currentTimeMillis = intent.getExtras().getLong(CURRENT_TIME_EXTRA);
             String currentTime = timeFormatFromMills(currentTimeMillis);
             timerTextView.setText(currentTime);
+        }
+    }
+
+    private class UIBroadcastReceiver extends BroadcastReceiver {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            int drawableId = -1;
+
+            switch (action) {
+                case PLAY_ACTION:
+                    drawableId = R.drawable.ic_play_white_24dp;
+                    break;
+                case PAUSE_ACTION:
+                    drawableId = R.drawable.ic_pause_white_24dp;
+                    break;
+                case RESET_ACTION:
+                    drawableId = R.drawable.ic_fab_dot;
+                    break;
+            }
+
+            if (drawableId != -1)
+                fab.setImageDrawable(ContextCompat.getDrawable(context, drawableId));
         }
     }
 }
