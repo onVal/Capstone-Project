@@ -15,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.onval.capstone.DeleteRecordingDialogFragment;
+import com.onval.capstone.dialog_fragment.DeleteRecordingDialogFragment;
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.MiniCategoriesAdapter;
+import com.onval.capstone.dialog_fragment.AddCategoryDialogFragment;
+import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import butterknife.BindView;
@@ -25,7 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
-import static com.onval.capstone.fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
+import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
 
 public class ChooseCategoryDialogFragment extends DialogFragment {
