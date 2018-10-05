@@ -7,11 +7,14 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
 @Entity(indices = { @Index(value = "name", unique = true),
                     @Index(value = "category_id")},
         foreignKeys = @ForeignKey(entity = Category.class,
                                     parentColumns = "id",
-                                    childColumns = "category_id"))
+                                    childColumns = "category_id",
+                                    onDelete = CASCADE))
 public class Record {
     @PrimaryKey(autoGenerate = true)
     private int id;

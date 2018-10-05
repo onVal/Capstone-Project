@@ -1,4 +1,4 @@
-package com.onval.capstone.fragment;
+package com.onval.capstone.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

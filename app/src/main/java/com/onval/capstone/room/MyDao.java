@@ -35,5 +35,5 @@ public interface MyDao {
     void deleteCategories(Category... categories);
 
     @Delete
-    void deleteRecords(List<Record> recordings);
+    void deleteRecordings(List<Record> recordings);
 }

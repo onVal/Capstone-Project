@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -25,10 +24,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.onval.capstone.DeleteRecordingDialogFragment;
+import com.onval.capstone.dialog_fragment.DeleteRecordingDialogFragment;
 import com.onval.capstone.R;
-import com.onval.capstone.fragment.ChooseCategoryDialogFragment;
-import com.onval.capstone.fragment.SaveRecordingDialogFragment;
+import com.onval.capstone.dialog_fragment.ChooseCategoryDialogFragment;
+import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.service.RecordingBinder;
 import com.onval.capstone.service.RecordingService;
 
@@ -51,6 +50,7 @@ public class RecordActivity extends AppCompatActivity
 
     @BindView(R.id.timer_tv) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
+
 
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
 

@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.onval.capstone.fragment.AddCategoryDialogFragment;
+import com.onval.capstone.dialog_fragment.AddCategoryDialogFragment;
 import com.onval.capstone.fragment.CategoriesFragment;
 
 import com.onval.capstone.viewmodel.CategoriesViewModel;
@@ -28,7 +28,7 @@ import com.onval.capstone.R;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 
-import static com.onval.capstone.fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
+import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
 public class MainActivity extends AppCompatActivity implements Observer<Integer> {
     private CategoriesViewModel viewModel;

@@ -5,7 +5,6 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.onval.capstone.fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.room.AppDatabase;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.MyDao;
@@ -15,7 +14,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static com.onval.capstone.fragment.SaveRecordingDialogFragment.*;
+import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.*;
 
 public class MyRepository {
     private MyDao dao;

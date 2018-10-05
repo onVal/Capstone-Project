@@ -1,5 +1,7 @@
 package com.onval.capstone.adapter;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +42,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     private boolean multiselect = false;
     private List<Integer> selectedPositions;
 
+    private Category[] cArray;
+
     private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -55,14 +59,25 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            ArrayList<Category> cats = new ArrayList<>();
+            ArrayList<Category> selectedCatList = new ArrayList<>();
 
             for (Integer pos : selectedPositions) {
-                cats.add(categories.get(pos));
+                selectedCatList.add(categories.get(pos));
             }
 
-            Category[] cArray = cats.toArray(new Category[cats.size()]);
-            viewModel.deleteCategories(cArray);
+            cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+            String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
+                        "inside the selected categories.";
+
+            builder.setTitle("Delete Categories")
+                    .setMessage(msg)
+                    .setPositiveButton(android.R.string.yes, (d, w)-> viewModel.deleteCategories(cArray))
+                    .setNegativeButton(android.R.string.no, null);
+
+            Dialog dialog = builder.create();
+            dialog.show();
 
             mode.finish();
             return true;

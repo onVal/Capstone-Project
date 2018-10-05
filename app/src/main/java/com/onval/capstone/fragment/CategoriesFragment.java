@@ -2,14 +2,11 @@ package com.onval.capstone.fragment;
 
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,13 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.onval.capstone.activities.SettingsActivity;
 import com.onval.capstone.adapter.CategoriesAdapter;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.R;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +60,7 @@ public class CategoriesFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        adapter = new CategoriesAdapter(context, viewModel);
+        adapter = new CategoriesAdapter(getActivity(), viewModel);
         boolean sortByName = prefs.getBoolean(getString(R.string.sort_by_name), false);
 
         categories.setAdapter(adapter);

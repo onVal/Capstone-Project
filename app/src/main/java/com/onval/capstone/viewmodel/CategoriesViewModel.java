@@ -3,12 +3,9 @@ package com.onval.capstone.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.database.sqlite.SQLiteConstraintException;
 
 import com.onval.capstone.MyRepository;
-import com.onval.capstone.R;
-import com.onval.capstone.fragment.SaveRecordingDialogFragment;
-import com.onval.capstone.fragment.SaveRecordingDialogFragment.OnSaveCallback;
+import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.Record;
 
