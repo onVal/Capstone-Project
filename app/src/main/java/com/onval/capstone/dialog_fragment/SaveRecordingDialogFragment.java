@@ -53,11 +53,12 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         editText = new EditText(getActivity());
         editText.setTextColor(Color.BLACK);
-        editText.setText("Recording-1");
+        String recStartTime = recInfoBundle.getString("REC_START_TIME");
+        String recDate = recInfoBundle.getString("REC_DATE");
+        editText.setText(String.format("Recording %s %s", recDate, recStartTime));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
-        builder.setTitle("")
-                .setView(editText)
+        builder.setView(editText)
                 .setPositiveButton("Confirm", new SaveRecordingListener())
                 .setNeutralButton("Delete", new AskConfirmationListener(fm))
                 .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());

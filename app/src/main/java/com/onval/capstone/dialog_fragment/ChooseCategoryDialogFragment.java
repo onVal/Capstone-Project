@@ -14,12 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-
-import com.onval.capstone.dialog_fragment.DeleteRecordingDialogFragment;
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.MiniCategoriesAdapter;
-import com.onval.capstone.dialog_fragment.AddCategoryDialogFragment;
-import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import butterknife.BindView;
@@ -31,6 +27,8 @@ import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_C
 
 
 public class ChooseCategoryDialogFragment extends DialogFragment {
+
+    private static final String SAVE_RECORDING_TAG = "save-recording-tag";
 
     @BindView(R.id.mini_cat_rv) RecyclerView categories;
     @BindView(R.id.mini_add_cat) ImageView addCategory;
@@ -51,6 +49,7 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         layout = LayoutInflater.from(getContext()).inflate(R.layout.category_list_mini, null);
         ButterKnife.bind(this, layout);
 
+        assert getActivity() != null;
         fm = getActivity().getSupportFragmentManager();
 
         adapter = new MiniCategoriesAdapter(getContext());
@@ -82,7 +81,7 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
 
             SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
             saveRecording.setArguments(recInfoBundle);
-            saveRecording.show(getActivity().getSupportFragmentManager(), "derpo");
+            saveRecording.show(fm, SAVE_RECORDING_TAG);
         }
     }
 
