@@ -20,6 +20,6 @@
         <item>Mobile Data</item>
     </array>
 
-    <string name="normal_quality">128000</string>
-    <string name="high_quality">320000</string>
+    <string name="normal_quality">64000</string>
+    <string name="high_quality">384000</string>
 </resources>
