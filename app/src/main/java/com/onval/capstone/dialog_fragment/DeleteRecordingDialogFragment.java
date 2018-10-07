@@ -29,7 +29,7 @@ public class DeleteRecordingDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
 
         builder.setTitle("Delete Recording")
-                .setMessage("Do you really want to permanently delete the recording? (this operation is irreversible!)")
+                .setMessage(R.string.delete_rec_msg)
                 .setPositiveButton(android.R.string.yes, new DeleteRecordingListener())
                 .setNegativeButton(android.R.string.no, null);
 

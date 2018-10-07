@@ -55,7 +55,6 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
 
         adapter = new MiniCategoriesAdapter(getContext());
 
-//        categories = layout.findViewById(R.id.mini_cat_rv);
         categories.setLayoutManager(new LinearLayoutManager(getContext()));
         categories.setAdapter(adapter);
 
@@ -69,8 +68,8 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         builder.setView(layout)
                 .setPositiveButton("Save", new ChooseCategoryListener())
-                .setNegativeButton("Delete", new AskConfirmationListener())
-                .setNeutralButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
+                .setNeutralButton("Delete", new AskConfirmationListener(fm))
+                .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
     }
@@ -84,14 +83,6 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
             SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
             saveRecording.setArguments(recInfoBundle);
             saveRecording.show(getActivity().getSupportFragmentManager(), "derpo");
-        }
-    }
-
-    class AskConfirmationListener implements DialogInterface.OnClickListener {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            DeleteRecordingDialogFragment deleteFragment = new DeleteRecordingDialogFragment();
-            deleteFragment.show(fm, "derp");
         }
     }
 

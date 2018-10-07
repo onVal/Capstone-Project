@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.EditText;
 
 import com.onval.capstone.R;
@@ -25,6 +26,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     private Bundle recInfoBundle;
     private OnSaveCallback callback;
     private Context context;
+    private FragmentManager fm;
 
     public interface OnSaveCallback {
         void onSaveRecording(long id, String name);
@@ -43,6 +45,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         viewModel.setOnSaveCallback(callback);
         recInfoBundle = getArguments();
+        fm = getActivity().getSupportFragmentManager();
     }
 
     @NonNull
@@ -56,6 +59,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
         builder.setTitle("")
                 .setView(editText)
                 .setPositiveButton("Confirm", new SaveRecordingListener())
+                .setNeutralButton("Delete", new AskConfirmationListener(fm))
                 .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
