@@ -1,4 +1,4 @@
-package com.onval.capstone.fragment;
+package com.onval.capstone.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,8 +19,10 @@ import com.onval.capstone.room.Category;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 public class AddCategoryDialogFragment extends DialogFragment {
-    EditText editText;
-    CategoriesViewModel viewModel;
+    public static final String ADD_CATEGORY_TAG = "ADD_CATEGORY";
+
+    private EditText editText;
+    private CategoriesViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +34,7 @@ public class AddCategoryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         editText = new EditText(getActivity());
-        editText.setTextColor(Color.parseColor("#000000"));
+        editText.setTextColor(Color.BLACK);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         builder.setTitle(R.string.add_category)
@@ -58,7 +60,7 @@ public class AddCategoryDialogFragment extends DialogFragment {
         }
     }
 
-    String fetchNextColor() {
+    private String fetchNextColor() {
         String[] colors = getContext().getResources().getStringArray(R.array.category_colors);
 
         SharedPreferences prefs = getContext().getSharedPreferences(

@@ -12,15 +12,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
+import com.onval.capstone.room.Record;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.RecordingVH> {
     private Context context;
+    private List<Record> recordings;
 
     public RecordingsAdapter(Context context) {
         this.context = context;
+        recordings = Collections.emptyList();
     }
 
     @NonNull
@@ -35,13 +42,18 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         holder.bind(position);
     }
 
+    public void setRecordings(List<Record> recordings) {
+        this.recordings = recordings;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
-        return 3;
+        return (recordings == null) ? 0 : recordings.size();
     }
 
     class RecordingVH extends RecyclerView.ViewHolder {
-        @BindView(R.id.cloud_icon) ImageView icon;
+        @BindView(R.id.cloud_icon) ImageView cloud_icon;
         @BindView(R.id.recording_name) TextView name;
         @BindView(R.id.recording_time) TextView time;
         @BindView(R.id.recording_duration) TextView duration;
@@ -57,25 +69,13 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
         //TODO filled with fake data for now
         void bind(int position) {
-            switch (position) {
-                case 0:
-                    name.setText("First meeting");
-                    time.setText("12/03/1991 - 12:01");
-                    duration.setText("02:33:18");
-                    break;
-                case 1:
-                    name.setText("Second meeting");
-                    time.setText("12/03/1992 - 18:33");
-                    duration.setText("01:13:00");
-                    break;
-                case 2:
-                    name.setText("Another meeting with Carlos");
-                    time.setText("12/03/2010 - 17:21");
-                    duration.setText("00:54:26");
-                    break;
-            }
+            Record recording = recordings.get(position);
 
-            icon.setImageDrawable(cloudAutouploadingIconOff);
+            name.setText(recording.getName());
+            time.setText(recording.getRecDate() + " - " + recording.getRecTime());
+            duration.setText(recording.getDuration());
+
+            cloud_icon.setImageDrawable(cloudAutouploadingIconOff);
         }
     }
 }

@@ -18,6 +18,8 @@ import com.onval.capstone.fragment.RecordingsFragment;
 import butterknife.OnClick;
 
 public class RecordingsActivity extends AppCompatActivity {
+    public static final String CATEGORY_ID = "category-id-extra";
+    private int categoryId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,8 @@ public class RecordingsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.my_rec_toolbar);
         setSupportActionBar(toolbar);
 
+        categoryId = getIntent().getExtras().getInt("CATEGORY_ID");
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment())
                 .commit();
@@ -35,6 +39,7 @@ public class RecordingsActivity extends AppCompatActivity {
     @OnClick
     public void record(View view) {
         Intent intent = new Intent(this, RecordActivity.class);
+        intent.putExtra(CATEGORY_ID, categoryId);
         startActivity(intent);
     }
 

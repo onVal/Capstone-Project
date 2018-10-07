@@ -9,6 +9,8 @@
     <string name="add_category">Add category</string>
     <string name="sort_categories">Sort Categories</string>
     <string name="sort_by_name">Sort by name</string>
+    <string name="sort_by_creation">Sort by creation</string>
+
     <string name="sort_by_recordings">Sort by recordings</string>
 
     <!-- Empty fragment messages -->
@@ -19,11 +21,21 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Error messages -->
-    <string name="cant_insert_cat">ERROR: This name is already taken.</string>
+    <string name="cant_insert">ERROR: This name is already taken.</string>
 
     <!-- Shared preferences -->
     <string name="prefs">shared-preferences</string>
     <string name="next_color">next-color</string>
     <string name="sort_pref">sort-prefs</string>
+
+
+   <!--Content description -->
+    <string name="stop_content_desc">Stop</string>
+    <string name="stop_recording">STOP</string>
+
+    <!-- Alert dialog -->
+    <string name="choose_category">Choose category...</string>
+    <string name="pref_save_quality">pref_save_quality</string>
+    <string name="delete_rec_msg">Do you really want to permanently delete the recording?</string>
 
 </resources>

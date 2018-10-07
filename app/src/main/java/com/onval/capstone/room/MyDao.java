@@ -25,6 +25,9 @@ public interface MyDao {
     @Insert
     void insertCategories(Category... categories);
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long insertRecording(Record recording);
+
     @Insert
     void insertRecordings(Record... recordings);
 
@@ -32,5 +35,5 @@ public interface MyDao {
     void deleteCategories(Category... categories);
 
     @Delete
-    void deleteRecords(List<Record> recordings);
+    void deleteRecordings(List<Record> recordings);
 }

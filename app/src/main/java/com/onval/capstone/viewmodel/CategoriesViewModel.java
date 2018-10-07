@@ -3,11 +3,11 @@ package com.onval.capstone.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.database.sqlite.SQLiteConstraintException;
 
 import com.onval.capstone.MyRepository;
-import com.onval.capstone.R;
+import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.room.Record;
 
 import java.util.List;
 
@@ -19,18 +19,23 @@ public class CategoriesViewModel extends AndroidViewModel {
     public CategoriesViewModel(Application application) {
         super(application);
         this.application = application;
-        repository = new MyRepository(application);
+        repository = new MyRepository(application, null);
     }
 
     public LiveData<List<Category>> getCategories() {
-//        String[] colors = application.getBaseContext()
-//                .getResources().getStringArray(R.array.category_colors);
-
         return repository.getCategories();
+    }
+
+    public LiveData<List<Record>> getRecordingsFromCategory(int categoryId) {
+        return repository.getRecordingsFromCategory(categoryId);
     }
 
     public void insertCategory(Category category) {
         repository.insertCategories(category);
+    }
+
+    public void insertRecording(Record recording) {
+        repository.insertRecording(recording);
     }
 
     public void deleteCategories(Category... categories) {
@@ -43,5 +48,9 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getRecNumberInCategory(int categoryId) {
         return repository.getRecNumberInCategory(categoryId);
+    }
+
+    public void setOnSaveCallback(OnSaveCallback callback) {
+        repository = new MyRepository(application, callback);
     }
 }
