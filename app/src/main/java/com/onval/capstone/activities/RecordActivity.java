@@ -42,6 +42,7 @@ import butterknife.OnClick;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.service.RecordingService.DEFAULT_REC_NAME;
+import static com.onval.capstone.service.RecordingService.REC_EXTENSION;
 import static com.onval.capstone.service.RecordingTimer.CURRENT_TIME_EXTRA;
 
 public class RecordActivity extends AppCompatActivity
@@ -51,15 +52,14 @@ public class RecordActivity extends AppCompatActivity
     @BindView(R.id.timer_tv) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
 
-
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
 
     public static final String PAUSE_ACTION = "com.onval.capstone.PAUSE";
     public static final String PLAY_ACTION = "com.onval.capstone.PLAY";
     public static final String RESET_ACTION = "com.onval.capstone.RESET";
 
-    private static final String CURRENT_TIME_KEY = "current-time";
     private static final String CC_FRAGMENT_TAG = "choose-category";
+    private static final String SR_FRAGMENT_TAG = "save-recording";
 
     @Nullable Integer categoryId;
 
@@ -108,6 +108,7 @@ public class RecordActivity extends AppCompatActivity
 
     private void kickStartService() {
         intentService = new Intent(this, RecordingService.class);
+        intentService.setAction("START-SERVICE");
         startService(intentService);
         bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -143,17 +144,25 @@ public class RecordActivity extends AppCompatActivity
         if (service == null) {
             kickStartService();
         } else {
-            if (service.isPlaying() && isBound)
-                service.pauseRecording();
-            else
-                service.resumeRecording();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (service.isPlaying() && isBound)
+                    service.pauseRecording();
+                else
+                    service.resumeRecording();
+            } else {
+                stopRecording();
+            }
         }
     }
 
     @OnClick(R.id.stop_recording)
-    public void stopRecording(View view) {
+    public void stopRecording() {
         if (isBound) {
-            service.pauseRecording();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                service.pauseRecording();
+            else
+                service.stopRecording();
+
             prepareRecordingInfoBundle();
 
             if (categoryId == null) {
@@ -165,7 +174,7 @@ public class RecordActivity extends AppCompatActivity
 
                 SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
                 saveRecording.setArguments(recInfoBundle);
-                saveRecording.show(getSupportFragmentManager(), "derpo");
+                saveRecording.show(getSupportFragmentManager(), SR_FRAGMENT_TAG);
             }
          }
     }
@@ -187,7 +196,8 @@ public class RecordActivity extends AppCompatActivity
 
     @Override
     public void onSaveRecording(long id, String name) {
-        service.stopRecording();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            service.stopRecording();
         String physicalName = id + "_" + name; //ex. 4_WednesdayMemo
         assignNameToRecording(physicalName);
 
@@ -215,7 +225,7 @@ public class RecordActivity extends AppCompatActivity
     private void assignNameToRecording(String newRecName) {
         String externalPath = getExternalCacheDir().getAbsolutePath();
         File rec = new File(externalPath + DEFAULT_REC_NAME);
-        File newName = new File(externalPath + "/" + newRecName + ".mp4");
+        File newName = new File(externalPath + "/" + newRecName + REC_EXTENSION);
         rec.renameTo(newName);
     }
 

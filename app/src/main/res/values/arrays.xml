@@ -5,13 +5,21 @@
         <item>Dark</item>
     </array>
 
-    <array name="formats">
-        <item>.aac</item>
-        <item>.mp3</item>
+    <array name="quality">
+        <item>Normal quality</item>
+        <item>High quality </item>
+    </array>
+
+    <array name="quality_values">
+        <item>@string/normal_quality</item>
+        <item>@string/high_quality</item>
     </array>
 
     <array name="data_sync">
         <item>Wifi only</item>
         <item>Mobile Data</item>
     </array>
+
+    <string name="normal_quality">128000</string>
+    <string name="high_quality">320000</string>
 </resources>

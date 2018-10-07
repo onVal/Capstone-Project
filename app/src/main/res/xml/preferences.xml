@@ -9,11 +9,12 @@
         />
 
     <ListPreference
-        android:key="pref_save_format"
-        android:title="Save Format"
-        android:summary="Choose the most appropriate save format"
-        android:entries="@array/formats"
-        android:entryValues="@array/formats"
+        android:key="@string/pref_save_quality"
+        android:title="Audio Quality"
+        android:summary="Choose the most appropriate audio quality"
+        android:entries="@array/quality"
+        android:entryValues="@array/quality_values"
+        android:defaultValue="@string/normal_quality"
         />
 
     <ListPreference

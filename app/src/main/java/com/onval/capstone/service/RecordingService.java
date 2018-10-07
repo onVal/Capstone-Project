@@ -7,9 +7,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -27,7 +29,8 @@ import static com.onval.capstone.activities.RecordActivity.PLAY_ACTION;
 import static com.onval.capstone.activities.RecordActivity.RESET_ACTION;
 
 public class RecordingService extends Service {
-    public static final String DEFAULT_REC_NAME = "/audiorecord.mp4";
+    public static final String REC_EXTENSION = ".mp4";
+    public static final String DEFAULT_REC_NAME = "/audiorecord" + REC_EXTENSION;
 
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-1";
@@ -73,6 +76,11 @@ public class RecordingService extends Service {
     }
 
     private void initializeRecorder() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String bitrateString = prefs.getString(getString(R.string.pref_save_quality),
+                                    getString(R.string.normal_quality));
+        int bitrate = Integer.parseInt(bitrateString);
+
         fileName = getExternalCacheDir().getAbsolutePath();
         fileName += DEFAULT_REC_NAME;
 
@@ -80,13 +88,13 @@ public class RecordingService extends Service {
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         recorder.setOutputFile(fileName);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        recorder.setAudioEncodingBitRate(bitrate);
 
         try {
             recorder.prepare();
         } catch (IOException exc) {
             exc.printStackTrace();
-
         }
     }
 
@@ -105,11 +113,11 @@ public class RecordingService extends Service {
     }
 
     private void createNotificationChannel() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    "Record", NotificationManager.IMPORTANCE_DEFAULT);
+                    "RecordChannel", NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
-            channel.setImportance(NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setSound(null, null);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -127,7 +135,11 @@ public class RecordingService extends Service {
         recorder.start();
         startForeground(NOTIFICATION_ID, foregroundNotification);
         startTimer();
-        updateUIButton(PAUSE_ACTION);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            updateUIButton(PAUSE_ACTION);
+        else
+            updateUIButton(RESET_ACTION);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -143,7 +155,6 @@ public class RecordingService extends Service {
         isPlaying = false;
         timer.removeCallback();
         updateUIButton(RESET_ACTION);
-
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -152,7 +163,6 @@ public class RecordingService extends Service {
         isPlaying = false;
         timer.pauseTimer();
         updateUIButton(PLAY_ACTION);
-
     }
 
     private void startTimer() {

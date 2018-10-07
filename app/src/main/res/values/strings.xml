@@ -35,5 +35,6 @@
 
     <!-- Alert dialog -->
     <string name="choose_category">Choose category...</string>
+    <string name="pref_save_quality">pref_save_quality</string>
 
 </resources>
