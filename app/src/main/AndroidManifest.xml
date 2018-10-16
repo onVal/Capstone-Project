@@ -34,6 +34,8 @@
             />
 
         <service android:name=".service.RecordingService" />
+        <service android:name=".service.PlayerService" />
+
     </application>
 
 </manifest>

@@ -28,6 +28,7 @@
 
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/recording_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
 
@@ -40,6 +41,19 @@
 
         android:onClick="record"
         />
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exo_player"
+        android:layout_width="match_parent"
+        android:layout_height="115dp"
+        android:layout_gravity="bottom|center"
+        android:visibility="invisible"
+        app:use_artwork="false"
+        app:hide_on_touch="false"
+        app:surface_type="none"
+        app:show_timeout="0"
+        app:shutter_background_color="#fff" />
+
 
 </FrameLayout>
 

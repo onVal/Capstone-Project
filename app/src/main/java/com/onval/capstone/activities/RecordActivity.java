@@ -199,7 +199,7 @@ public class RecordActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             service.stopRecording();
         String physicalName = id + "_" + name; //ex. 4_WednesdayMemo
-        assignNameToRecording(physicalName);
+        saveRecordingAs(physicalName);
 
         String msg = "The recording " + name + " has been created.";
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
@@ -222,10 +222,11 @@ public class RecordActivity extends AppCompatActivity
         timerTextView.setText(getString(R.string.starting_timer));
     }
 
-    private void assignNameToRecording(String newRecName) {
+    private void saveRecordingAs(String newRecName) {
         String externalPath = getExternalCacheDir().getAbsolutePath();
         File rec = new File(externalPath + DEFAULT_REC_NAME);
-        File newName = new File(externalPath + "/" + newRecName + REC_EXTENSION);
+        String validName = newRecName.replace(":", "_");
+        File newName = new File(externalPath + "/" + validName + REC_EXTENSION);
         rec.renameTo(newName);
     }
 

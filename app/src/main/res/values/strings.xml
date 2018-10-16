@@ -36,6 +36,7 @@
     <!-- Alert dialog -->
     <string name="choose_category">Choose category...</string>
     <string name="pref_save_quality">pref_save_quality</string>
+
     <string name="delete_rec_msg">Do you really want to permanently delete the recording?</string>
 
 </resources>
