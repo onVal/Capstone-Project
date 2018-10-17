@@ -153,7 +153,8 @@ public class RecordingService extends Service {
         recorder.stop();
         stopForeground(true);
         isPlaying = false;
-        timer.removeCallback();
+        timer.pauseTimer();
+
         updateUIButton(RESET_ACTION);
     }
 
