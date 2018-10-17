@@ -96,16 +96,16 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (currentlySelected != position) {
+                    if (position != currentlySelected) {
+//                        selectToPlay(false);
                         currentlySelected = position;
                         selectToPlay(true);
+                        notifyDataSetChanged();
 
                         int recId = recording.getId();
                         String recName = recording.getName();
                         Uri recUri = createUriFromRecording(recId, recName);
                         listener.onRecordingClicked(recUri);
-                    } else {
-                        selectToPlay(false);
                     }
                 }
             });

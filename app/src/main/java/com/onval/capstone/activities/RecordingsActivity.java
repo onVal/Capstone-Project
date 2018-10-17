@@ -91,7 +91,7 @@ public class RecordingsActivity extends AppCompatActivity
         playerService.play();
 
         playerView.setVisibility(View.VISIBLE);
-        fab.setVisibility(View.INVISIBLE);
+        fab.setVisibility(View.GONE);
     }
 
 }
