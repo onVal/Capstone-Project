@@ -176,7 +176,7 @@ public class RecordActivity extends AppCompatActivity
                 saveRecording.setArguments(recInfoBundle);
                 saveRecording.show(getSupportFragmentManager(), SR_FRAGMENT_TAG);
             }
-         }
+        }
     }
 
     private void prepareRecordingInfoBundle() {

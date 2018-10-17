@@ -52,7 +52,7 @@
         app:hide_on_touch="false"
         app:surface_type="none"
         app:show_timeout="0"
-        app:shutter_background_color="#fff" />
+        app:shutter_background_color="@color/colorPrimary" />
 
 
 </FrameLayout>
