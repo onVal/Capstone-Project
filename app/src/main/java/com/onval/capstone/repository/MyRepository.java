@@ -1,15 +1,17 @@
-package com.onval.capstone;
+package com.onval.capstone.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.onval.capstone.R;
 import com.onval.capstone.room.AppDatabase;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.MyDao;
 import com.onval.capstone.room.Record;
 
+import java.io.File;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -48,12 +50,16 @@ public class MyRepository {
         new CategoriesInsertAsyncTask().execute(category);
     }
 
+    public void deleteCategories(final Category... categories) {
+        new CategoriesDeleteAsyncTask().execute(categories);
+    }
+
     public void insertRecording(final Record recs) {
         new RecordingsInsertAsyncTask(onSaveCallback).execute(recs);
     }
 
-    public void deleteCategories(final Category... categories) {
-        new CategoriesDeleteAsyncTask().execute(categories);
+    public void deleteRecordings(final Record... recs) {
+        
     }
 
     private class CategoriesInsertAsyncTask extends AsyncTask<Category, Void, Long> {
