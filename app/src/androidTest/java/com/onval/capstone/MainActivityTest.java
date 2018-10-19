@@ -34,6 +34,6 @@ public class MainActivityTest {
                 .perform(click());
 
         intended(hasComponent(RecordActivity.class.getName()));
-        onView(withId(R.id.timer)).check(matches(isDisplayed()));
+        onView(withId(R.id.timer_tv)).check(matches(isDisplayed()));
     }
 }

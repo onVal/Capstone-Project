@@ -59,7 +59,7 @@ public class MyRepository {
     }
 
     public void deleteRecordings(final Record... recs) {
-        
+        new RecordingsDeleteAsyncTask().execute(recs);
     }
 
     private class CategoriesInsertAsyncTask extends AsyncTask<Category, Void, Long> {
@@ -110,6 +110,14 @@ public class MyRepository {
                         Toast.LENGTH_SHORT).show();
             else
                 callback.onSaveRecording(rowId, recName);
+        }
+    }
+
+    private class RecordingsDeleteAsyncTask extends AsyncTask<Record, Void, Void> {
+        @Override
+        protected Void doInBackground(Record... records) {
+            dao.deleteRecordings(records);
+            return null;
         }
     }
 }
