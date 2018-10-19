@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
+import com.onval.capstone.utility.Utility;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,20 +27,19 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private Context context;
     private List<Record> recordings;
 
-    private final static int NO_REC_SELECTED = -1;
     private int currentlySelected;
 
     private RecordingListener listener;
 
     public interface RecordingListener {
-        void onRecordingClicked(Uri recUri);
+        void onRecordingClicked(Uri recUri, int selectedRec);
     }
 
-    public RecordingsAdapter(Context context) {
+    public RecordingsAdapter(Context context, int selectedRecording) {
         this.context = context;
         listener = (RecordingListener) context;
         recordings = Collections.emptyList();
-        currentlySelected = NO_REC_SELECTED;
+        currentlySelected = selectedRecording;
     }
 
     @NonNull
@@ -97,15 +97,12 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                 @Override
                 public void onClick(View v) {
                     if (position != currentlySelected) {
-//                        selectToPlay(false);
                         currentlySelected = position;
                         selectToPlay(true);
                         notifyDataSetChanged();
 
-                        int recId = recording.getId();
-                        String recName = recording.getName();
-                        Uri recUri = createUriFromRecording(recId, recName);
-                        listener.onRecordingClicked(recUri);
+                        Uri recUri = Utility.createUriFromRecording(context, recording);
+                        listener.onRecordingClicked(recUri, currentlySelected);
                     }
                 }
             });
@@ -121,14 +118,6 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             time.setTextColor(subColor);
             duration.setTextColor(subColor);
 //            cloud_icon.setColorFilter(subColor);
-        }
-
-
-
-        private Uri createUriFromRecording(int recId, String recName) {
-            String filePath =  context.getExternalCacheDir().getAbsolutePath();
-            String recFullName = "/" + recId + "_" + recName.replace(":", "_") + ".mp4";
-            return Uri.parse(filePath + recFullName);
         }
     }
 }

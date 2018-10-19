@@ -26,6 +26,8 @@
         <activity
             android:name=".activities.RecordingsActivity"
             android:label="@string/recording_activity_title"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainActivity" />
         <activity
             android:name=".activities.SettingsActivity"
