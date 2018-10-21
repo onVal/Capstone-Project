@@ -1,6 +1,7 @@
 package com.onval.capstone.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -28,6 +29,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private List<Record> recordings;
 
     private int currentlySelected;
+    private String categoryColor;
 
     private RecordingListener listener;
 
@@ -64,7 +66,16 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         notifyDataSetChanged();
     }
 
-    class RecordingVH extends RecyclerView.ViewHolder {
+    public void setColor(String categoryColor) {
+        this.categoryColor = categoryColor;
+    }
+
+    public void setSelected(int position) {
+        currentlySelected = position;
+        notifyDataSetChanged();
+    }
+
+    public class RecordingVH extends RecyclerView.ViewHolder {
         @BindView(R.id.cloud_icon) ImageView cloud_icon;
         @BindView(R.id.recording_name) TextView name;
         @BindView(R.id.recording_time) TextView time;
@@ -109,15 +120,18 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         }
 
         private void selectToPlay(boolean selected) {
-            int bgColor = (selected) ? Color.BLUE : Color.WHITE;
+            int LITEGRAY = Color.parseColor("#eeeeee");
+
+            int darkenedColor = Utility.darkenColor(Color.parseColor(categoryColor), 0.7f);
+            int bgColor = (selected) ? darkenedColor : Color.WHITE;
             int textColor = (selected) ? Color.WHITE : Color.BLACK;
-            int subColor = (selected) ? Color.LTGRAY : Color.DKGRAY;
+            int subColor = (selected) ? LITEGRAY : Color.DKGRAY;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);
             time.setTextColor(subColor);
             duration.setTextColor(subColor);
-//            cloud_icon.setColorFilter(subColor);
+            cloud_icon.setImageTintList(ColorStateList.valueOf(textColor));
         }
     }
 }

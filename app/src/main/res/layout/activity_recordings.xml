@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
-            android:theme="@style/LightTheme.Toolbar"
+            app:titleTextColor="#fff"
             app:popupTheme="@style/LightTheme.OverflowPopup"
             tools:ignore="UnusedAttribute" />
 

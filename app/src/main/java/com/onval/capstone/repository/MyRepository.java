@@ -46,6 +46,10 @@ public class MyRepository {
         return dao.numberOfRecordingsInCategory(categoryId);
     }
 
+    public LiveData<String> getCategoryColor(int categoryId) {
+        return dao.getCategoryColor(categoryId);
+    }
+
     public void insertCategories(final Category category) {
         new CategoriesInsertAsyncTask().execute(category);
     }

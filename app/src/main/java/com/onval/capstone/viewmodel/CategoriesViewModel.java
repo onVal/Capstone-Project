@@ -65,6 +65,10 @@ public class CategoriesViewModel extends AndroidViewModel {
         return repository.getRecNumberInCategory(categoryId);
     }
 
+    public LiveData<String> getCategoryColor(int categoryId) {
+        return repository.getCategoryColor(categoryId);
+    }
+
     public void setOnSaveCallback(OnSaveCallback callback) {
         repository = new MyRepository(application, callback);
     }
