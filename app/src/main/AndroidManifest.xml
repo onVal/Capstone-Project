@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onval.capstone">
 
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".application.ProductionApplication"
@@ -17,27 +17,38 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RecordActivity"
-                 android:launchMode="singleTask"
-                android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.RecordActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.RecordingsActivity"
             android:label="@string/recording_activity_title"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".activities.MainActivity" />
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/SettingsTheme"
-            />
+            android:theme="@style/SettingsTheme" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.PlayerService" />
 
+        <receiver android:name=".PlayerAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.onval.capstone.APPWIDGET_MANUAL_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/player_app_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

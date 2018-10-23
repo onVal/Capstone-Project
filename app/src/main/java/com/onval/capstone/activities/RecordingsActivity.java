@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.RecordingsAdapter;
 import com.onval.capstone.fragment.RecordingsFragment;
+import com.onval.capstone.room.Record;
 import com.onval.capstone.service.PlayerService;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
@@ -37,6 +38,7 @@ import static com.onval.capstone.fragment.RecordingsFragment.NO_SELECTED_REC;
 public class RecordingsActivity extends AppCompatActivity
         implements RecordingsAdapter.RecordingListener {
     public static final String CATEGORY_ID = "category-id-extra";
+    public static final String CATEGORY_NAME = "category-name-extra";
     public static final String SELECTED_REC = "selected-rec-extra";
     public static final String FRAGMENT_TAG = "rec-fragment";
 
@@ -44,6 +46,7 @@ public class RecordingsActivity extends AppCompatActivity
     @BindView(R.id.recording_fab) FloatingActionButton fab;
 
     private int categoryId;
+    private String categoryName;
     private Integer selectedRec;
 
     private Intent serviceIntent;
@@ -55,6 +58,7 @@ public class RecordingsActivity extends AppCompatActivity
     Toolbar toolbar;
 
     private RecordingsFragment fragment;
+    private LiveData<String> categoryColor;
 
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -92,9 +96,10 @@ public class RecordingsActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         categoryId = getIntent().getExtras().getInt(CATEGORY_ID);
+        categoryName = getIntent().getExtras().getString(CATEGORY_NAME);
 
         CategoriesViewModel viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
-        LiveData<String> categoryColor = viewModel.getCategoryColor(categoryId);
+        categoryColor = viewModel.getCategoryColor(categoryId);
         categoryColor.observe(this, this::setInterfaceColor);
 
         if (PlayerService.isRunning) {
@@ -132,12 +137,20 @@ public class RecordingsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRecordingClicked(Uri recUri, int selectedRec) {
+    public void onRecordingClicked(Uri recUri, int selectedRec, Record recording) {
         playingRecordingUri = recUri;
+        String recName = recording.getName();
+        String recDuration = recording.getDuration();
+        String catColor = categoryColor.getValue();
 
         Intent intent = new Intent(this, PlayerService.class);
         intent.putExtra(CATEGORY_ID, categoryId);
+        intent.putExtra(CATEGORY_NAME, categoryName);
+
         intent.putExtra(SELECTED_REC, selectedRec);
+        intent.putExtra("rec-name", recName);
+        intent.putExtra("rec-duration", recDuration);
+        intent.putExtra("cat-color", catColor);
 
         if (playerService == null) {
             startService(intent);

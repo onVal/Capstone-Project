@@ -5,13 +5,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -21,10 +24,12 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.onval.capstone.PlayerAppWidget;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
+import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
 import static com.onval.capstone.activities.RecordingsActivity.SELECTED_REC;
 
 public class PlayerService extends Service {
@@ -39,15 +44,45 @@ public class PlayerService extends Service {
     private static final int NOTIFICATION_ID = 2;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-2";
 
+    private String categoryName;
+    private String categoryColor;
+    private String recName;
+    private String recDuration;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int categoryId = intent.getExtras().getInt(CATEGORY_ID);
+
         selectedRec = intent.getExtras().getInt(SELECTED_REC);
 
+        categoryName = intent.getExtras().getString(CATEGORY_NAME);
+        categoryColor = intent.getExtras().getString("cat-color");
+        recName = intent.getExtras().getString("rec-name");
+        recDuration = intent.getExtras().getString("rec-duration");
+
         initializePlayer();
-        initializeNotification(categoryId);
+        initializeNotification(categoryId, categoryName);
         isRunning = true;
+
         return Service.START_STICKY;
+    }
+
+    private void notifyWidget() {
+        Intent intent = new Intent(getApplicationContext(), PlayerAppWidget.class);
+        intent.setAction(PlayerAppWidget.WIDGET_MANUAL_UPDATE);
+        intent.putExtra(CATEGORY_NAME, categoryName);
+        intent.putExtra("cat-color", categoryColor);
+        intent.putExtra("rec-name", recName);
+        intent.putExtra("rec-duration", recDuration);
+        intent.putExtra("status", isPlaying);
+
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.player_app_widget);
+        views.setTextViewText(R.id.playing_rec, recName);
+        views.setTextViewText(R.id.from_category, "from " + categoryName);
+        views.setTextViewText(R.id.rec_duration, recDuration);
+        views.setInt(R.id.cat_color, "setBackgroundColor", Color.parseColor(categoryColor));
+
+        sendBroadcast(intent);
     }
 
     @Nullable
@@ -56,16 +91,18 @@ public class PlayerService extends Service {
         return new PlayerBinder();
     }
 
-    private void initializeNotification(int categoryId) {
+    private void initializeNotification(int categoryId, String categoryName) {
         createNotificationChannel();
 
         Intent intent = new Intent(this, RecordingsActivity.class);
         intent.putExtra(CATEGORY_ID, categoryId);
+        intent.putExtra(CATEGORY_NAME, categoryName);
+
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("Player")
-                .setContentText("You are playing a recording")
+                .setContentText(recName)
                 .setSmallIcon(R.drawable.ic_play_circle_filled_white_24dp)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {0L})
@@ -82,7 +119,6 @@ public class PlayerService extends Service {
             notificationManager.createNotificationChannel(channel);
         }
     }
-
 
     private void initializePlayer() {
         if (player == null)
@@ -105,6 +141,7 @@ public class PlayerService extends Service {
         player.setPlayWhenReady(true);
         isPlaying = true;
         startForeground(NOTIFICATION_ID, foregroundNotification);
+        notifyWidget();
     }
 
     public void pause() {

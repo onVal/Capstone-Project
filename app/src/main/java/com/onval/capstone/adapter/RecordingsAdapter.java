@@ -34,7 +34,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private RecordingListener listener;
 
     public interface RecordingListener {
-        void onRecordingClicked(Uri recUri, int selectedRec);
+        void onRecordingClicked(Uri recUri, int selectedRec, Record recording);
     }
 
     public RecordingsAdapter(Context context, int selectedRecording) {
@@ -113,7 +113,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                         notifyDataSetChanged();
 
                         Uri recUri = Utility.createUriFromRecording(context, recording);
-                        listener.onRecordingClicked(recUri, currentlySelected);
+                        listener.onRecordingClicked(recUri, currentlySelected, recording);
                     }
                 }
             });

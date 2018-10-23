@@ -35,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
+import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
     private Context context;
@@ -188,6 +189,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 else {
                     Intent intent = new Intent(context, RecordingsActivity.class);
                     intent.putExtra(CATEGORY_ID, category.getId());
+                    intent.putExtra(CATEGORY_NAME, category.getName());
+
                     context.startActivity(intent);
                 }
             });
