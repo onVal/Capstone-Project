@@ -30,6 +30,7 @@ import com.onval.capstone.dialog_fragment.ChooseCategoryDialogFragment;
 import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.service.RecordingBinder;
 import com.onval.capstone.service.RecordingService;
+import com.onval.capstone.utility.UserInterfaceUtility;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -191,7 +192,7 @@ public class RecordActivity extends AppCompatActivity
         recInfoBundle = new Bundle();
         recInfoBundle.putString("REC_START_TIME", formattedTime);
         recInfoBundle.putString("REC_DATE", formattedDate);
-        recInfoBundle.putString("REC_DURATION", timeFormatFromMills(service.getTimeElapsed()));
+        recInfoBundle.putString("REC_DURATION", UserInterfaceUtility.timeFormatFromMills(service.getTimeElapsed(), true));
     }
 
     @Override
@@ -230,20 +231,6 @@ public class RecordActivity extends AppCompatActivity
         rec.renameTo(newName);
     }
 
-    @SuppressLint("DefaultLocale")
-    private String timeFormatFromMills(long millis) {
-        int seconds = (int) (millis / 1000);
-
-        int hh = seconds / 3600;
-        int mm = seconds / 60 % 60;
-        int ss = seconds % 60;
-
-        if (hh == 0)
-            return String.format("%02d:%02d", mm, ss);
-
-        return String.format("%02d:%02d:%02d", hh, mm, ss);
-    }
-
     private class MyServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -262,7 +249,7 @@ public class RecordActivity extends AppCompatActivity
     private class TimerBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             long currentTimeMillis = intent.getExtras().getLong(CURRENT_TIME_EXTRA);
-            String currentTime = timeFormatFromMills(currentTimeMillis);
+            String currentTime = UserInterfaceUtility.timeFormatFromMills(currentTimeMillis, false);
             timerTextView.setText(currentTime);
         }
     }

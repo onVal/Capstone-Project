@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
+import com.onval.capstone.utility.UserInterfaceUtility;
 import com.onval.capstone.utility.Utility;
 
 import java.util.Collections;
@@ -122,7 +123,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         private void selectToPlay(boolean selected) {
             int LITEGRAY = Color.parseColor("#eeeeee");
 
-            int darkenedColor = Utility.darkenColor(Color.parseColor(categoryColor), 0.7f);
+            int darkenedColor = UserInterfaceUtility.darkenColor(Color.parseColor(categoryColor), 0.7f);
             int bgColor = (selected) ? darkenedColor : Color.WHITE;
             int textColor = (selected) ? Color.WHITE : Color.BLACK;
             int subColor = (selected) ? LITEGRAY : Color.DKGRAY;

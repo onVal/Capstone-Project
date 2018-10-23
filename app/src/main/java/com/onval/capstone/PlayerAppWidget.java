@@ -40,6 +40,9 @@ public class PlayerAppWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.playing_rec, NO_RECORDING_SELECTED);
             views.setTextViewText(R.id.from_category, NO_CATEGORY_SELECTED);
             views.setTextViewText(R.id.rec_duration, DEFAULT_REC_DURATION);
+            views.setInt(R.id.cat_color, "setBackgroundColor", Color.parseColor("#777777"));
+            views.setImageViewResource(R.id.play_pause, R.drawable.ic_play_white_24dp);
+
         } else {
             views.setTextViewText(R.id.playing_rec, recName);
             views.setTextViewText(R.id.from_category, "from " + categoryName);

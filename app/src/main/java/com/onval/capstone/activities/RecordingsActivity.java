@@ -26,6 +26,7 @@ import com.onval.capstone.adapter.RecordingsAdapter;
 import com.onval.capstone.fragment.RecordingsFragment;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.service.PlayerService;
+import com.onval.capstone.utility.UserInterfaceUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
@@ -117,7 +118,7 @@ public class RecordingsActivity extends AppCompatActivity
 
     private void setInterfaceColor(String colorStr) {
         int color = Color.parseColor(colorStr);
-        int darkenedColor = Utility.darkenColor(color, 0.9f);
+        int darkenedColor = UserInterfaceUtility.darkenColor(color, 0.9f);
 
         fab.setBackgroundTintList(ColorStateList.valueOf(darkenedColor));
         toolbar.setBackgroundColor(darkenedColor);
