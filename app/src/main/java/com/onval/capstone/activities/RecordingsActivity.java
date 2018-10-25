@@ -172,7 +172,6 @@ public class RecordingsActivity extends AppCompatActivity
                 .findFragmentByTag(FRAGMENT_TAG));
         AdapterListener listener = fragment;
 
-
         unbindService(serviceConnection);
         Intent intent = new Intent(this, PlayerService.class);
         stopService(intent);

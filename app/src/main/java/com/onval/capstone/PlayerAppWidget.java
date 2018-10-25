@@ -53,6 +53,8 @@ public class PlayerAppWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.rec_duration, DEFAULT_REC_DURATION);
             views.setInt(R.id.cat_color, "setBackgroundColor", Color.parseColor("#777777"));
             views.setImageViewResource(R.id.play_pause, R.drawable.ic_play_white_24dp);
+//            views.setInt(R.id.play_pause, "setBackgroundColor", );
+
 
         } else {
             views.setTextViewText(R.id.playing_rec, recName);

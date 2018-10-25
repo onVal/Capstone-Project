@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -91,12 +92,14 @@ public class PlayerService extends Service {
                 extras.getString(REC_NAME),
                 extras.getString(REC_DURATION));
 
+        initializeNotification();
+        NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, foregroundNotification);
 
         if (!isRunning) {
             initializePlayer();
-            initializeNotification(categoryId, categoryName);
             isRunning = true;
         }
+
     }
 
     private void notifyWidget() {
@@ -128,7 +131,7 @@ public class PlayerService extends Service {
         this.recDuration = recDuration;
     }
 
-    private void initializeNotification(int categoryId, String categoryName) {
+    private void initializeNotification() {
         createNotificationChannel();
 
         Intent intent = new Intent(this, RecordingsActivity.class);
@@ -137,8 +140,8 @@ public class PlayerService extends Service {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Player")
-                .setContentText(recName)
+                .setContentTitle(recName)
+                .setContentText("from " + categoryName)
                 .setSmallIcon(R.drawable.ic_play_circle_filled_white_24dp)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {0L})
