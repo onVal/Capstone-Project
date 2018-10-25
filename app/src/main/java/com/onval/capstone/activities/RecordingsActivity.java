@@ -1,25 +1,27 @@
 package com.onval.capstone.activities;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.RecordingsAdapter;
@@ -27,7 +29,6 @@ import com.onval.capstone.fragment.RecordingsFragment;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.service.PlayerService;
 import com.onval.capstone.utility.UserInterfaceUtility;
-import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import butterknife.BindView;
@@ -37,7 +38,6 @@ import butterknife.OnClick;
 import static com.onval.capstone.PlayerAppWidget.CATEGORY_COLOR;
 import static com.onval.capstone.PlayerAppWidget.REC_DURATION;
 import static com.onval.capstone.PlayerAppWidget.REC_NAME;
-import static com.onval.capstone.fragment.RecordingsFragment.NO_SELECTED_REC;
 import static com.onval.capstone.service.PlayerService.START_SERVICE_ACTION;
 
 public class RecordingsActivity extends AppCompatActivity
@@ -47,24 +47,42 @@ public class RecordingsActivity extends AppCompatActivity
     public static final String SELECTED_REC = "selected-rec-extra";
     public static final String FRAGMENT_TAG = "rec-fragment";
 
+    public static final String UPDATE_PLAYER_ACTION = "com.onval.capstone.UPDATE_PLAYER";
+
     @BindView(R.id.exo_player) PlayerView playerView;
     @BindView(R.id.recording_fab) FloatingActionButton fab;
+    @BindView(R.id.ctrl_rec_name) TextView recNameView;
+    @BindView(R.id.ctrl_cat_name) TextView catNameView;
 
     private int categoryId;
     private String categoryName;
-    private Integer selectedRec;
+
+    private String recName;
+    private String recCategoryName;
 
     private Intent serviceIntent;
     private PlayerService playerService;
 
     private Uri playingRecordingUri;
-    private boolean isBound;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(UPDATE_PLAYER_ACTION)) {
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    recName = extras.getString(REC_NAME);
+                    recCategoryName = extras.getString(CATEGORY_NAME);
+                    updatePlayerText(recName, recCategoryName);
+                }
+            }
+        }
+    };
 
     Toolbar toolbar;
 
     private RecordingsFragment fragment;
     private LiveData<String> categoryColor;
-
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -78,14 +96,14 @@ public class RecordingsActivity extends AppCompatActivity
                 playerView.setPlayer(playerService.getPlayer());
             }
 
-            isBound = true;
+            updatePlayerText(playerService.getRecName(),
+                    playerService.getCategoryName());
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             playerService = null;
             playingRecordingUri = null;
-            isBound = false;
         }
     };
 
@@ -98,6 +116,9 @@ public class RecordingsActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
+
+        IntentFilter filter = new IntentFilter(UPDATE_PLAYER_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
         categoryId = getIntent().getExtras().getInt(CATEGORY_ID);
         categoryName = getIntent().getExtras().getString(CATEGORY_NAME);
@@ -114,9 +135,27 @@ public class RecordingsActivity extends AppCompatActivity
             bindService(intent, serviceConnection, BIND_AUTO_CREATE);
         }
 
-        int commit = getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment(), FRAGMENT_TAG)
                 .commit();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        updatePlayerText(
+                savedInstanceState.getString(REC_NAME),
+                savedInstanceState.getString(CATEGORY_NAME));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (playerService != null) {
+            outState.putString(REC_NAME, playerService.getRecName());
+            outState.putString(CATEGORY_NAME, playerService.getCategoryName());
+        }
     }
 
     private void setInterfaceColor(String colorStr) {
@@ -145,6 +184,7 @@ public class RecordingsActivity extends AppCompatActivity
         playingRecordingUri = recUri;
         String recName = recording.getName();
         String recDuration = recording.getDuration();
+        //todo: sometimes this is null and app crashes - can't rely on it
         String catColor = categoryColor.getValue();
 
         Intent intent = new Intent(this, PlayerService.class);
@@ -165,6 +205,11 @@ public class RecordingsActivity extends AppCompatActivity
         } else {
             startMediaPlayer();
         }
+    }
+
+    private void updatePlayerText(String recName, String catName) {
+        recNameView.setText(recName);
+        catNameView.setText("from " + catName);
     }
 
     public void closePlayer(View view) {

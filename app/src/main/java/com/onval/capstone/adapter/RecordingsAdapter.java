@@ -90,7 +90,6 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             ButterKnife.bind(this, itemView);
         }
 
-        //TODO filled with fake data for now
         void bind(int position) {
             Record recording = recordings.get(position);
 

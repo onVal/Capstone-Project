@@ -5,10 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -17,8 +14,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.widget.RemoteViews;
-import android.widget.Toast;
+import android.support.v4.content.LocalBroadcastManager;
+
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -40,6 +37,7 @@ import static com.onval.capstone.PlayerAppWidget.REC_NAME;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
 import static com.onval.capstone.activities.RecordingsActivity.SELECTED_REC;
+import static com.onval.capstone.activities.RecordingsActivity.UPDATE_PLAYER_ACTION;
 
 public class PlayerService extends Service {
     public static final String START_SERVICE_ACTION = "start-action";
@@ -92,6 +90,8 @@ public class PlayerService extends Service {
                 extras.getString(REC_NAME),
                 extras.getString(REC_DURATION));
 
+        notifyPlayer();
+
         initializeNotification();
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, foregroundNotification);
 
@@ -99,7 +99,15 @@ public class PlayerService extends Service {
             initializePlayer();
             isRunning = true;
         }
+    }
 
+    private void notifyPlayer() {
+        Intent intent = new Intent();
+        intent.setAction(UPDATE_PLAYER_ACTION);
+        intent.putExtra(REC_NAME, recName);
+        intent.putExtra(CATEGORY_NAME, categoryName);
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void notifyWidget() {
@@ -205,6 +213,14 @@ public class PlayerService extends Service {
 
     public SimpleExoPlayer getPlayer() {
         return player;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public String getRecName() {
+        return recName;
     }
 
     @Override
