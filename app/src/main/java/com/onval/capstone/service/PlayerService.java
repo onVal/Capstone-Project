@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -28,11 +29,19 @@ import com.onval.capstone.PlayerAppWidget;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 
+import static com.onval.capstone.PlayerAppWidget.CATEGORY_COLOR;
+import static com.onval.capstone.PlayerAppWidget.PLAYER_STATUS;
+import static com.onval.capstone.PlayerAppWidget.REC_DURATION;
+import static com.onval.capstone.PlayerAppWidget.REC_NAME;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
 import static com.onval.capstone.activities.RecordingsActivity.SELECTED_REC;
 
 public class PlayerService extends Service {
+    public static final String START_SERVICE_ACTION = "start-action";
+    public static final String PLAY_PLAYER_ACTION = "play-action";
+    public static final String PAUSE_PLAYER_ACTION = "stop-action";
+
     private SimpleExoPlayer player;
     private MediaSource source;
     private Notification foregroundNotification;
@@ -51,36 +60,49 @@ public class PlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int categoryId = intent.getExtras().getInt(CATEGORY_ID);
+        String action = intent.getAction();
+        assert action != null;
 
-        selectedRec = intent.getExtras().getInt(SELECTED_REC);
-
-        categoryName = intent.getExtras().getString(CATEGORY_NAME);
-        categoryColor = intent.getExtras().getString("cat-color");
-        recName = intent.getExtras().getString("rec-name");
-        recDuration = intent.getExtras().getString("rec-duration");
-
-        initializePlayer();
-        initializeNotification(categoryId, categoryName);
-        isRunning = true;
+        switch (action) {
+            case START_SERVICE_ACTION:
+                startService(intent.getExtras());
+                break;
+            case PLAY_PLAYER_ACTION:
+                play();
+                break;
+            case PAUSE_PLAYER_ACTION:
+                pause();
+                break;
+        }
 
         return Service.START_STICKY;
+    }
+
+    private void startService(Bundle extras) {
+        if (!isRunning) {
+            int categoryId = extras.getInt(CATEGORY_ID);
+            selectedRec = extras.getInt(SELECTED_REC);
+
+            categoryName = extras.getString(CATEGORY_NAME);
+            categoryColor = extras.getString(CATEGORY_COLOR);
+            recName = extras.getString(REC_NAME);
+            recDuration = extras.getString(REC_DURATION);
+
+            initializePlayer();
+            initializeNotification(categoryId, categoryName);
+            isRunning = true;
+            notifyWidget();
+        }
     }
 
     private void notifyWidget() {
         Intent intent = new Intent(getApplicationContext(), PlayerAppWidget.class);
         intent.setAction(PlayerAppWidget.WIDGET_MANUAL_UPDATE);
         intent.putExtra(CATEGORY_NAME, categoryName);
-        intent.putExtra("cat-color", categoryColor);
-        intent.putExtra("rec-name", recName);
-        intent.putExtra("rec-duration", recDuration);
-        intent.putExtra("status", isPlaying);
-
-        RemoteViews views = new RemoteViews(getPackageName(), R.layout.player_app_widget);
-        views.setTextViewText(R.id.playing_rec, recName);
-        views.setTextViewText(R.id.from_category, "from " + categoryName);
-        views.setTextViewText(R.id.rec_duration, recDuration);
-        views.setInt(R.id.cat_color, "setBackgroundColor", Color.parseColor(categoryColor));
+        intent.putExtra(CATEGORY_COLOR, categoryColor);
+        intent.putExtra(REC_NAME, recName);
+        intent.putExtra(REC_DURATION, recDuration);
+        intent.putExtra(PLAYER_STATUS, isPlaying);
 
         sendBroadcast(intent);
     }
@@ -97,7 +119,6 @@ public class PlayerService extends Service {
         Intent intent = new Intent(this, RecordingsActivity.class);
         intent.putExtra(CATEGORY_ID, categoryId);
         intent.putExtra(CATEGORY_NAME, categoryName);
-
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
@@ -147,6 +168,7 @@ public class PlayerService extends Service {
     public void pause() {
         player.setPlayWhenReady(false);
         isPlaying = false;
+        notifyWidget();
     }
 
     public boolean isPlaying() {
@@ -165,6 +187,7 @@ public class PlayerService extends Service {
         player.release();
         player = null;
         isRunning = false;
+        notifyWidget();
     }
 
     public class PlayerBinder extends Binder {

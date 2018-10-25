@@ -34,7 +34,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.onval.capstone.PlayerAppWidget.CATEGORY_COLOR;
+import static com.onval.capstone.PlayerAppWidget.REC_DURATION;
+import static com.onval.capstone.PlayerAppWidget.REC_NAME;
 import static com.onval.capstone.fragment.RecordingsFragment.NO_SELECTED_REC;
+import static com.onval.capstone.service.PlayerService.START_SERVICE_ACTION;
 
 public class RecordingsActivity extends AppCompatActivity
         implements RecordingsAdapter.RecordingListener {
@@ -66,7 +70,6 @@ public class RecordingsActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             playerService = ((PlayerService.PlayerBinder) binder).getService();
-            SimpleExoPlayer player = playerService.getPlayer();
             if (!playerService.isPlaying())
                 startMediaPlayer();
             else {
@@ -145,13 +148,15 @@ public class RecordingsActivity extends AppCompatActivity
         String catColor = categoryColor.getValue();
 
         Intent intent = new Intent(this, PlayerService.class);
+        intent.setAction(START_SERVICE_ACTION);
+
         intent.putExtra(CATEGORY_ID, categoryId);
         intent.putExtra(CATEGORY_NAME, categoryName);
 
         intent.putExtra(SELECTED_REC, selectedRec);
-        intent.putExtra("rec-name", recName);
-        intent.putExtra("rec-duration", recDuration);
-        intent.putExtra("cat-color", catColor);
+        intent.putExtra(REC_NAME, recName);
+        intent.putExtra(REC_DURATION, recDuration);
+        intent.putExtra(CATEGORY_COLOR, catColor);
 
         if (playerService == null) {
             startService(intent);
