@@ -158,8 +158,9 @@ public class RecordingsActivity extends AppCompatActivity
         intent.putExtra(REC_DURATION, recDuration);
         intent.putExtra(CATEGORY_COLOR, catColor);
 
+        startService(intent);
+
         if (playerService == null) {
-            startService(intent);
             bindService(intent, serviceConnection, BIND_AUTO_CREATE);
         } else {
             startMediaPlayer();

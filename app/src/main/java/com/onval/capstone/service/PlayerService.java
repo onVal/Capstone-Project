@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -16,8 +17,10 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -53,6 +56,7 @@ public class PlayerService extends Service {
     private static final int NOTIFICATION_ID = 2;
     private static final String NOTIFICATION_CHANNEL_ID = "channel-2";
 
+    private int categoryId;
     private String categoryName;
     private String categoryColor;
     private String recName;
@@ -79,19 +83,19 @@ public class PlayerService extends Service {
     }
 
     private void startService(Bundle extras) {
+        updateServiceState(
+                extras.getInt(CATEGORY_ID),
+                extras.getInt(SELECTED_REC),
+                extras.getString(CATEGORY_NAME),
+                extras.getString(CATEGORY_COLOR),
+                extras.getString(REC_NAME),
+                extras.getString(REC_DURATION));
+
+
         if (!isRunning) {
-            int categoryId = extras.getInt(CATEGORY_ID);
-            selectedRec = extras.getInt(SELECTED_REC);
-
-            categoryName = extras.getString(CATEGORY_NAME);
-            categoryColor = extras.getString(CATEGORY_COLOR);
-            recName = extras.getString(REC_NAME);
-            recDuration = extras.getString(REC_DURATION);
-
             initializePlayer();
             initializeNotification(categoryId, categoryName);
             isRunning = true;
-            notifyWidget();
         }
     }
 
@@ -111,6 +115,17 @@ public class PlayerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return new PlayerBinder();
+    }
+
+    public void updateServiceState(int catId, int selRec, String catName, String catColor,
+                                   String recName, String recDuration) {
+        categoryId = catId;
+        selectedRec = selRec;
+
+        categoryName = catName;
+        categoryColor = catColor;
+        this.recName = recName;
+        this.recDuration = recDuration;
     }
 
     private void initializeNotification(int categoryId, String categoryName) {
@@ -142,8 +157,22 @@ public class PlayerService extends Service {
     }
 
     private void initializePlayer() {
-        if (player == null)
+        if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+
+            player.addListener(new Player.DefaultEventListener() {
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        player.setPlayWhenReady(false);
+                        player.seekTo(0);
+                    }
+
+                    isPlaying = playWhenReady;
+                    notifyWidget();
+                }
+            });
+        }
     }
 
     public void setUri(Uri uri) {
@@ -160,15 +189,11 @@ public class PlayerService extends Service {
 
     public void play() {
         player.setPlayWhenReady(true);
-        isPlaying = true;
         startForeground(NOTIFICATION_ID, foregroundNotification);
-        notifyWidget();
     }
 
     public void pause() {
         player.setPlayWhenReady(false);
-        isPlaying = false;
-        notifyWidget();
     }
 
     public boolean isPlaying() {
