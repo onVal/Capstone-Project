@@ -177,9 +177,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                     selectToPlay(true);
             }
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            itemView.setOnClickListener((v) -> {
                     if (multiselect) {
                         if (selectedPositions.contains(position)) {
                             selectedPositions.remove(selectedPositions.indexOf(position));
@@ -199,8 +197,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                             listener.onRecordingClicked(recUri, currentlySelected, recording);
                         }
                     }
-                }
-            });
+                });
 
             itemView.setOnLongClickListener(v -> {
                 ((AppCompatActivity) v.getContext()).startSupportActionMode(actionModeCallback);
