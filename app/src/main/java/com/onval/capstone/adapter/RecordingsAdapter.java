@@ -182,7 +182,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                 public void onClick(View v) {
                     if (multiselect) {
                         if (selectedPositions.contains(position)) {
-                            selectedPositions.remove(position);
+                            selectedPositions.remove(selectedPositions.indexOf(position));
                             selectToDelete(false);
                         }
                         else {
