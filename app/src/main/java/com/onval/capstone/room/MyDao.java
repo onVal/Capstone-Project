@@ -19,6 +19,9 @@ public interface MyDao {
     @Query ("SELECT COUNT(*) FROM record AS R WHERE R.category_id = :categoryId")
     LiveData<Integer> numberOfRecordingsInCategory(int categoryId);
 
+    @Query("SELECT color FROM category WHERE id = :categoryId")
+    LiveData<String> getCategoryColor(int categoryId);
+
     @Insert(onConflict =  OnConflictStrategy.IGNORE)
     long insertCategory(Category category);
 
@@ -35,5 +38,5 @@ public interface MyDao {
     void deleteCategories(Category... categories);
 
     @Delete
-    void deleteRecordings(List<Record> recordings);
+    void deleteRecordings(Record... recordings);
 }

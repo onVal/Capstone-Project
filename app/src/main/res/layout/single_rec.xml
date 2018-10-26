@@ -18,7 +18,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_cloud_upload_off" />
+        tools:src="@drawable/ic_cloud_upload_off"
+        android:foregroundTint="@color/colorAccent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

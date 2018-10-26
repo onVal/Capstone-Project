@@ -11,6 +11,7 @@ import com.onval.capstone.room.AppDatabase;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.MyDao;
 import com.onval.capstone.room.Record;
+import com.onval.capstone.utility.Utility;
 
 import org.junit.After;
 import org.junit.Before;
@@ -147,5 +148,27 @@ public class DatabaseTest {
         assertEquals (1, liveCategories.getValue().size());
         mydao.deleteCategories(categories.get(1));
         assertEquals (0, liveCategories.getValue().size());
+    }
+
+    @Test
+    public void testDeleteRecordings() {
+        Category math = new Category("math", "green", false);
+        Category prog = new Category("prog", "blue", false);
+        mydao.insertCategories(math, prog);
+
+        Record rec1 = new Record("lesson math 1", 1);
+        Record rec2 = new Record("lesson prog 1", 2);
+        Record rec3 = new Record("lesson math 2", 1);
+        Record rec4 = new Record("lesson math 3", 1);
+        mydao.insertRecordings(rec1, rec2, rec3, rec4);
+
+        LiveData<List<Record>> liveRecordings = mydao.loadRecordingsFromCategory(1);
+        liveRecordings.observeForever(recObs);
+
+        List<Record> recordings = liveRecordings.getValue();
+        assertEquals(3, recordings.size());
+
+        mydao.deleteRecordings(recordings.get(0), recordings.get(1), recordings.get(2));
+        assertEquals(0, liveRecordings.getValue().size());
     }
 }

@@ -5,7 +5,6 @@
     <color name="colorAccent">#d2124c</color>
     <color name="colorSubtext">#666</color>
 
-
     <string-array name="category_colors">
         <item>#ff1744</item>
         <item>#ffa000</item>

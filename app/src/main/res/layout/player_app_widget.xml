@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="#aa000000"
+    android:padding="@dimen/widget_margin">
+
+    <FrameLayout
+        android:id="@+id/cat_color"
+        android:layout_width="@dimen/color_label"
+        android:layout_height="match_parent"
+        android:background="#777"
+        />
+
+    <ImageView
+        android:id="@+id/play_pause"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_play_white_24dp"
+        />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_weight="18"
+        >
+
+        <TextView
+            android:id="@+id/playing_rec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            tools:text="Design Pattern"
+            />
+
+        <TextView
+            android:id="@+id/from_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#aaa"
+            tools:text="from Software Engineering"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/rec_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp"
+        android:layout_marginEnd="8dp"
+        android:textColor="#fff"
+        android:layout_gravity="center|end"
+        tools:text="00:23:18"
+        />
+
+</LinearLayout>

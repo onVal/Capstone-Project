@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.onval.capstone.R;
+import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.adapter.RecordingsAdapter;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
@@ -25,12 +26,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
+import static com.onval.capstone.activities.RecordingsActivity.SELECTED_REC;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordingsFragment extends Fragment {
+public class RecordingsFragment extends Fragment
+        implements RecordingsActivity.AdapterListener {
     private RecordingsAdapter adapter;
     private CategoriesViewModel viewModel;
+
+    public static final int NO_SELECTED_REC = -1;
 
     @BindView(R.id.recordings_rv) RecyclerView recordingsRv;
 
@@ -50,10 +57,17 @@ public class RecordingsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_recordings, container, false);
         ButterKnife.bind(this, view);
 
-        recordingsRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new RecordingsAdapter(getContext());
+        int categoryId = getActivity().getIntent().getExtras().getInt(CATEGORY_ID);
+        int selectedRec = getActivity().getIntent().getExtras().getInt(SELECTED_REC, NO_SELECTED_REC);
 
-        int categoryId = getActivity().getIntent().getExtras().getInt("CATEGORY_ID");
+        recordingsRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new RecordingsAdapter(getContext(), selectedRec, viewModel);
+
+        CategoriesViewModel viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        LiveData<String> categoryColor = viewModel.getCategoryColor(categoryId);
+        categoryColor.observe(this, (color) -> {
+            adapter.setColor(color);
+        });
 
         recordingsRv.setAdapter(adapter);
 
@@ -61,5 +75,10 @@ public class RecordingsFragment extends Fragment {
         liveRecordings.observe(this, (records -> adapter.setRecordings(records)));
 
         return view;
+    }
+
+    @Override
+    public void setSelected(int position) {
+        adapter.setSelected(position);
     }
 }
