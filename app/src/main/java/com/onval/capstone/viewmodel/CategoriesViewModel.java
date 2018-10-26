@@ -13,6 +13,8 @@ import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.Utility;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 public class CategoriesViewModel extends AndroidViewModel {
@@ -23,12 +25,16 @@ public class CategoriesViewModel extends AndroidViewModel {
     private final Observer<List<Record>> deleteRecordObs = new Observer<List<Record>>() {
         @Override
         public void onChanged(@Nullable List<Record> recordings) {
-            if (recordings != null && recordings.size() != 0) {
-                for (Record rec : recordings)
-                    Utility.deleteRecordingFromFilesystem(application, rec);
-            }
+            deleteRecordingsFiles(recordings);
         }
     };
+
+    private void deleteRecordingsFiles(List<Record> recordings) {
+        if (recordings != null && recordings.size() != 0) {
+            for (Record rec : recordings)
+                Utility.deleteRecordingFromFilesystem(application, rec);
+        }
+    }
 
     public CategoriesViewModel(Application application) {
         super(application);
@@ -67,6 +73,11 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public LiveData<String> getCategoryColor(int categoryId) {
         return repository.getCategoryColor(categoryId);
+    }
+
+    public void deleteRecordings(Record... recordings) {
+        deleteRecordingsFiles(Arrays.asList(recordings));
+        repository.deleteRecordings(recordings);
     }
 
     public void setOnSaveCallback(OnSaveCallback callback) {

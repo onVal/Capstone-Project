@@ -61,7 +61,7 @@ public class RecordingsFragment extends Fragment
         int selectedRec = getActivity().getIntent().getExtras().getInt(SELECTED_REC, NO_SELECTED_REC);
 
         recordingsRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new RecordingsAdapter(getContext(), selectedRec);
+        adapter = new RecordingsAdapter(getContext(), selectedRec, viewModel);
 
         CategoriesViewModel viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         LiveData<String> categoryColor = viewModel.getCategoryColor(categoryId);
