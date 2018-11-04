@@ -51,7 +51,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add("Delete");
+            mode.getMenuInflater().inflate(R.menu.menu_action, menu);
             multiselect = true;
             return true;
         }
@@ -73,8 +73,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             rArray = selectedRecList.toArray(new Record[selectedRecList.size()]);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
-            String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
-                    "inside the selected category.";
+            String msg = "CAUTION: You will lose PERMANENTLY all selected recordings.";
 
             builder.setTitle("Delete Categories")
                     .setMessage(msg)

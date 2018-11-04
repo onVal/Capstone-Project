@@ -22,6 +22,9 @@ public interface MyDao {
     @Query("SELECT color FROM category WHERE id = :categoryId")
     LiveData<String> getCategoryColor(int categoryId);
 
+    @Update
+    void updateCategories(Category... categories);
+
     @Insert(onConflict =  OnConflictStrategy.IGNORE)
     long insertCategory(Category category);
 

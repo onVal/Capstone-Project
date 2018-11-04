@@ -58,6 +58,10 @@ public class CategoriesViewModel extends AndroidViewModel {
         repository.insertRecording(recording);
     }
 
+    public void updateCategories(Category... categories) {
+        repository.updateCategories(categories);
+    }
+
     public void deleteCategories(Category... categories) {
         deleteRecFilesOfCategories(categories);
         repository.deleteCategories(categories);

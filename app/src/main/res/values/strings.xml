@@ -46,5 +46,6 @@
     <string name="account_msg">You can now upload your recordings\n in your Google Drive account</string>
     <string name="logout_btn_txt">Sign out</string>
     <string name="sign_in_message">Sign in to upload your recordings to Google Drive</string>
+    <string name="delete_cat_title">Delete</string>
 
 </resources>

@@ -62,6 +62,10 @@ public class MyRepository {
         new RecordingsInsertAsyncTask(onSaveCallback).execute(recs);
     }
 
+    public void updateCategories(Category... categories) {
+        new UpdateCategoriesAsyncTask().execute(categories);
+    }
+
     public void deleteRecordings(final Record... recs) {
         new RecordingsDeleteAsyncTask().execute(recs);
     }
@@ -121,6 +125,14 @@ public class MyRepository {
         @Override
         protected Void doInBackground(Record... records) {
             dao.deleteRecordings(records);
+            return null;
+        }
+    }
+
+    private class UpdateCategoriesAsyncTask extends AsyncTask<Category, Void, Void> {
+        @Override
+        protected Void doInBackground(Category... categories) {
+            dao.updateCategories(categories);
             return null;
         }
     }

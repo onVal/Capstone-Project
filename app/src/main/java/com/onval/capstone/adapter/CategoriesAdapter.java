@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -50,7 +51,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add("Delete");
+            mode.getMenuInflater().inflate(R.menu.menu_action, menu);
             multiselect = true;
             return true;
         }
@@ -192,6 +193,28 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     intent.putExtra(CATEGORY_NAME, category.getName());
 
                     context.startActivity(intent);
+                }
+            });
+
+            autouploadIcon.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+                    String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
+                                                                : "Turn on auto uploading for this category?";
+
+                    builder.setTitle("Google Drive Sync")
+                            .setMessage(msg)
+                            .setPositiveButton(android.R.string.yes, (d, w) -> {
+                                category.setAutoUploading(!category.isAutoUploading());
+                                viewModel.updateCategories(category);
+                            })
+                            .setNegativeButton(android.R.string.no, null);
+
+                    Dialog dialog = builder.create();
+                    dialog.show();
+
+                    return true;
                 }
             });
         }

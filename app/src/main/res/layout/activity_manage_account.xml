@@ -62,22 +62,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_email" />
 
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+
+        <!--android:layout_marginStart="16dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:textColor="#000"-->
+        <!--android:textSize="16sp"-->
+        <!--android:textStyle="bold"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/login_btn"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--tools:text="Synced categories"-->
+        <!--/>-->
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/synced_categories"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/logout_btn"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/account_txt"-->
+        <!--/>-->
 
     <Button
         android:id="@+id/logout_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
 
-        android:text="@string/logout_btn_txt"
         android:background="#222"
+        android:text="@string/logout_btn_txt"
         android:textColor="#fff"
         android:visibility="invisible"
-        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
+        tools:visibility="visible" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/login_btn"

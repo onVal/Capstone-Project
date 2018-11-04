@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
         android:key="pref_account"
-        android:title="Manage Google Account">
+        android:title="Google Account">
         <intent
             android:targetPackage="com.onval.capstone"
             android:targetClass="com.onval.capstone.activities.ManageAccountActivity" />
