@@ -81,6 +81,7 @@ public class RecordingService extends Service {
                                     getString(R.string.normal_quality));
         int bitrate = Integer.parseInt(bitrateString);
 
+        //todo there is a bug here
         fileName = getExternalCacheDir().getAbsolutePath();
         fileName += DEFAULT_REC_NAME;
 
