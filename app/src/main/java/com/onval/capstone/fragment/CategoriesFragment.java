@@ -53,7 +53,6 @@ public class CategoriesFragment extends Fragment {
         setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
-        LiveData<List<Category>> liveCategories = viewModel.getCategories();
 
         context = getContext();
         prefs = getActivity().getSharedPreferences(getString(R.string.prefs), MODE_PRIVATE);
@@ -65,10 +64,10 @@ public class CategoriesFragment extends Fragment {
 
         categories.setAdapter(adapter);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         categories.setLayoutManager(layoutManager);
 
-        liveCategories.observe(this,
+        viewModel.getCategories().observe(this,
                 cats -> {
                     adapter.setCategories(cats != null ? cats : Collections.EMPTY_LIST);
                     if (sortByName) adapter.sortCategoriesByName();
@@ -77,6 +76,12 @@ public class CategoriesFragment extends Fragment {
         );
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

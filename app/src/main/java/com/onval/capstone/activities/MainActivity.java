@@ -33,7 +33,6 @@ import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_C
 public class MainActivity extends AppCompatActivity implements Observer<Integer> {
     private CategoriesViewModel viewModel;
     private FragmentManager fm;
-    private LiveData<Integer> liveNumCategories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         if (savedInstanceState == null) {
             viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-            liveNumCategories = viewModel.getNumOfCategories();
-            liveNumCategories.observe(this, this);
+            viewModel.getNumOfCategories()
+                    .observe(this, this);
         }
     }
 

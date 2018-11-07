@@ -1,7 +1,9 @@
 package com.onval.capstone.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,9 +25,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import java.util.ArrayList;
@@ -159,16 +165,20 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());
 
-            LiveData<Integer> recordings = viewModel.getRecNumberInCategory(category.getId());
-            recordings.observeForever((Integer r)->{
-                    String subtext = r + ((r == 1) ? " recording" : " recordings");
-                    categorySubtext.setText(subtext);
-            });
+            viewModel.getRecNumberInCategory(category.getId())
+                    .observeForever((Integer num) -> {
+                        String subtext = num + ((num == 1) ? " recording" : " recordings");
+                        categorySubtext.setText(subtext);
+                    });
 
-            if (category.isAutoUploading()) // todo: i need to check if g.drive is enabled as well
-                autouploadIcon.setImageDrawable(cloudAutouploadingIconOn);
-            else
-                autouploadIcon.setImageDrawable(cloudAutouploadingIconOff);
+//            GoogleSignInAccount
+            if (Utility.isSignedIn(context)) {
+                autouploadIcon.setImageDrawable(
+                        (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff
+                );
+            } else {
+                autouploadIcon.setImageDrawable(null);
+            }
 
             // This is to prevent incorrect item selection when RecyclerView does its thing
             if (selectedPositions.contains(position)) {
@@ -196,26 +206,23 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 }
             });
 
-            autouploadIcon.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
-                    String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
-                                                                : "Turn on auto uploading for this category?";
+            autouploadIcon.setOnLongClickListener(view -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+                String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
+                                                            : "Turn on auto uploading for this category?";
 
-                    builder.setTitle("Google Drive Sync")
-                            .setMessage(msg)
-                            .setPositiveButton(android.R.string.yes, (d, w) -> {
-                                category.setAutoUploading(!category.isAutoUploading());
-                                viewModel.updateCategories(category);
-                            })
-                            .setNegativeButton(android.R.string.no, null);
+                builder.setTitle("Google Drive Sync")
+                        .setMessage(msg)
+                        .setPositiveButton(android.R.string.yes, (d, w) -> {
+                            category.setAutoUploading(!category.isAutoUploading());
+                            viewModel.updateCategories(category);
+                        })
+                        .setNegativeButton(android.R.string.no, null);
 
-                    Dialog dialog = builder.create();
-                    dialog.show();
+                Dialog dialog = builder.create();
+                dialog.show();
 
-                    return true;
-                }
+                return true;
             });
         }
 

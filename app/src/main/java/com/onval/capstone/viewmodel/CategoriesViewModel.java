@@ -3,9 +3,12 @@ package com.onval.capstone.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.onval.capstone.repository.MyRepository;
 import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
 import com.onval.capstone.room.Category;
@@ -22,12 +25,8 @@ public class CategoriesViewModel extends AndroidViewModel {
     private LiveData<List<Category>> categories;
     private MyRepository repository;
 
-    private final Observer<List<Record>> deleteRecordObs = new Observer<List<Record>>() {
-        @Override
-        public void onChanged(@Nullable List<Record> recordings) {
-            deleteRecordingsFiles(recordings);
-        }
-    };
+    private final Observer<List<Record>> deleteRecordObs =
+            recordings -> deleteRecordingsFiles(recordings);
 
     private void deleteRecordingsFiles(List<Record> recordings) {
         if (recordings != null && recordings.size() != 0) {

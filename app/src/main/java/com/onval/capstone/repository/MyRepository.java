@@ -135,5 +135,10 @@ public class MyRepository {
             dao.updateCategories(categories);
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
     }
 }
