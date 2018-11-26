@@ -1,12 +1,8 @@
 package com.onval.capstone.adapter;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -25,9 +21,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
@@ -206,6 +199,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 }
             });
 
+
+
             autouploadIcon.setOnLongClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
@@ -216,6 +211,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
                             category.setAutoUploading(!category.isAutoUploading());
                             viewModel.updateCategories(category);
+                            viewModel.uploadRecordings(category.getId());
                         })
                         .setNegativeButton(android.R.string.no, null);
 

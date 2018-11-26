@@ -3,6 +3,7 @@ package com.onval.capstone.repository;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.onval.capstone.R;
@@ -11,10 +12,7 @@ import com.onval.capstone.room.Category;
 import com.onval.capstone.room.MyDao;
 import com.onval.capstone.room.Record;
 
-import java.io.File;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.*;
 
