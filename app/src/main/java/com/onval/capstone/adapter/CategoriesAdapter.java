@@ -199,8 +199,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 }
             });
 
-
-
             autouploadIcon.setOnLongClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
@@ -209,9 +207,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 builder.setTitle("Google Drive Sync")
                         .setMessage(msg)
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
-                            category.setAutoUploading(!category.isAutoUploading());
+                            boolean autoupload = !category.isAutoUploading();
+                            category.setAutoUploading(autoupload);
                             viewModel.updateCategories(category);
-                            viewModel.uploadRecordings(category.getId());
+
+                            if (autoupload)
+                                viewModel.uploadRecordings(category.getId());
                         })
                         .setNegativeButton(android.R.string.no, null);
 

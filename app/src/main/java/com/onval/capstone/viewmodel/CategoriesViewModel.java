@@ -5,6 +5,8 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -73,11 +75,19 @@ public class CategoriesViewModel extends AndroidViewModel {
         if (Utility.isSignedIn(application)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(application);
 
+            Log.d("run", "outside: " + Thread.currentThread().getName());
             LiveData<List<Record>> recordings = getRecordingsFromCategory(categoryId);
             recordings.observeForever(records -> {
-                for (Record rec : records) {
-                    uploadRecordingToDrive(rec, account);
-                }
+
+                HandlerThread handlerThread = new HandlerThread("HandlerThread");
+                handlerThread.start();
+
+                new Handler(handlerThread.getLooper()).post(() -> {
+                    Log.d("run", "inside: " + Thread.currentThread().getName());
+                    for (Record rec : records) {
+                        uploadRecordingToDrive(rec, account);
+                    }
+                });
             });
         }
     }
@@ -117,6 +127,7 @@ public class CategoriesViewModel extends AndroidViewModel {
         }
     }
 
+    //don't run this on the main thread
     private void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
         Uri uri = Utility.createUriFromRecording(application, recording);
         File recordingFile = new File(uri.toString());
