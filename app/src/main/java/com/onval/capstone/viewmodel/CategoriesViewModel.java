@@ -5,8 +5,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -29,6 +27,9 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class CategoriesViewModel extends AndroidViewModel {
     private Application application;
@@ -78,16 +79,9 @@ public class CategoriesViewModel extends AndroidViewModel {
             Log.d("run", "outside: " + Thread.currentThread().getName());
             LiveData<List<Record>> recordings = getRecordingsFromCategory(categoryId);
             recordings.observeForever(records -> {
-
-                HandlerThread handlerThread = new HandlerThread("HandlerThread");
-                handlerThread.start();
-
-                new Handler(handlerThread.getLooper()).post(() -> {
-                    Log.d("run", "inside: " + Thread.currentThread().getName());
-                    for (Record rec : records) {
-                        uploadRecordingToDrive(rec, account);
-                    }
-                });
+                for (Record rec : records) {
+                    uploadRecordingToDrive(rec, account);
+                }
             });
         }
     }
@@ -127,17 +121,25 @@ public class CategoriesViewModel extends AndroidViewModel {
         }
     }
 
-    //don't run this on the main thread
     private void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
         Uri uri = Utility.createUriFromRecording(application, recording);
         File recordingFile = new File(uri.toString());
+
+        Log.d("derp", "outside task" + Thread.currentThread().getName());
+
+        // this executor prevents code from being run in the main thread
+        int numCores = Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores *2,
+                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
         DriveResourceClient resourceClient =  Drive.getDriveResourceClient(application, account);
 
         final Task<DriveFolder> rootFolderTask = resourceClient.getRootFolder();
         final Task<DriveContents> createContentsTask = resourceClient.createContents();
         Tasks.whenAll(rootFolderTask, createContentsTask)
-                .continueWithTask(task -> {
+                .continueWithTask(executor, task -> {
+                    Log.d("derp", "inside task" + Thread.currentThread().getName());
+
                     DriveFolder parent = rootFolderTask.getResult();
                     DriveContents contents = createContentsTask.getResult();
 
