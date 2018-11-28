@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
@@ -143,6 +144,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         @BindView(R.id.category_name) TextView categoryName;
         @BindView(R.id.category_subtext) TextView categorySubtext;
         @BindView(R.id.autoupload_icon) ImageView autouploadIcon;
+        @BindView(R.id.upload_progress) ProgressBar progressBar;
 
         final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
         final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
@@ -199,6 +201,26 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 }
             });
 
+            viewModel.getRecordingState().observeForever(recStates -> {
+                boolean isRecording = recStates.get(category.getId());
+                if (isRecording) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    autouploadIcon.setVisibility(View.INVISIBLE);
+                } else {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    autouploadIcon.setVisibility(View.VISIBLE);
+
+//                    if (Utility.isSignedIn(context)) {
+//                        autouploadIcon.setImageDrawable(
+//                                (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff
+//                        );
+//                    } else {
+//                        autouploadIcon.setImageDrawable(null);
+//                    }
+                }
+
+            });
+
             autouploadIcon.setOnLongClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
@@ -208,11 +230,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                         .setMessage(msg)
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
                             boolean autoupload = !category.isAutoUploading();
+
+                            if (autoupload) {
+//                                progressBar.setVisibility(View.VISIBLE);
+//                                autouploadIcon.setVisibility(View.INVISIBLE);
+                                viewModel.uploadRecordings(category.getId());
+                            }
+
+
                             category.setAutoUploading(autoupload);
                             viewModel.updateCategories(category);
 
-                            if (autoupload)
-                                viewModel.uploadRecordings(category.getId());
+
                         })
                         .setNegativeButton(android.R.string.no, null);
 

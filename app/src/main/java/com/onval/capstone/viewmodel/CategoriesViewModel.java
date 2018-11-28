@@ -3,9 +3,11 @@ package com.onval.capstone.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.net.Uri;
-import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -33,8 +35,12 @@ import java.util.concurrent.TimeUnit;
 
 public class CategoriesViewModel extends AndroidViewModel {
     private Application application;
-    private LiveData<List<Category>> categories;
     private MyRepository repository;
+
+    /*A SparseBooleanArray is just a HashMap <Integer, Boolean>
+     *to store <categoryId, isRecording> */
+    private MutableLiveData<SparseBooleanArray> recordingState;
+    private SparseBooleanArray states;
 
     private final Observer<List<Record>> deleteRecordObs =
             recordings -> deleteRecordingsFiles(recordings);
@@ -50,6 +56,9 @@ public class CategoriesViewModel extends AndroidViewModel {
         super(application);
         this.application = application;
         repository = new MyRepository(application, null);
+        states = new SparseBooleanArray();
+        recordingState = new MutableLiveData<>();
+        recordingState.setValue(states);
     }
 
     public LiveData<List<Category>> getCategories() {
@@ -72,15 +81,23 @@ public class CategoriesViewModel extends AndroidViewModel {
         repository.updateCategories(categories);
     }
 
+    public LiveData<SparseBooleanArray> getRecordingState() {
+        return recordingState;
+    }
+
     public void uploadRecordings(int categoryId) {
         if (Utility.isSignedIn(application)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(application);
 
-            Log.d("run", "outside: " + Thread.currentThread().getName());
             LiveData<List<Record>> recordings = getRecordingsFromCategory(categoryId);
+
+            states = recordingState.getValue();
+            states.append(categoryId, true);
+            recordingState.setValue(states);
+
             recordings.observeForever(records -> {
                 for (Record rec : records) {
-                    uploadRecordingToDrive(rec, account);
+                    uploadRecordingToDrive(rec, account, categoryId);
                 }
             });
         }
@@ -121,16 +138,14 @@ public class CategoriesViewModel extends AndroidViewModel {
         }
     }
 
-    private void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
+    private void uploadRecordingToDrive(Record recording, GoogleSignInAccount account, int categoryId) {
         Uri uri = Utility.createUriFromRecording(application, recording);
         File recordingFile = new File(uri.toString());
-
-        Log.d("derp", "outside task" + Thread.currentThread().getName());
 
         // this executor prevents code from being run in the main thread
         int numCores = Runtime.getRuntime().availableProcessors();
         ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores *2,
-                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
         DriveResourceClient resourceClient =  Drive.getDriveResourceClient(application, account);
 
@@ -138,8 +153,6 @@ public class CategoriesViewModel extends AndroidViewModel {
         final Task<DriveContents> createContentsTask = resourceClient.createContents();
         Tasks.whenAll(rootFolderTask, createContentsTask)
                 .continueWithTask(executor, task -> {
-                    Log.d("derp", "inside task" + Thread.currentThread().getName());
-
                     DriveFolder parent = rootFolderTask.getResult();
                     DriveContents contents = createContentsTask.getResult();
 
@@ -161,10 +174,17 @@ public class CategoriesViewModel extends AndroidViewModel {
                 })
                 .addOnSuccessListener(
                         driveFile -> {
-                            Log.e("derp", "File created successfully");
+                            Toast.makeText(application, "Recording uploaded.", Toast.LENGTH_SHORT).show();
+                            states = recordingState.getValue();
+                            states.append(categoryId, false);
+                            recordingState.setValue(states);
+
                         })
                 .addOnFailureListener(e -> {
-                    Log.e("derp", "Unable to create file", e);
+                    Toast.makeText(application, "Unable to create file in google Drive.", Toast.LENGTH_SHORT).show();
+                    states = recordingState.getValue();
+                    states.append(categoryId, false);
+                    recordingState.setValue(states);
                 });
     }
 }
