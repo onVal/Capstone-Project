@@ -4,15 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +19,7 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
@@ -32,6 +27,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -121,10 +122,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
-
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getString(R.string.prefs), Context.MODE_PRIVATE);
-
         notifyDataSetChanged();
     }
 
@@ -166,11 +163,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                         categorySubtext.setText(subtext);
                     });
 
+            viewModel.getUploadingRecordings().observeForever(recordList -> {
+                if (recordList != null) {
+                    boolean categoryIsUploading = isCategoryIdInRecList(category.getId(), recordList);
+                    Log.d("debug", "cat name: " + category.getName() + " - categoryIsUploading: " + categoryIsUploading + " - num rec: " + recordList.size());
+                    showProgressBar(categoryIsUploading);
+                }
+            });
+
 //            GoogleSignInAccount
             if (Utility.isSignedIn(context)) {
                 autouploadIcon.setImageDrawable(
-                        (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff
-                );
+                        (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff);
             } else {
                 autouploadIcon.setImageDrawable(null);
             }
@@ -201,26 +205,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 }
             });
 
-            viewModel.getRecordingState().observeForever(recStates -> {
-                boolean isRecording = recStates.get(category.getId());
-                if (isRecording) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    autouploadIcon.setVisibility(View.INVISIBLE);
-                } else {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    autouploadIcon.setVisibility(View.VISIBLE);
-
-//                    if (Utility.isSignedIn(context)) {
-//                        autouploadIcon.setImageDrawable(
-//                                (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff
-//                        );
-//                    } else {
-//                        autouploadIcon.setImageDrawable(null);
-//                    }
-                }
-
-            });
-
             autouploadIcon.setOnLongClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
@@ -231,16 +215,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
                             boolean autoupload = !category.isAutoUploading();
 
-                            if (autoupload) {
-//                                progressBar.setVisibility(View.VISIBLE);
-//                                autouploadIcon.setVisibility(View.INVISIBLE);
+                            if (autoupload)
                                 viewModel.uploadRecordings(category.getId());
-                            }
-
 
                             category.setAutoUploading(autoupload);
                             viewModel.updateCategories(category);
-
 
                         })
                         .setNegativeButton(android.R.string.no, null);
@@ -260,6 +239,20 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 selectedPositions.add(position);
                 layout.setBackgroundColor(Color.LTGRAY);
             }
+        }
+
+        private void showProgressBar(boolean show) {
+            progressBar.setVisibility((show) ? View.VISIBLE : View.INVISIBLE);
+            autouploadIcon.setVisibility((show) ? View.INVISIBLE : View.VISIBLE);
+        }
+
+        private boolean isCategoryIdInRecList(int categoryId, List<Record> recordingList) {
+            for (Record r : recordingList) {
+                if (categoryId == r.getCategoryId())
+                    return true;
+            }
+
+            return false;
         }
     }
 }

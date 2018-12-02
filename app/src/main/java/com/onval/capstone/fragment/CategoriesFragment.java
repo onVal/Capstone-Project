@@ -1,15 +1,9 @@
 package com.onval.capstone.fragment;
 
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,14 +11,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.onval.capstone.adapter.CategoriesAdapter;
-import com.onval.capstone.room.Category;
-import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.R;
+import com.onval.capstone.adapter.CategoriesAdapter;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import java.util.Collections;
-import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

@@ -14,7 +14,7 @@
     android:background="@drawable/bg_pattern"
     tools:context=".activities.MainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         />
 </LinearLayout>
 
-<android.support.design.widget.FloatingActionButton
+<com.google.android.material.floatingactionbutton.FloatingActionButton
 android:id="@+id/main_fab"
 android:layout_width="@dimen/fab_size"
 android:layout_height="@dimen/fab_size"
