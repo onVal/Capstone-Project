@@ -1,9 +1,9 @@
 package com.onval.capstone.repository;
 
 import android.app.Application;
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
-import androidx.annotation.Nullable;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.widget.Toast;
 
 import com.onval.capstone.R;
@@ -14,7 +14,10 @@ import com.onval.capstone.room.Record;
 
 import java.util.List;
 
-import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.*;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+
+import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
 
 public class MyRepository {
     private MyDao dao;
@@ -53,7 +56,7 @@ public class MyRepository {
     }
 
     public void deleteCategories(final Category... categories) {
-        new CategoriesDeleteAsyncTask().execute(categories);
+        runInBackground(() -> dao.deleteCategories(categories));
     }
 
     public void insertRecording(final Record recs) {
@@ -61,11 +64,18 @@ public class MyRepository {
     }
 
     public void updateCategories(Category... categories) {
-        new UpdateCategoriesAsyncTask().execute(categories);
+        runInBackground(()->dao.updateCategories(categories));
+
     }
 
     public void deleteRecordings(final Record... recs) {
-        new RecordingsDeleteAsyncTask().execute(recs);
+        runInBackground(()->dao.deleteRecordings(recs));
+    }
+
+    private void runInBackground(Runnable runnable) {
+        HandlerThread handlerThread = new HandlerThread("Background-thread");
+        handlerThread.start();
+        new Handler(handlerThread.getLooper()).post(runnable);
     }
 
     private class CategoriesInsertAsyncTask extends AsyncTask<Category, Void, Long> {
@@ -82,14 +92,6 @@ public class MyRepository {
                 Toast.makeText(app.getApplicationContext(),
                         R.string.cant_insert,
                         Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private class CategoriesDeleteAsyncTask extends AsyncTask<Category, Void, Void> {
-        @Override
-        protected Void doInBackground(Category... categories) {
-            dao.deleteCategories(categories);
-            return null;
         }
     }
 
@@ -116,27 +118,6 @@ public class MyRepository {
                         Toast.LENGTH_SHORT).show();
             else
                 callback.onSaveRecording(rowId, recName);
-        }
-    }
-
-    private class RecordingsDeleteAsyncTask extends AsyncTask<Record, Void, Void> {
-        @Override
-        protected Void doInBackground(Record... records) {
-            dao.deleteRecordings(records);
-            return null;
-        }
-    }
-
-    private class UpdateCategoriesAsyncTask extends AsyncTask<Category, Void, Void> {
-        @Override
-        protected Void doInBackground(Category... categories) {
-            dao.updateCategories(categories);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
         }
     }
 }

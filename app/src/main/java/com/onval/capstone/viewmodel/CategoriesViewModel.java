@@ -40,9 +40,6 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     private Model model;
 
-    private List<Record> recs;
-//    private MutableLiveData<List<Record>> recsBeingUploaded;
-
     private final Observer<List<Record>> deleteRecordObs =
             recordings -> deleteRecordingsFiles(recordings);
 
@@ -58,9 +55,6 @@ public class CategoriesViewModel extends AndroidViewModel {
         this.application = application;
         repository = new MyRepository(application, null);
         model = Model.newInstance();
-//        if (recsBeingUploaded == null) {
-//            recsBeingUploaded = new MutableLiveData<>();
-//        }
     }
 
     public LiveData<List<Category>> getCategories() {
@@ -86,24 +80,6 @@ public class CategoriesViewModel extends AndroidViewModel {
     public LiveData<List<Record>> getUploadingRecordings() {
         return model.getRecordsBeingUploaded();
     }
-
-//    private void setUploadingRecs() {
-//        if (recsBeingUploaded == null || recsBeingUploaded.getValue() == null)
-//            recs = new ArrayList<>();
-//        else
-//            recs = recsBeingUploaded.getValue();
-//    }
-
-//    public LiveData<List<Record>> getUploadingRecordings() {
-//        List<Record> recs = model.getRecordsBeingUploaded();
-//        recsBeingUploaded.setValue(recs);
-//        return recsBeingUploaded;
-////        if (recsBeingUploaded.getValue() == null) {
-////            setUploadingRecs();
-////            recsBeingUploaded.setValue(recs);
-////        }
-////        return recsBeingUploaded;
-//    }
 
     public void uploadRecordings(int categoryId) {
         if (Utility.isSignedIn(application)) {
@@ -200,11 +176,5 @@ public class CategoriesViewModel extends AndroidViewModel {
                     Toast.makeText(application, "Unable to create file in google Drive.", Toast.LENGTH_SHORT).show();
                     model.removeRecording(recording);
                 });
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        Log.d("debug", "onCleared is being executed!");
     }
 }
