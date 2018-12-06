@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
@@ -117,12 +118,15 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
     public class RecordingVH extends RecyclerView.ViewHolder {
         @BindView(R.id.cloud_icon) ImageView cloud_icon;
+        @BindView(R.id.upload_progress_rec) ProgressBar progressBar;
         @BindView(R.id.recording_name) TextView name;
         @BindView(R.id.recording_time) TextView time;
         @BindView(R.id.recording_duration) TextView duration;
 
-        final Drawable cloudAutouploadingIconOff =
+        final Drawable cloudUploadedOff =
                 ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
+        final Drawable cloudUploadedOn =
+                ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
 
         RecordingVH(View itemView) {
             super(itemView);
@@ -136,17 +140,19 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             time.setText(recording.getRecDate() + " - " + recording.getRecTime());
             duration.setText(recording.getDuration());
 
-            cloud_icon.setImageDrawable(cloudAutouploadingIconOff);
+            cloud_icon.setImageDrawable(cloudUploadedOff);
 
-            if (actionModeCallback.isMultiselect()) {
+            showProgressBar(true);
+
+            viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
+                boolean recIsUploading = recordings.contains(recording.getId());
+                showProgressBar(recIsUploading);
+            });
+
+            if (actionModeCallback.isMultiselect())
                 multiSelectItem(position);
-
-            } else {
-                if (position != currentlySelected)
-                    selectToPlay(false);
-                else
-                    selectToPlay(true);
-            }
+            else
+                selectToPlay(position == currentlySelected);
 
             itemView.setOnClickListener((v) -> {
                 if (actionModeCallback.isMultiselect()) {
@@ -168,6 +174,11 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                 multiSelectItem(position);
                 return true;
             });
+        }
+
+        private void showProgressBar(boolean isUploading) {
+            cloud_icon.setVisibility(isUploading ? View.INVISIBLE : View.VISIBLE);
+            progressBar.setVisibility(isUploading ? View.VISIBLE : View.INVISIBLE);
         }
 
         private void multiSelectItem(Integer position) {

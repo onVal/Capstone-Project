@@ -20,7 +20,7 @@ import androidx.lifecycle.Observer;
 
 public class CategoriesViewModel extends AndroidViewModel {
     private Application application;
-    private DataModel dataModel;
+    private DataModel model;
 
     private MediatorLiveData<Set<Integer>> uploadingCategoryIds;
 
@@ -30,10 +30,10 @@ public class CategoriesViewModel extends AndroidViewModel {
     public CategoriesViewModel(Application application) {
         super(application);
         this.application = application;
-        dataModel = DataModel.getInstance(application);
+        model = DataModel.getInstance(application);
 
         uploadingCategoryIds = new MediatorLiveData<>();
-        uploadingCategoryIds.addSource(dataModel.getUploadingRecordings(), (recordings) -> {
+        uploadingCategoryIds.addSource(model.getUploadingRecordings(), (recordings) -> {
             Set<Integer> catIdsHashSet = new HashSet<>();
 
             for (Record rec : recordings) {
@@ -45,15 +45,15 @@ public class CategoriesViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Category>> getCategories() {
-        return dataModel.getCategories();
+        return model.getCategories();
     }
 
     public void insertCategory(Category category) {
-        dataModel.insertCategories(category);
+        model.insertCategories(category);
     }
 
     public void updateCategories(Category... categories) {
-        dataModel.updateCategories(categories);
+        model.updateCategories(categories);
     }
 
     public LiveData<Set<Integer>> getUploadingCategoryIds() {
@@ -63,13 +63,13 @@ public class CategoriesViewModel extends AndroidViewModel {
     public void uploadRecordings(int categoryId) {
         if (Utility.isSignedIn(application)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(application);
-            LiveData<List<Record>> recordings = dataModel.getRecordingsFromCategory(categoryId);
+            LiveData<List<Record>> recordings = model.getRecordingsFromCategory(categoryId);
 
-            dataModel.startUploadService();
+            model.startUploadService();
 
             recordings.observeForever(records -> {
                 for (Record rec : records) {
-                    dataModel.getServiceLiveData().observeForever(
+                    model.getServiceLiveData().observeForever(
                             (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
                     );
                 }
@@ -79,7 +79,7 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public void deleteCategories(Category... categories) {
         deleteRecFilesOfCategories(categories);
-        dataModel.deleteCategories(categories);
+        model.deleteCategories(categories);
     }
 
     private void deleteRecordingsFiles(List<Record> recordings) {
@@ -93,20 +93,20 @@ public class CategoriesViewModel extends AndroidViewModel {
         LiveData<List<Record>> recLiveData;
 
         for(Category category : categories) {
-            recLiveData = dataModel.getRecordingsFromCategory(category.getId());
+            recLiveData = model.getRecordingsFromCategory(category.getId());
             recLiveData.observeForever(deleteRecordObs);
         }
     }
 
     public LiveData<Integer> getNumOfCategories() {
-        return dataModel.getNumOfCategories();
+        return model.getNumOfCategories();
     }
 
     public LiveData<Integer> getRecNumberInCategory(int categoryId) {
-        return dataModel.getRecNumberInCategory(categoryId);
+        return model.getRecNumberInCategory(categoryId);
     }
 
     public LiveData<String> getCategoryColor(int categoryId) {
-        return dataModel.getCategoryColor(categoryId);
+        return model.getCategoryColor(categoryId);
     }
 }

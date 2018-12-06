@@ -6,29 +6,46 @@ import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCall
 import com.onval.capstone.repository.DataModel;
 import com.onval.capstone.room.Record;
 
+import java.util.HashSet;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 
 public class RecordingsViewModel extends AndroidViewModel {
-    private DataModel repository;
+    private DataModel model;
+    private MediatorLiveData<HashSet<Integer>> recordingsIds;
 
     public RecordingsViewModel(@NonNull Application application) {
         super(application);
-        repository = DataModel.getInstance(application);
+        model = DataModel.getInstance(application);
+
+        recordingsIds = new MediatorLiveData<>();
+        recordingsIds.addSource(model.getUploadingRecordings(), recordings -> {
+            HashSet<Integer> recIds = new HashSet<>();
+
+            for (Record r : recordings)
+                recIds.add(r.getId());
+
+            recordingsIds.setValue(recIds);
+        });
     }
 
     public void insertRecording(Record recording, OnSaveCallback callback) {
-        repository.insertRecording(recording, callback);
+        model.insertRecording(recording, callback);
     }
 
     public LiveData<List<Record>> getRecordingsFromCategory(int categoryId) {
-        return repository.getRecordingsFromCategory(categoryId);
+        return model.getRecordingsFromCategory(categoryId);
+    }
+
+    public LiveData<HashSet<Integer>> getUploadingRecordingsIds() {
+        return recordingsIds;
     }
 
     public void deleteRecordings(Record... recordings) {
-        repository.deleteRecordings(recordings);
+        model.deleteRecordings(recordings);
     }
 }
