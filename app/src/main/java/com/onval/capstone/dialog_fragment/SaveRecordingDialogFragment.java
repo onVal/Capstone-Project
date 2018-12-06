@@ -3,26 +3,27 @@ package com.onval.capstone.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 import android.widget.EditText;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
-import com.onval.capstone.viewmodel.CategoriesViewModel;
+import com.onval.capstone.viewmodel.RecordingsViewModel;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 
 public class SaveRecordingDialogFragment extends DialogFragment {
     private EditText editText;
-    private CategoriesViewModel viewModel;
+    private RecordingsViewModel viewModel;
     private Bundle recInfoBundle;
     private OnSaveCallback callback;
     private Context context;
@@ -42,8 +43,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
-        viewModel.setOnSaveCallback(callback);
+        viewModel = ViewModelProviders.of(this).get(RecordingsViewModel.class);
         recInfoBundle = getArguments();
         fm = getActivity().getSupportFragmentManager();
     }
@@ -77,8 +77,15 @@ public class SaveRecordingDialogFragment extends DialogFragment {
             String recDate = recInfoBundle.getString("REC_DATE");
             int categoryId = recInfoBundle.getInt(CATEGORY_ID);
 
-            Record recording = new Record(recName, recDuration, recDate, recStartTime, ".wav", null, categoryId);
-            viewModel.insertRecording(recording);
+            Record recording = new Record(
+                    recName,
+                    recDuration,
+                    recDate,
+                    recStartTime,
+                    ".wav",
+                    null,
+                    categoryId);
+            viewModel.insertRecording(recording, callback);
         }
     }
 }

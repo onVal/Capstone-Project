@@ -1,9 +1,14 @@
 package com.onval.capstone.repository;
 
 import android.app.Application;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.widget.Toast;
 
 import com.onval.capstone.R;
@@ -11,24 +16,80 @@ import com.onval.capstone.room.AppDatabase;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.MyDao;
 import com.onval.capstone.room.Record;
+import com.onval.capstone.service.UploadService;
+import com.onval.capstone.utility.Utility;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
 
-public class MyRepository {
+public class DataModel {
     private MyDao dao;
     private Application app;
-    private OnSaveCallback onSaveCallback;
+    private UploadService serviceInstance;
+    private MutableLiveData<UploadService> serviceLiveData;
+    private MutableLiveData<List<Record>> uploadingRecordings;
 
-    public MyRepository(Application app, @Nullable OnSaveCallback onSaveCallback) {
+    private static volatile DataModel sInstance;
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            UploadService.UploadBinder binder = (UploadService.UploadBinder) iBinder;
+            serviceInstance = binder.getService();
+            serviceLiveData.setValue(serviceInstance);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            serviceInstance = null;
+        }
+    };
+
+    private DataModel(Application app) {
         AppDatabase db = AppDatabase.getDatabase(app);
         dao = db.getDao();
         this.app = app;
-        this.onSaveCallback = onSaveCallback;
+
+        serviceLiveData = new MutableLiveData<>();
+
+        uploadingRecordings = new MutableLiveData<>();
+        uploadingRecordings.setValue(new ArrayList<>());
+    }
+
+    public static DataModel getInstance(Application app) {
+        if (sInstance == null) {
+            synchronized (DataModel.class) {
+                if (sInstance == null) {
+                    sInstance = new DataModel(app);
+                }
+            }
+        }
+        return sInstance;
+    }
+
+    public LiveData<List<Record>> getUploadingRecordings() {
+        if (UploadService.isRunning) {
+            return serviceInstance.getUploadingRecs();
+        }
+
+        return new MediatorLiveData<>();
+    }
+
+    public void startUploadService() {
+        Intent intent = new Intent(app, UploadService.class);
+        app.startService(intent);
+        app.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public LiveData<UploadService> getServiceLiveData() {
+        return serviceLiveData;
     }
 
     public LiveData<List<Category>> getCategories() {
@@ -59,16 +120,27 @@ public class MyRepository {
         runInBackground(() -> dao.deleteCategories(categories));
     }
 
-    public void insertRecording(final Record recs) {
+    public void insertRecording(final Record recs, OnSaveCallback onSaveCallback) {
         new RecordingsInsertAsyncTask(onSaveCallback).execute(recs);
     }
 
     public void updateCategories(Category... categories) {
         runInBackground(()->dao.updateCategories(categories));
-
     }
 
-    public void deleteRecordings(final Record... recs) {
+    public void deleteRecordings(Record... recordings) {
+        deleteRecordingsFiles(Arrays.asList(recordings));
+        deleteRecordingsEntries(recordings);
+    }
+
+    private void deleteRecordingsFiles(List<Record> recordings) {
+        if (recordings != null && recordings.size() != 0) {
+            for (Record rec : recordings)
+                Utility.deleteRecordingFromFilesystem(app, rec);
+        }
+    }
+
+    private void deleteRecordingsEntries(final Record... recs) {
         runInBackground(()->dao.deleteRecordings(recs));
     }
 

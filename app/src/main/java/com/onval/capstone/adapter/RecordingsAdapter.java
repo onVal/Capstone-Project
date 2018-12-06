@@ -19,7 +19,7 @@ import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.UserInterfaceUtility;
 import com.onval.capstone.utility.Utility;
-import com.onval.capstone.viewmodel.CategoriesViewModel;
+import com.onval.capstone.viewmodel.RecordingsViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +41,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private int currentlySelected;
     private boolean multiselect;
     private List<Integer> selectedPositions = new ArrayList<>();
-    private CategoriesViewModel viewModel;
+    private RecordingsViewModel viewModel;
 
     private String categoryColor;
 
@@ -102,7 +102,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
     public RecordingsAdapter(Context context, int selectedRecording, ViewModel viewModel) {
         this.context = context;
-        this.viewModel = (CategoriesViewModel) viewModel;
+        this.viewModel = (RecordingsViewModel) viewModel;
         listener = (RecordingListener) context;
         recordings = Collections.emptyList();
         currentlySelected = selectedRecording;

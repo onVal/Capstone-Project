@@ -1,11 +1,6 @@
 package com.onval.capstone;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.room.Room;
 import android.content.Context;
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.onval.capstone.room.AppDatabase;
 import com.onval.capstone.room.Category;
@@ -17,19 +12,22 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-
 import java.util.List;
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.room.Room;
+import androidx.test.core.app.ApplicationProvider;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
 
-@RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
     private MyDao mydao;
     private AppDatabase appDb;
@@ -49,7 +47,7 @@ public class DatabaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         appDb = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
                     .allowMainThreadQueries().build();
         mydao = appDb.getDao();

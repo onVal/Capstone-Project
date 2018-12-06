@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
-import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
@@ -163,13 +161,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                         categorySubtext.setText(subtext);
                     });
 
-            viewModel.getUploadingRecordings().observeForever(recordList -> {
-                if (recordList != null) {
-                    boolean categoryIsUploading = isCategoryIdInRecList(category.getId(), recordList);
-                    Log.d("debug", "cat name: " + category.getName() + " - categoryIsUploading: " + categoryIsUploading + " - num rec: " + recordList.size());
-                    showProgressBar(categoryIsUploading);
-                }
+            viewModel.getUploadingCategoryIds().observeForever(catIds -> {
+                boolean categoryIsUploading = catIds.contains(category.getId());
+                showProgressBar(categoryIsUploading);
             });
+//                else
+//                    showProgressBar(false);
+
 
 //            GoogleSignInAccount
             if (Utility.isSignedIn(context)) {
@@ -213,12 +211,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 builder.setTitle("Google Drive Sync")
                         .setMessage(msg)
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
-                            boolean autoupload = !category.isAutoUploading();
+                            boolean autouploadIsSet = !category.isAutoUploading();
 
-                            if (autoupload)
+                            if (autouploadIsSet)
                                 viewModel.uploadRecordings(category.getId());
 
-                            category.setAutoUploading(autoupload);
+                            //todo: this should be done after upload recording finishes
+                            category.setAutoUploading(autouploadIsSet);
                             viewModel.updateCategories(category);
 
                         })
@@ -246,13 +245,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             autouploadIcon.setVisibility((show) ? View.INVISIBLE : View.VISIBLE);
         }
 
-        private boolean isCategoryIdInRecList(int categoryId, List<Record> recordingList) {
-            for (Record r : recordingList) {
-                if (categoryId == r.getCategoryId())
-                    return true;
-            }
-
-            return false;
-        }
+//        private boolean isCategoryIdInRecList(int categoryId, List<Record> recordingList) {
+//            for (Record r : recordingList) {
+//                if (categoryId == r.getCategoryId())
+//                    return true;
+//            }
+//
+//            return false;
+//        }
     }
 }

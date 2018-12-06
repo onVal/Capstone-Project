@@ -1,7 +1,6 @@
 package com.onval.capstone.fragment;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,7 +27,6 @@ import butterknife.ButterKnife;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CategoriesFragment extends Fragment {
-    private Context context;
     private CategoriesViewModel viewModel;
     private CategoriesAdapter adapter;
     private SharedPreferences prefs;
@@ -50,8 +48,6 @@ public class CategoriesFragment extends Fragment {
         setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
-
-        context = getContext();
         prefs = getActivity().getSharedPreferences(getString(R.string.prefs), MODE_PRIVATE);
 
         ButterKnife.bind(this, view);

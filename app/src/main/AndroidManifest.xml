@@ -38,6 +38,7 @@
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.PlayerService" />
+        <service android:name=".service.UploadService" />
 
         <receiver android:name=".PlayerAppWidget">
             <intent-filter>

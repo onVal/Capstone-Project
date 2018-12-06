@@ -1,47 +1,86 @@
 package com.onval.capstone.viewmodel;
 
 import android.app.Application;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.onval.capstone.Model;
-import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
-import com.onval.capstone.repository.MyRepository;
+import com.onval.capstone.repository.DataModel;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.Utility;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 
 public class CategoriesViewModel extends AndroidViewModel {
     private Application application;
-    private MyRepository repository;
+    private DataModel dataModel;
 
-    private Model model;
+    private MediatorLiveData<Set<Integer>> uploadingCategoryIds;
 
     private final Observer<List<Record>> deleteRecordObs =
-            recordings -> deleteRecordingsFiles(recordings);
+            this::deleteRecordingsFiles;
+
+    public CategoriesViewModel(Application application) {
+        super(application);
+        this.application = application;
+        dataModel = DataModel.getInstance(application);
+
+        uploadingCategoryIds = new MediatorLiveData<>();
+        uploadingCategoryIds.addSource(dataModel.getUploadingRecordings(), (recordings) -> {
+            Set<Integer> catIdsHashSet = new HashSet<>();
+
+            for (Record rec : recordings) {
+                catIdsHashSet.add(rec.getCategoryId());
+            }
+
+            uploadingCategoryIds.setValue(catIdsHashSet);
+        });
+    }
+
+    public LiveData<List<Category>> getCategories() {
+        return dataModel.getCategories();
+    }
+
+    public void insertCategory(Category category) {
+        dataModel.insertCategories(category);
+    }
+
+    public void updateCategories(Category... categories) {
+        dataModel.updateCategories(categories);
+    }
+
+    public LiveData<Set<Integer>> getUploadingCategoryIds() {
+        return uploadingCategoryIds;
+    }
+
+    public void uploadRecordings(int categoryId) {
+        if (Utility.isSignedIn(application)) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(application);
+            LiveData<List<Record>> recordings = dataModel.getRecordingsFromCategory(categoryId);
+
+            dataModel.startUploadService();
+
+            recordings.observeForever(records -> {
+                for (Record rec : records) {
+                    dataModel.getServiceLiveData().observeForever(
+                            (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
+                    );
+                }
+            });
+        }
+    }
+
+    public void deleteCategories(Category... categories) {
+        deleteRecFilesOfCategories(categories);
+        dataModel.deleteCategories(categories);
+    }
 
     private void deleteRecordingsFiles(List<Record> recordings) {
         if (recordings != null && recordings.size() != 0) {
@@ -50,131 +89,24 @@ public class CategoriesViewModel extends AndroidViewModel {
         }
     }
 
-    public CategoriesViewModel(Application application) {
-        super(application);
-        this.application = application;
-        repository = new MyRepository(application, null);
-        model = Model.newInstance();
-    }
-
-    public LiveData<List<Category>> getCategories() {
-        return repository.getCategories();
-    }
-
-    public LiveData<List<Record>> getRecordingsFromCategory(int categoryId) {
-        return repository.getRecordingsFromCategory(categoryId);
-    }
-
-    public void insertCategory(Category category) {
-        repository.insertCategories(category);
-    }
-
-    public void insertRecording(Record recording) {
-        repository.insertRecording(recording);
-    }
-
-    public void updateCategories(Category... categories) {
-        repository.updateCategories(categories);
-    }
-
-    public LiveData<List<Record>> getUploadingRecordings() {
-        return model.getRecordsBeingUploaded();
-    }
-
-    public void uploadRecordings(int categoryId) {
-        if (Utility.isSignedIn(application)) {
-            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(application);
-
-            LiveData<List<Record>> recordings = getRecordingsFromCategory(categoryId);
-
-            recordings.observeForever(records -> {
-                for (Record rec : records) {
-                    model.addRecording(rec);
-                    uploadRecordingToDrive(rec, account);
-                }
-            });
-        }
-    }
-
-    public void deleteCategories(Category... categories) {
-        deleteRecFilesOfCategories(categories);
-        repository.deleteCategories(categories);
-    }
-
-    public LiveData<Integer> getNumOfCategories() {
-        return repository.getNumOfCategories();
-    }
-
-    public LiveData<Integer> getRecNumberInCategory(int categoryId) {
-        return repository.getRecNumberInCategory(categoryId);
-    }
-
-    public LiveData<String> getCategoryColor(int categoryId) {
-        return repository.getCategoryColor(categoryId);
-    }
-
-    public void deleteRecordings(Record... recordings) {
-        deleteRecordingsFiles(Arrays.asList(recordings));
-        repository.deleteRecordings(recordings);
-    }
-
-    public void setOnSaveCallback(OnSaveCallback callback) {
-        repository = new MyRepository(application, callback);
-    }
-
     private void deleteRecFilesOfCategories(Category... categories) {
         LiveData<List<Record>> recLiveData;
 
         for(Category category : categories) {
-            recLiveData = getRecordingsFromCategory(category.getId());
+            recLiveData = dataModel.getRecordingsFromCategory(category.getId());
             recLiveData.observeForever(deleteRecordObs);
         }
     }
 
-    private void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
-        Uri uri = Utility.createUriFromRecording(application, recording);
-        File recordingFile = new File(uri.toString());
+    public LiveData<Integer> getNumOfCategories() {
+        return dataModel.getNumOfCategories();
+    }
 
-        // this executor prevents code from being run in the main thread
-        int numCores = Runtime.getRuntime().availableProcessors();
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores *2,
-                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    public LiveData<Integer> getRecNumberInCategory(int categoryId) {
+        return dataModel.getRecNumberInCategory(categoryId);
+    }
 
-        DriveResourceClient resourceClient =  Drive.getDriveResourceClient(application, account);
-
-        final Task<DriveFolder> rootFolderTask = resourceClient.getRootFolder();
-        final Task<DriveContents> createContentsTask = resourceClient.createContents();
-        Tasks.whenAll(rootFolderTask, createContentsTask)
-                .continueWithTask(executor, task -> {
-                    DriveFolder parent = rootFolderTask.getResult();
-                    DriveContents contents = createContentsTask.getResult();
-
-                    OutputStream outputStream = contents.getOutputStream();
-                    FileInputStream inputStream = new FileInputStream(recordingFile);
-                    int readByte;
-                    while ((readByte = inputStream.read()) != -1) {
-                        outputStream.write(readByte);
-                    }
-
-                    String title = uri.getLastPathSegment();
-
-                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                            .setTitle(uri.getLastPathSegment())
-                            .setMimeType("audio/mp4")
-                            .build();
-
-                    return resourceClient.createFile(parent, changeSet, contents);
-                })
-                .addOnSuccessListener(
-                        driveFile -> {
-                            Toast.makeText(application, "Recording uploaded.", Toast.LENGTH_SHORT).show();
-                            Log.d("debug", "One file uploaded");
-                            model.removeRecording(recording);
-
-                        })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(application, "Unable to create file in google Drive.", Toast.LENGTH_SHORT).show();
-                    model.removeRecording(recording);
-                });
+    public LiveData<String> getCategoryColor(int categoryId) {
+        return dataModel.getCategoryColor(categoryId);
     }
 }
