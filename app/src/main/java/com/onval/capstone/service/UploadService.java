@@ -92,6 +92,7 @@ public class UploadService extends IntentService {
                 .addOnSuccessListener(
                         driveFile -> {
                             showToast(recording.getName() + " uploaded.");
+                            Toast.makeText(this, "Recording uploaded.", Toast.LENGTH_SHORT).show();
                             setUploadingRecs(recording, false);
                             recording.setCloudStatus(Record.CLOUD_UPLOADED);
                             model.updateRecordings(recording);
@@ -103,8 +104,8 @@ public class UploadService extends IntentService {
     }
 
     private void showToast(CharSequence text) {
-        toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.cancel();
+        toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.show();
     }
 
