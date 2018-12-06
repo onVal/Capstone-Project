@@ -38,12 +38,15 @@ public class UploadService extends IntentService {
     private static List<Record> uploadingRecList;
     private static MutableLiveData<List<Record>> uploadingRecs;
 
+    private Toast toast;
+
     public UploadService() {
         super("UploadService");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        toast = new Toast(this);
         isRunning = true;
         initializeUploadingRecs();
     }
@@ -86,14 +89,20 @@ public class UploadService extends IntentService {
                 })
                 .addOnSuccessListener(
                         driveFile -> {
-                            Toast.makeText(this, "Recording uploaded.", Toast.LENGTH_SHORT).show();
+                            showToast(recording.getName() + " uploaded.", Toast.LENGTH_SHORT);
                             setUploadingRecs(recording, false);
 
                         })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Unable to create file in google Drive.", Toast.LENGTH_SHORT).show();
+                    showToast("Unable to create file in google Drive.", Toast.LENGTH_SHORT);
                     setUploadingRecs(recording, false);
                 });
+    }
+
+    private void showToast(CharSequence text, int duration) {
+        toast = Toast.makeText(this, text, duration);
+        toast.cancel();
+        toast.show();
     }
 
     private void initializeUploadingRecs() {
