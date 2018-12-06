@@ -15,6 +15,7 @@ import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.onval.capstone.repository.DataModel;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.Utility;
 
@@ -31,9 +32,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 public class UploadService extends IntentService {
-//    public static final String UPLOAD_RECORDING = "UPLOAD_RECS";
-
     public static boolean isRunning;
+
+    private DataModel model;
 
     private static List<Record> uploadingRecList;
     private static MutableLiveData<List<Record>> uploadingRecs;
@@ -49,6 +50,7 @@ public class UploadService extends IntentService {
         toast = new Toast(this);
         isRunning = true;
         initializeUploadingRecs();
+        model = DataModel.getInstance(getApplication());
     }
 
     public void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
@@ -89,18 +91,19 @@ public class UploadService extends IntentService {
                 })
                 .addOnSuccessListener(
                         driveFile -> {
-                            showToast(recording.getName() + " uploaded.", Toast.LENGTH_SHORT);
+                            showToast(recording.getName() + " uploaded.");
                             setUploadingRecs(recording, false);
-
+                            recording.setCloudStatus(Record.CLOUD_UPLOADED);
+                            model.updateRecordings(recording);
                         })
                 .addOnFailureListener(e -> {
-                    showToast("Unable to create file in google Drive.", Toast.LENGTH_SHORT);
+                    showToast("Unable to create file in google Drive.");
                     setUploadingRecs(recording, false);
                 });
     }
 
-    private void showToast(CharSequence text, int duration) {
-        toast = Toast.makeText(this, text, duration);
+    private void showToast(CharSequence text) {
+        toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.cancel();
         toast.show();
     }

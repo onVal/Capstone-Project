@@ -34,6 +34,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.onval.capstone.room.Record.CLOUD_UPLOADED;
+
 public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.RecordingVH> {
     private Context context;
     private List<Record> recordings;
@@ -140,9 +142,10 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             time.setText(recording.getRecDate() + " - " + recording.getRecTime());
             duration.setText(recording.getDuration());
 
-            cloud_icon.setImageDrawable(cloudUploadedOff);
-
-            showProgressBar(true);
+            if (recording.getCloudStatus().equals(CLOUD_UPLOADED))
+                cloud_icon.setImageDrawable(cloudUploadedOn);
+            else
+                cloud_icon.setImageDrawable(cloudUploadedOff);
 
             viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
                 boolean recIsUploading = recordings.contains(recording.getId());

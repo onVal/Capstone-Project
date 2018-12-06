@@ -1,9 +1,14 @@
 package com.onval.capstone.room;
 
-import androidx.lifecycle.LiveData;
-import androidx.room.*;
-
 import java.util.List;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
 
 @Dao
 public interface MyDao {
@@ -24,6 +29,9 @@ public interface MyDao {
 
     @Update
     void updateCategories(Category... categories);
+
+    @Update
+    void updateRecordings(Record... recordings);
 
     @Insert(onConflict =  OnConflictStrategy.IGNORE)
     long insertCategory(Category category);

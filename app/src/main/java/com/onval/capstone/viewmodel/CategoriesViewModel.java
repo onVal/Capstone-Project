@@ -67,11 +67,15 @@ public class CategoriesViewModel extends AndroidViewModel {
 
             model.startUploadService();
 
-            recordings.observeForever(records -> {
-                for (Record rec : records) {
-                    model.getServiceLiveData().observeForever(
-                            (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
-                    );
+            recordings.observeForever(new Observer<List<Record>>() {
+                @Override
+                public void onChanged(List<Record> records) {
+                    for (Record rec : records) {
+                        model.getServiceLiveData().observeForever(
+                                (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
+                        );
+                    }
+                    recordings.removeObserver(this);
                 }
             });
         }

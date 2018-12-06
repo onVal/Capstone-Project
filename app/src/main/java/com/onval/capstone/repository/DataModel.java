@@ -128,6 +128,10 @@ public class DataModel {
         runInBackground(()->dao.updateCategories(categories));
     }
 
+    public void updateRecordings(Record... recordings) {
+        runInBackground(()-> dao.updateRecordings(recordings));
+    }
+
     public void deleteRecordings(Record... recordings) {
         deleteRecordingsFiles(Arrays.asList(recordings));
         deleteRecordingsEntries(recordings);

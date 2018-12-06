@@ -16,6 +16,9 @@ import static androidx.room.ForeignKey.CASCADE;
                                     childColumns = "category_id",
                                     onDelete = CASCADE))
 public class Record {
+    public static final String CLOUD_UPLOADED = "UPLOADED";
+    public static final String CLOUD_NOT_UPLOADED = "NOT UPLOADED";
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 

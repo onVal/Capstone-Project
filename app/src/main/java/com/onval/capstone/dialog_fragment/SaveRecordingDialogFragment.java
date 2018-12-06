@@ -83,7 +83,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
                     recDate,
                     recStartTime,
                     ".wav",
-                    null,
+                    Record.CLOUD_NOT_UPLOADED,
                     categoryId);
             viewModel.insertRecording(recording, callback);
         }

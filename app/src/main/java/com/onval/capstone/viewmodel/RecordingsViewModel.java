@@ -33,6 +33,10 @@ public class RecordingsViewModel extends AndroidViewModel {
         });
     }
 
+    public void updateRecordings(Record... recordings) {
+        model.updateRecordings(recordings);
+    }
+
     public void insertRecording(Record recording, OnSaveCallback callback) {
         model.insertRecording(recording, callback);
     }
