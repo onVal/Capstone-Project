@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,33 +41,15 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     private List<Category> categories;
     private CategoriesViewModel viewModel;
 
-    private boolean multiselect = false;
-    private List<Integer> selectedPositions;
-
-    private Category[] cArray;
-
-    private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_action, menu);
-            multiselect = true;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
+    private MyActionModeCallback actionModeCallback = new MyActionModeCallback() {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             ArrayList<Category> selectedCatList = new ArrayList<>();
 
-            for (Integer pos : selectedPositions) {
+            for (Integer pos : getSelectedPositions())
                 selectedCatList.add(categories.get(pos));
-            }
 
-            cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
+            Category[] cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
@@ -85,20 +66,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             mode.finish();
             return true;
         }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            multiselect = false;
-            selectedPositions.clear();
-            notifyDataSetChanged();
-        }
     };
 
     public CategoriesAdapter(Context context, CategoriesViewModel viewModel) {
         this.context = context;
         this.viewModel = viewModel;
         categories = Collections.emptyList();
-        selectedPositions = new ArrayList<>();
     }
 
     @NonNull
@@ -165,8 +138,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 boolean categoryIsUploading = catIds.contains(category.getId());
                 showProgressBar(categoryIsUploading);
             });
-//                else
-//                    showProgressBar(false);
 
 
 //            GoogleSignInAccount
@@ -178,7 +149,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             }
 
             // This is to prevent incorrect item selection when RecyclerView does its thing
-            if (selectedPositions.contains(position)) {
+            if (actionModeCallback.getSelectedPositions().contains(position)) {
                 layout.setBackgroundColor(Color.LTGRAY);
             } else {
                 layout.setBackgroundColor(Color.WHITE);
@@ -186,13 +157,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             //add listeners
             itemView.setOnLongClickListener(view -> {
-                ((AppCompatActivity) view.getContext()).startSupportActionMode(actionModeCallbacks);
+                ((AppCompatActivity) view.getContext()).startSupportActionMode(actionModeCallback);
                 selectItem(position);
                 return true;
             });
 
             itemView.setOnClickListener(view -> {
-                if (multiselect)
+                if (actionModeCallback.isMultiselect())
                     selectItem(position);
                 else {
                     Intent intent = new Intent(context, RecordingsActivity.class);
@@ -231,27 +202,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         }
 
         private void selectItem(Integer position) {
-            if (selectedPositions.contains(position)) {
-                selectedPositions.remove(position);
-                layout.setBackgroundColor(Color.WHITE);
-            } else {
-                selectedPositions.add(position);
-                layout.setBackgroundColor(Color.LTGRAY);
-            }
+            boolean itemIsSelected = actionModeCallback.selectItemAtPosition(position);
+            layout.setBackgroundColor(itemIsSelected ? Color.LTGRAY : Color.WHITE );
+
         }
 
         private void showProgressBar(boolean show) {
             progressBar.setVisibility((show) ? View.VISIBLE : View.INVISIBLE);
             autouploadIcon.setVisibility((show) ? View.INVISIBLE : View.VISIBLE);
         }
-
-//        private boolean isCategoryIdInRecList(int categoryId, List<Record> recordingList) {
-//            for (Record r : recordingList) {
-//                if (categoryId == r.getCategoryId())
-//                    return true;
-//            }
-//
-//            return false;
-//        }
     }
 }

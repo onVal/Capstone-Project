@@ -74,11 +74,11 @@
         android:id="@+id/autoupload_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
-        tools:background="@drawable/ic_cloud_upload_on"/>
+        tools:src="@drawable/ic_cloud_upload_on"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

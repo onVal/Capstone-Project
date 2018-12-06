@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,37 +38,21 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private List<Record> recordings;
 
     private int currentlySelected;
-    private boolean multiselect;
-    private List<Integer> selectedPositions = new ArrayList<>();
     private RecordingsViewModel viewModel;
 
     private String categoryColor;
 
     private RecordingListener listener;
 
-    ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_action, menu);
-            multiselect = true;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
+    private MyActionModeCallback actionModeCallback = new MyActionModeCallback() {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             ArrayList<Record> selectedRecList = new ArrayList<>();
-            Record[] rArray;
 
-            for (Integer pos : selectedPositions) {
+            for (Integer pos : getSelectedPositions())
                 selectedRecList.add(recordings.get(pos));
-            }
 
-            rArray = selectedRecList.toArray(new Record[selectedRecList.size()]);
+            Record[] rArray = selectedRecList.toArray(new Record[selectedRecList.size()]);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all selected recordings.";
@@ -86,13 +69,6 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
             mode.finish();
             return true;
-
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            selectedPositions = new ArrayList<>();
-            multiselect = false;
         }
     };
 
@@ -106,7 +82,6 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         listener = (RecordingListener) context;
         recordings = Collections.emptyList();
         currentlySelected = selectedRecording;
-        multiselect = false;
     }
 
     @NonNull
@@ -163,11 +138,9 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
             cloud_icon.setImageDrawable(cloudAutouploadingIconOff);
 
-            if (multiselect) {
-                if (selectedPositions.contains(position))
-                    selectToDelete(true);
-                else
-                    selectToDelete(false);
+            if (actionModeCallback.isMultiselect()) {
+                multiSelectItem(position);
+
             } else {
                 if (position != currentlySelected)
                     selectToPlay(false);
@@ -176,42 +149,36 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             }
 
             itemView.setOnClickListener((v) -> {
-                    if (multiselect) {
-                        if (selectedPositions.contains(position)) {
-                            selectedPositions.remove(selectedPositions.indexOf(position));
-                            selectToDelete(false);
-                        }
-                        else {
-                            selectToDelete(true);
-                            selectedPositions.add(position);
-                        }
-                    } else {
-                        if (position != currentlySelected) {
-                            currentlySelected = position;
-                            selectToPlay(true);
-                            notifyDataSetChanged();
+                if (actionModeCallback.isMultiselect()) {
+                    multiSelectItem(position);
+                } else {
+                    if (position != currentlySelected) {
+                        currentlySelected = position;
+                        selectToPlay(true);
+                        notifyDataSetChanged();
 
-                            Uri recUri = Utility.createUriFromRecording(context, recording);
-                            listener.onRecordingClicked(recUri, currentlySelected, recording);
-                        }
+                        Uri recUri = Utility.createUriFromRecording(context, recording);
+                        listener.onRecordingClicked(recUri, currentlySelected, recording);
                     }
-                });
+                }
+            });
 
             itemView.setOnLongClickListener(v -> {
                 ((AppCompatActivity) v.getContext()).startSupportActionMode(actionModeCallback);
-                selectedPositions.add(position);
-                selectToDelete(true);
+                multiSelectItem(position);
                 return true;
             });
         }
 
-        private void selectToDelete(boolean selected) {
-            int LITEGRAY = Color.parseColor("#eeeeee");
-            int DEEPBLUE = Color.parseColor("#129fe5");
+        private void multiSelectItem(Integer position) {
+            boolean isSelected = actionModeCallback.selectItemAtPosition(position);
 
-            int bgColor = (selected) ? DEEPBLUE : Color.WHITE;
-            int textColor = (selected) ? Color.WHITE : Color.BLACK;
-            int subColor = (selected) ? LITEGRAY : Color.DKGRAY;
+            final int LITEGRAY = Color.parseColor("#eeeeee");
+            final int DEEPBLUE = Color.parseColor("#129fe5");
+
+            int bgColor = (isSelected) ? DEEPBLUE : Color.WHITE;
+            int textColor = (isSelected) ? Color.WHITE : Color.BLACK;
+            int subColor = (isSelected) ? LITEGRAY : Color.DKGRAY;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);
