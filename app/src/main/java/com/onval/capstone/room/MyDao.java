@@ -27,6 +27,9 @@ public interface MyDao {
     @Query("SELECT color FROM category WHERE id = :categoryId")
     LiveData<String> getCategoryColor(int categoryId);
 
+    @Query("SELECT auto_upload FROM category WHERE id = :categoryId")
+    LiveData<Boolean> categoryAutoupload(int categoryId);
+
     @Update
     void updateCategories(Category... categories);
 

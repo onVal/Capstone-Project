@@ -48,6 +48,10 @@ public class CategoriesViewModel extends AndroidViewModel {
         return model.getCategories();
     }
 
+    public LiveData<Boolean> isCategoryAutouploadOn(int categoryId) {
+        return model.categoryAutoupload(categoryId);
+    }
+
     public void insertCategory(Category category) {
         model.insertCategories(category);
     }

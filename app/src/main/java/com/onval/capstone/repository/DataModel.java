@@ -100,6 +100,10 @@ public class DataModel {
         return dao.numOfCategories();
     }
 
+    public LiveData<Boolean> categoryAutoupload(int categoryId) {
+        return dao.categoryAutoupload(categoryId);
+    }
+
     public LiveData<List<Record>> getRecordingsFromCategory(int categoryId) {
         return dao.loadRecordingsFromCategory(categoryId);
     }
@@ -173,15 +177,15 @@ public class DataModel {
 
     private class RecordingsInsertAsyncTask extends AsyncTask<Record, Void, Long> {
         private OnSaveCallback callback;
-        private String recName;
+        private Record recording;
 
         RecordingsInsertAsyncTask(OnSaveCallback callback) {
             this.callback = callback;
         }
         @Override
         protected Long doInBackground(Record... recs) {
-            recName = recs[0].getName();
-            return dao.insertRecording(recs[0]);
+            recording = recs[0];
+            return dao.insertRecording(recording);
         }
 
         @Override
@@ -193,7 +197,7 @@ public class DataModel {
                         R.string.cant_insert,
                         Toast.LENGTH_SHORT).show();
             else
-                callback.onSaveRecording(rowId, recName);
+                callback.onSaveRecording(rowId, recording);
         }
     }
 }

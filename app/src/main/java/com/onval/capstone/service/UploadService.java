@@ -47,7 +47,6 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        toast = new Toast(this);
         isRunning = true;
         initializeUploadingRecs();
         model = DataModel.getInstance(getApplication());
@@ -92,18 +91,20 @@ public class UploadService extends IntentService {
                 .addOnSuccessListener(
                         driveFile -> {
                             showToast(recording.getName() + " uploaded.");
-                            Toast.makeText(this, "Recording uploaded.", Toast.LENGTH_SHORT).show();
                             setUploadingRecs(recording, false);
                             recording.setCloudStatus(Record.CLOUD_UPLOADED);
                             model.updateRecordings(recording);
                         })
                 .addOnFailureListener(e -> {
-                    showToast("Unable to create file in google Drive.");
+                    showToast("Unable to create recording " + recording.getName() + " in google Drive.");
                     setUploadingRecs(recording, false);
                 });
     }
 
     private void showToast(CharSequence text) {
+        if (toast == null) {
+            toast = new Toast(this);
+        }
         toast.cancel();
         toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.show();

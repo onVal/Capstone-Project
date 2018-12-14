@@ -23,27 +23,28 @@ import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 
 public class SaveRecordingDialogFragment extends DialogFragment {
     private EditText editText;
-    private RecordingsViewModel viewModel;
+
+    private RecordingsViewModel recViewModel;
+
     private Bundle recInfoBundle;
     private OnSaveCallback callback;
-    private Context context;
     private FragmentManager fm;
 
     public interface OnSaveCallback {
-        void onSaveRecording(long id, String name);
+        void onSaveRecording(long id, Record recording);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         callback = (OnSaveCallback) context;
-        this.context = context;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(RecordingsViewModel.class);
+        recViewModel = ViewModelProviders.of(this).get(RecordingsViewModel.class);
+
         recInfoBundle = getArguments();
         fm = getActivity().getSupportFragmentManager();
     }
@@ -85,7 +86,8 @@ public class SaveRecordingDialogFragment extends DialogFragment {
                     ".wav",
                     Record.CLOUD_NOT_UPLOADED,
                     categoryId);
-            viewModel.insertRecording(recording, callback);
+
+            recViewModel.insertRecording(recording, callback);
         }
     }
 }
