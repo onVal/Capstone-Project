@@ -207,11 +207,11 @@ public class RecordActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveRecording(long id, Record recording) {
+    public void onSaveRecording(Record recording) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             service.stopRecording();
 
-        String physicalName = id + "_" + recording.getName(); //ex. 4_WednesdayMemo
+        String physicalName = recording.getId() + "_" + recording.getName(); //ex. 4_WednesdayMemo
         saveRecordingAs(physicalName);
 
         String msg = "The recording " + recording.getName() + " has been created.";

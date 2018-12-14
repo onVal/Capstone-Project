@@ -19,7 +19,7 @@ import androidx.lifecycle.MediatorLiveData;
 
 public class RecordingsViewModel extends AndroidViewModel {
     private DataModel model;
-    private MediatorLiveData<HashSet<Integer>> recordingsIds;
+    private MediatorLiveData<HashSet<Long>> recordingsIds;
     private Application application;
 
     public RecordingsViewModel(@NonNull Application application) {
@@ -29,7 +29,7 @@ public class RecordingsViewModel extends AndroidViewModel {
 
         recordingsIds = new MediatorLiveData<>();
         recordingsIds.addSource(model.getUploadingRecordings(), recordings -> {
-            HashSet<Integer> recIds = new HashSet<>();
+            HashSet<Long> recIds = new HashSet<>();
 
             for (Record r : recordings)
                 recIds.add(r.getId());
@@ -61,7 +61,7 @@ public class RecordingsViewModel extends AndroidViewModel {
         return model.getRecordingsFromCategory(categoryId);
     }
 
-    public LiveData<HashSet<Integer>> getUploadingRecordingsIds() {
+    public LiveData<HashSet<Long>> getUploadingRecordingsIds() {
         return recordingsIds;
     }
 

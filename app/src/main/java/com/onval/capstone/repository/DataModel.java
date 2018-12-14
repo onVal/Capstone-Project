@@ -196,8 +196,10 @@ public class DataModel {
                 Toast.makeText(app.getApplicationContext(),
                         R.string.cant_insert,
                         Toast.LENGTH_SHORT).show();
-            else
-                callback.onSaveRecording(rowId, recording);
+            else {
+                recording.setId(rowId);
+                callback.onSaveRecording(recording);
+            }
         }
     }
 }

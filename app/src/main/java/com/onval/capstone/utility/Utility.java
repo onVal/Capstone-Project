@@ -12,7 +12,7 @@ import java.io.File;
 public class Utility {
 
     public static Uri createUriFromRecording(Context context, Record recording) {
-        int recId = recording.getId();
+        long recId = recording.getId();
         String recName = recording.getName();
 
         String filePath =  context.getExternalCacheDir().getAbsolutePath();

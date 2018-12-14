@@ -20,7 +20,7 @@ public class Record {
     public static final String CLOUD_NOT_UPLOADED = "NOT UPLOADED";
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
     private String name;
     private String duration;
@@ -55,11 +55,11 @@ public class Record {
         this.categoryId = categoryId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

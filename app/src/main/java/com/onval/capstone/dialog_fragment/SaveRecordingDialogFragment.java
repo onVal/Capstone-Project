@@ -31,7 +31,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     private FragmentManager fm;
 
     public interface OnSaveCallback {
-        void onSaveRecording(long id, Record recording);
+        void onSaveRecording(Record recording);
     }
 
     @Override
