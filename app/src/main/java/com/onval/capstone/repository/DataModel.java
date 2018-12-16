@@ -86,28 +86,18 @@ public class DataModel {
                         assert action != null;
                         assert extras != null;
 
-                        long longValue;
-                        int intValue;
-
-                        ArrayList<Long> x;
-                        ArrayList<Integer> y;
-
                         switch (action) {
                             case ADD_UPREC:
-                                longValue = extras.getLong(VALUE_ID);
-                                updateRecValue(longValue, true);
+                                updateRecValue(extras.getLong(VALUE_ID), true);
                                 break;
                             case RMV_UPREC:
-                                longValue = extras.getLong(VALUE_ID);
-                                updateRecValue(longValue, false);
+                                updateRecValue(extras.getLong(VALUE_ID), false);
                                 break;
                             case ADD_UPCAT:
-                                intValue = extras.getInt(VALUE_ID);
-                                updateCatValue(intValue, true);
+                                updateCatValue(extras.getInt(VALUE_ID), true);
                                 break;
                             case RMV_UPCAT:
-                                intValue = extras.getInt(VALUE_ID);
-                                updateCatValue(intValue, false);
+                                updateCatValue(extras.getInt(VALUE_ID), false);
                                 break;
                         }
                     }
@@ -123,14 +113,12 @@ public class DataModel {
         uploadingRecordingsId.setValue(list);
     }
 
-    private void updateCatValue(int value, boolean add) {
+    private void updateCatValue(Integer value, boolean add) {
         ArrayList<Integer> list = uploadingCategoriesId.getValue();
-        // explicit cast to Integer is needed, otherwise it will use
-        // the (incorrect) overloaded method
         if (add)
-            list.add((Integer) value);
+            list.add(value);
         else
-            list.remove((Integer) value);
+            list.remove(value);
         uploadingCategoriesId.setValue(list);
     }
 
