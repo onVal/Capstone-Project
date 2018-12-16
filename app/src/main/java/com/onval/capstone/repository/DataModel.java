@@ -31,6 +31,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
+import static com.onval.capstone.service.UploadService.*;
 
 public class DataModel {
     private MyDao dao;
@@ -70,10 +71,10 @@ public class DataModel {
         uploadingCategoriesId.setValue(new ArrayList<>());
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction("ADD_UPREC");
-        filter.addAction("RMV_UPREC");
-        filter.addAction("ADD_UPCAT");
-        filter.addAction("RMV_UPCAT");
+        filter.addAction(ADD_UPREC);
+        filter.addAction(RMV_UPREC);
+        filter.addAction(ADD_UPCAT);
+        filter.addAction(RMV_UPCAT);
 
         LocalBroadcastManager.getInstance(app)
                 .registerReceiver(new BroadcastReceiver() {
@@ -92,24 +93,21 @@ public class DataModel {
                         ArrayList<Integer> y;
 
                         switch (action) {
-                            case "ADD_UPREC":
-                                longValue = extras.getLong("VALUE");
+                            case ADD_UPREC:
+                                longValue = extras.getLong(VALUE_ID);
                                 updateRecValue(longValue, true);
                                 break;
-                            case "RMV_UPREC":
-                                longValue = extras.getLong("VALUE");
+                            case RMV_UPREC:
+                                longValue = extras.getLong(VALUE_ID);
                                 updateRecValue(longValue, false);
                                 break;
-                            case "ADD_UPCAT":
-                                intValue = extras.getInt("VALUE");
+                            case ADD_UPCAT:
+                                intValue = extras.getInt(VALUE_ID);
                                 updateCatValue(intValue, true);
-
-
                                 break;
-                            case "RMV_UPCAT":
-                                intValue = extras.getInt("VALUE");
+                            case RMV_UPCAT:
+                                intValue = extras.getInt(VALUE_ID);
                                 updateCatValue(intValue, false);
-
                                 break;
                         }
                     }

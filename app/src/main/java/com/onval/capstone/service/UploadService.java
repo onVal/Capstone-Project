@@ -30,6 +30,12 @@ import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class UploadService extends IntentService {
+    public static final String VALUE_ID = "value_id";
+    public static final String ADD_UPREC = "add-uprec-action";
+    public static final String RMV_UPREC = "rmv-uprec-action";
+    public static final String ADD_UPCAT = "add-upcat-action";
+    public static final String RMV_UPCAT = "rmv-upcat-action";
+
     public static boolean isRunning;
 
     private DataModel model;
@@ -48,8 +54,7 @@ public class UploadService extends IntentService {
     }
 
     public void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
-        setUploadingRecs(recording.getId(), true);
-        setUploadingCats(recording.getCategoryId(), true);
+        setUploadingValues(recording.getId(), recording.getCategoryId());
 
         Uri uri = Utility.createUriFromRecording(this, recording);
         File recordingFile = new File(uri.toString());
@@ -87,14 +92,13 @@ public class UploadService extends IntentService {
                 .addOnSuccessListener(
                         driveFile -> {
                             showToast(recording.getName() + " uploaded.");
-                            setUploadingRecs(recording.getId(), false);
-                            setUploadingCats(recording.getCategoryId(), false);                            recording.setCloudStatus(Record.CLOUD_UPLOADED);
+                            unsetUploadingValues(recording.getId(), recording.getCategoryId());
+                            recording.setCloudStatus(Record.CLOUD_UPLOADED);
                             model.updateRecordings(recording);
                         })
                 .addOnFailureListener(e -> {
                     showToast("Unable to create recording " + recording.getName() + " in google Drive.");
-                    setUploadingRecs(recording.getId(), false);
-                    setUploadingCats(recording.getCategoryId() , false);
+                    unsetUploadingValues(recording.getId(), recording.getCategoryId());
                 });
     }
 
@@ -107,17 +111,27 @@ public class UploadService extends IntentService {
         toast.show();
     }
 
+    private void setUploadingValues(long recId, int catId) {
+        setUploadingRecs(recId, true);
+        setUploadingCats(catId, true);
+    }
+
+    private void unsetUploadingValues(long recId, int catId) {
+        setUploadingRecs(recId, false);
+        setUploadingCats(catId, false);
+    }
+
     private void setUploadingRecs(long recId, boolean isUploading) {
         Intent intent = new Intent();
-        intent.setAction((isUploading) ? "ADD_UPREC" : "RMV_UPREC");
-        intent.putExtra("VALUE", recId);
+        intent.setAction((isUploading) ? ADD_UPREC : RMV_UPREC);
+        intent.putExtra(VALUE_ID, recId);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void setUploadingCats(int catId, boolean isUploading) {
         Intent intent = new Intent();
-        intent.setAction((isUploading) ? "ADD_UPCAT" : "RMV_UPCAT");
-        intent.putExtra("VALUE", catId);
+        intent.setAction((isUploading) ? ADD_UPCAT : RMV_UPCAT);
+        intent.putExtra(VALUE_ID, catId);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
