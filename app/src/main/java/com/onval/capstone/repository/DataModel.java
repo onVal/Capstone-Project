@@ -1,11 +1,14 @@
 package com.onval.capstone.repository;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -24,8 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment.OnSaveCallback;
 
@@ -34,7 +37,9 @@ public class DataModel {
     private Application app;
     private UploadService serviceInstance;
     private MutableLiveData<UploadService> serviceLiveData;
-    private MutableLiveData<List<Record>> uploadingRecordings;
+
+    private MutableLiveData<ArrayList<Long>> uploadingRecordingsId;
+    private MutableLiveData<ArrayList<Integer>> uploadingCategoriesId;
 
     private static volatile DataModel sInstance;
 
@@ -59,8 +64,76 @@ public class DataModel {
 
         serviceLiveData = new MutableLiveData<>();
 
-        uploadingRecordings = new MutableLiveData<>();
-        uploadingRecordings.setValue(new ArrayList<>());
+        uploadingRecordingsId = new MutableLiveData<>();
+        uploadingRecordingsId.setValue(new ArrayList<>());
+        uploadingCategoriesId = new MutableLiveData<>();
+        uploadingCategoriesId.setValue(new ArrayList<>());
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("ADD_UPREC");
+        filter.addAction("RMV_UPREC");
+        filter.addAction("ADD_UPCAT");
+        filter.addAction("RMV_UPCAT");
+
+        LocalBroadcastManager.getInstance(app)
+                .registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        String action = intent.getAction();
+                        Bundle extras = intent.getExtras();
+
+                        assert action != null;
+                        assert extras != null;
+
+                        long longValue;
+                        int intValue;
+
+                        ArrayList<Long> x;
+                        ArrayList<Integer> y;
+
+                        switch (action) {
+                            case "ADD_UPREC":
+                                longValue = extras.getLong("VALUE");
+                                updateRecValue(longValue, true);
+                                break;
+                            case "RMV_UPREC":
+                                longValue = extras.getLong("VALUE");
+                                updateRecValue(longValue, false);
+                                break;
+                            case "ADD_UPCAT":
+                                intValue = extras.getInt("VALUE");
+                                updateCatValue(intValue, true);
+
+
+                                break;
+                            case "RMV_UPCAT":
+                                intValue = extras.getInt("VALUE");
+                                updateCatValue(intValue, false);
+
+                                break;
+                        }
+                    }
+                }, filter);
+    }
+
+    private void updateRecValue(long value, boolean add) {
+        ArrayList<Long> list = uploadingRecordingsId.getValue();
+        if (add)
+            list.add(value);
+        else
+            list.remove(value);
+        uploadingRecordingsId.setValue(list);
+    }
+
+    private void updateCatValue(int value, boolean add) {
+        ArrayList<Integer> list = uploadingCategoriesId.getValue();
+        // explicit cast to Integer is needed, otherwise it will use
+        // the (incorrect) overloaded method
+        if (add)
+            list.add((Integer) value);
+        else
+            list.remove((Integer) value);
+        uploadingCategoriesId.setValue(list);
     }
 
     public static DataModel getInstance(Application app) {
@@ -74,12 +147,13 @@ public class DataModel {
         return sInstance;
     }
 
-    public LiveData<List<Record>> getUploadingRecordings() {
-        if (UploadService.isRunning) {
-            return serviceInstance.getUploadingRecs();
-        }
 
-        return new MediatorLiveData<>();
+    public LiveData<ArrayList<Integer>> getCategoriesIds() {
+        return uploadingCategoriesId;
+    }
+
+    public LiveData<ArrayList<Long>> getRecordingsIds() {
+        return uploadingRecordingsId;
     }
 
     public void startUploadService() {

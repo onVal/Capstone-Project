@@ -22,22 +22,17 @@ import com.onval.capstone.utility.Utility;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class UploadService extends IntentService {
     public static boolean isRunning;
 
     private DataModel model;
-
-    private static List<Record> uploadingRecList;
-    private static MutableLiveData<List<Record>> uploadingRecs;
 
     private Toast toast;
 
@@ -48,12 +43,13 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         isRunning = true;
-        initializeUploadingRecs();
+//        initializeUploadingRecs();
         model = DataModel.getInstance(getApplication());
     }
 
     public void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
-        setUploadingRecs(recording, true);
+        setUploadingRecs(recording.getId(), true);
+        setUploadingCats(recording.getCategoryId(), true);
 
         Uri uri = Utility.createUriFromRecording(this, recording);
         File recordingFile = new File(uri.toString());
@@ -91,13 +87,14 @@ public class UploadService extends IntentService {
                 .addOnSuccessListener(
                         driveFile -> {
                             showToast(recording.getName() + " uploaded.");
-                            setUploadingRecs(recording, false);
-                            recording.setCloudStatus(Record.CLOUD_UPLOADED);
+                            setUploadingRecs(recording.getId(), false);
+                            setUploadingCats(recording.getCategoryId(), false);                            recording.setCloudStatus(Record.CLOUD_UPLOADED);
                             model.updateRecordings(recording);
                         })
                 .addOnFailureListener(e -> {
                     showToast("Unable to create recording " + recording.getName() + " in google Drive.");
-                    setUploadingRecs(recording, false);
+                    setUploadingRecs(recording.getId(), false);
+                    setUploadingCats(recording.getCategoryId() , false);
                 });
     }
 
@@ -110,23 +107,18 @@ public class UploadService extends IntentService {
         toast.show();
     }
 
-    private void initializeUploadingRecs() {
-        uploadingRecs = new MutableLiveData<>();
-        uploadingRecList = new ArrayList<>();
-        uploadingRecs.postValue(uploadingRecList);
+    private void setUploadingRecs(long recId, boolean isUploading) {
+        Intent intent = new Intent();
+        intent.setAction((isUploading) ? "ADD_UPREC" : "RMV_UPREC");
+        intent.putExtra("VALUE", recId);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-    private void setUploadingRecs(Record rec, boolean isUploading) {
-        if (isUploading)
-            uploadingRecList.add(rec);
-        else
-            uploadingRecList.remove(rec);
-
-        uploadingRecs.setValue(uploadingRecList);
-    }
-
-    public MutableLiveData<List<Record>> getUploadingRecs() {
-        return uploadingRecs;
+    private void setUploadingCats(int catId, boolean isUploading) {
+        Intent intent = new Intent();
+        intent.setAction((isUploading) ? "ADD_UPCAT" : "RMV_UPCAT");
+        intent.putExtra("VALUE", catId);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Nullable
@@ -145,6 +137,5 @@ public class UploadService extends IntentService {
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        uploadingRecs.setValue(new ArrayList<>());
     }
 }

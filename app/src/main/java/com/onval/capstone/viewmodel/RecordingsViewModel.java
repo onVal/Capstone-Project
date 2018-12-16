@@ -9,33 +9,21 @@ import com.onval.capstone.repository.DataModel;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.Utility;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 
 public class RecordingsViewModel extends AndroidViewModel {
     private DataModel model;
-    private MediatorLiveData<HashSet<Long>> recordingsIds;
     private Application application;
 
     public RecordingsViewModel(@NonNull Application application) {
         super(application);
         model = DataModel.getInstance(application);
         this.application = application;
-
-        recordingsIds = new MediatorLiveData<>();
-        recordingsIds.addSource(model.getUploadingRecordings(), recordings -> {
-            HashSet<Long> recIds = new HashSet<>();
-
-            for (Record r : recordings)
-                recIds.add(r.getId());
-
-            recordingsIds.setValue(recIds);
-        });
     }
 
     public void updateRecordings(Record... recordings) {
@@ -52,7 +40,7 @@ public class RecordingsViewModel extends AndroidViewModel {
 
             model.startUploadService();
             model.getServiceLiveData().observeForever(
-                    (uploadService -> uploadService.uploadRecordingToDrive(recording, account))
+                     (uploadService -> uploadService.uploadRecordingToDrive(recording, account))
             );
         }
     }
@@ -61,8 +49,8 @@ public class RecordingsViewModel extends AndroidViewModel {
         return model.getRecordingsFromCategory(categoryId);
     }
 
-    public LiveData<HashSet<Long>> getUploadingRecordingsIds() {
-        return recordingsIds;
+    public LiveData<ArrayList<Long>> getUploadingRecordingsIds() {
+        return model.getRecordingsIds();
     }
 
     public void deleteRecordings(Record... recordings) {
