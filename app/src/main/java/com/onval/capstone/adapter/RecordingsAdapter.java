@@ -15,6 +15,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.MetadataBuffer;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.utility.UserInterfaceUtility;
@@ -34,8 +44,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.onval.capstone.room.Record.CLOUD_UPLOADED;
-
 public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.RecordingVH> {
     private Context context;
     private List<Record> recordings;
@@ -46,6 +54,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private String categoryColor;
 
     private RecordingListener listener;
+    private DriveResourceClient driveClient;
 
     private MyActionModeCallback actionModeCallback = new MyActionModeCallback() {
         @Override
@@ -85,6 +94,10 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         listener = (RecordingListener) context;
         recordings = Collections.emptyList();
         currentlySelected = selectedRecording;
+
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(context.getApplicationContext());
+        driveClient = Drive.getDriveResourceClient(context, account);
     }
 
     @NonNull
@@ -142,15 +155,27 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             time.setText(recording.getRecDate() + " - " + recording.getRecTime());
             duration.setText(recording.getDuration());
 
-            if (recording.getCloudStatus().equals(CLOUD_UPLOADED))
-                cloud_icon.setImageDrawable(cloudUploadedOn);
-            else
-                cloud_icon.setImageDrawable(cloudUploadedOff);
+            Query query = new Query.Builder()
+                    .addFilter(Filters.and(Filters.contains(SearchableField.TITLE, String.valueOf(recording.getId())),
+                            Filters.eq(SearchableField.TRASHED, false)))
+                    .build();
 
-            viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
-                boolean recIsUploading = recordings.contains(recording.getId());
-                showProgressBar(recIsUploading);
-            });
+            Task<MetadataBuffer> queryTask = driveClient.query(query);
+            queryTask.addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
+                        @Override
+                        public void onSuccess(MetadataBuffer metadataBuffer) {
+                            if (metadataBuffer.getCount() != 0) {
+                                cloud_icon.setImageDrawable(cloudUploadedOn);
+                            } else {
+                                cloud_icon.setImageDrawable(cloudUploadedOff);
+                            }
+                        }
+                    });
+
+                    viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
+                        boolean recIsUploading = recordings.contains(recording.getId());
+                        showProgressBar(recIsUploading);
+                    });
 
             if (actionModeCallback.isMultiselect())
                 multiSelectItem(position);

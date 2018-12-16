@@ -7,6 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.adapter.RecordingsAdapter;
@@ -58,6 +62,11 @@ public class RecordingsFragment extends Fragment
 
         int categoryId = getActivity().getIntent().getExtras().getInt(CATEGORY_ID);
         int selectedRec = getActivity().getIntent().getExtras().getInt(SELECTED_REC, NO_SELECTED_REC);
+
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(getContext());
+        DriveClient driveClient = Drive.getDriveClient(getContext(), account);
+        driveClient.requestSync();
 
         recordingsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RecordingsAdapter(getContext(), selectedRec, recViewModel);

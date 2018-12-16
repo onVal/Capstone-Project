@@ -4,6 +4,13 @@ import android.app.Application;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.MetadataBuffer;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.Task;
 import com.onval.capstone.repository.DataModel;
 import com.onval.capstone.room.Category;
 import com.onval.capstone.room.Record;
@@ -52,19 +59,32 @@ public class CategoriesViewModel extends AndroidViewModel {
     public void uploadRecordings(int categoryId) {
         if (Utility.isSignedIn(application)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(application);
-            LiveData<List<Record>> recordings = model.getRecordingsFromCategory(categoryId);
+            DriveResourceClient resourceClient = Drive.getDriveResourceClient(application, account);
+
+            LiveData<List<Record>> recordingsLiveData = model.getRecordingsFromCategory(categoryId);
 
             model.startUploadService();
 
-            recordings.observeForever(new Observer<List<Record>>() {
+            recordingsLiveData.observeForever(new Observer<List<Record>>() {
                 @Override
-                public void onChanged(List<Record> records) {
-                    for (Record rec : records) {
-                        model.getServiceLiveData().observeForever(
-                                (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
-                        );
+                public void onChanged(List<Record> recordings) {
+                    for (Record rec : recordings) {
+                        Query query = new Query.Builder()
+                                //There is a bug here, rec.getId could be part of the file name
+                                .addFilter(Filters.and(Filters.contains(SearchableField.TITLE, String.valueOf(rec.getId())),
+                                        Filters.eq(SearchableField.TRASHED, false)))
+                                .build();
+
+                        Task<MetadataBuffer> queryTask = resourceClient.query(query);
+                        queryTask.addOnSuccessListener(metadataBuffer -> {
+                            if (metadataBuffer.getCount() == 0) {
+                                model.getServiceLiveData().observeForever(
+                                        (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
+                                );
+                            }
+                        });
                     }
-                    recordings.removeObserver(this);
+                    recordingsLiveData.removeObserver(this);
                 }
             });
         }

@@ -49,11 +49,12 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         isRunning = true;
-//        initializeUploadingRecs();
         model = DataModel.getInstance(getApplication());
     }
 
     public void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
+        DriveResourceClient resourceClient =  Drive.getDriveResourceClient(this, account);
+
         setUploadingValues(recording.getId(), recording.getCategoryId());
 
         Uri uri = Utility.createUriFromRecording(this, recording);
@@ -64,7 +65,6 @@ public class UploadService extends IntentService {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores *2,
                 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
-        DriveResourceClient resourceClient =  Drive.getDriveResourceClient(this, account);
 
         final Task<DriveFolder> rootFolderTask = resourceClient.getRootFolder();
         final Task<DriveContents> createContentsTask = resourceClient.createContents();
