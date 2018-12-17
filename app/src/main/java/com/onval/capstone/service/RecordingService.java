@@ -12,10 +12,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
@@ -23,6 +19,11 @@ import com.onval.capstone.activities.RecordActivity;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.onval.capstone.activities.RecordActivity.PAUSE_ACTION;
 import static com.onval.capstone.activities.RecordActivity.PLAY_ACTION;
@@ -201,6 +202,8 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        updateUIButton(RESET_ACTION);
+
         if (recorder != null) {
             recorder.release();
             recorder = null;

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.ChooseCategoryDialogFragment;
@@ -57,6 +58,8 @@ public class RecordActivity extends AppCompatActivity
 
     @BindView(R.id.timer_tv) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
+    @BindView(R.id.rec_animation)
+    LottieAnimationView animationView;
 
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
 
@@ -288,12 +291,18 @@ public class RecordActivity extends AppCompatActivity
             switch (action) {
                 case PLAY_ACTION:
                     drawableId = R.drawable.ic_play_white_24dp;
+                    animationView.pauseAnimation();
+                    animationView.setVisibility(View.VISIBLE);
                     break;
                 case PAUSE_ACTION:
                     drawableId = R.drawable.ic_pause_white_24dp;
+                    animationView.setVisibility(View.VISIBLE);
+                    animationView.playAnimation();
                     break;
                 case RESET_ACTION:
                     drawableId = R.drawable.ic_fab_dot;
+                    animationView.setVisibility(View.INVISIBLE);
+                    animationView.cancelAnimation();
                     break;
             }
 

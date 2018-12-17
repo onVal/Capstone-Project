@@ -21,13 +21,6 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
-//    private static final Migration MIGRATION_2_3 = new Migration(1, 2) {
-//        @Override
-//        public void migrate(SupportSQLiteDatabase database) {
-//            database.execSQL("CREATE UNIQUE INDEX index_Record_name ON Record(name)");
-//        }
-//    };
-
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
