@@ -6,10 +6,15 @@
         <item name="android:colorBackground">@color/colorPrimary</item>
         <item name="android:colorForeground">@android:color/white</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/LightTheme.Toolbar</item>
     </style>
 
     <style name="LightTheme.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="popupTheme">@style/LightTheme.OverflowPopup</item>
+
     </style>
 
     <style name="LightTheme.OverflowPopup" parent="ThemeOverlay.AppCompat.Light">
