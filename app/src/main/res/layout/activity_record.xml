@@ -9,16 +9,19 @@
     android:background="#fff"
     tools:context=".activities.RecordActivity">
 
-    <TextView
+    <ImageView
         android:id="@+id/stop_recording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/stop_recording"
-        android:textSize="18sp"
-        android:padding="16dp"
+        android:layout_marginTop="32dp"
+        android:padding="4dp"
+        android:elevation="8dp"
+        android:src="@drawable/ic_close_black_24dp"
+        android:background="@drawable/ic_close_black_24dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:tint="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,8 +30,10 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/record_fab"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:elevation="8dp"
+        app:fabCustomSize="64dp"
         app:srcCompat="@drawable/ic_pause_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:textSize="25sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/record_fab"
