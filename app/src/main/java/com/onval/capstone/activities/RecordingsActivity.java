@@ -79,8 +79,6 @@ public class RecordingsActivity extends AppCompatActivity
         }
     };
 
-    Toolbar toolbar;
-
     private RecordingsFragment fragment;
     private LiveData<String> categoryColor;
 
@@ -112,20 +110,19 @@ public class RecordingsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
 
-        toolbar = findViewById(R.id.my_rec_toolbar);
-        setSupportActionBar(toolbar);
+        categoryId = getIntent().getExtras().getInt(CATEGORY_ID);
+        categoryName = getIntent().getExtras().getString(CATEGORY_NAME);
+
+        setToolbar();
 
         ButterKnife.bind(this);
 
         IntentFilter filter = new IntentFilter(UPDATE_PLAYER_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
-        categoryId = getIntent().getExtras().getInt(CATEGORY_ID);
-        categoryName = getIntent().getExtras().getString(CATEGORY_NAME);
-
         CategoriesViewModel viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         categoryColor = viewModel.getCategoryColor(categoryId);
-        categoryColor.observe(this, this::setInterfaceColor);
+//        categoryColor.observe(this, this::setInterfaceColor);
 
         if (PlayerService.isRunning) {
             if (PlayerService.selectedRec != null)
@@ -138,6 +135,14 @@ public class RecordingsActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment(), FRAGMENT_TAG)
                 .commit();
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = findViewById(R.id.my_rec_toolbar);
+        toolbar.setTitle(categoryName);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
@@ -158,13 +163,13 @@ public class RecordingsActivity extends AppCompatActivity
         }
     }
 
-    private void setInterfaceColor(String colorStr) {
-        int color = Color.parseColor(colorStr);
-        int darkenedColor = UserInterfaceUtility.darkenColor(color, 0.9f);
+//    private void setInterfaceColor(String colorStr) {
+//        int color = Color.parseColor(colorStr);
+//        int darkenedColor = UserInterfaceUtility.darkenColor(color, 0.9f);
 
-        fab.setBackgroundTintList(ColorStateList.valueOf(darkenedColor));
-        toolbar.setBackgroundColor(darkenedColor);
-    }
+//        fab.setBackgroundTintList(ColorStateList.valueOf(darkenedColor));
+//        toolbar.setBackgroundColor(darkenedColor);
+//    }
 
     @OnClick
     public void record(View view) {

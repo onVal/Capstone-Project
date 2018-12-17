@@ -23,7 +23,6 @@ import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
@@ -161,16 +160,13 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                     .build();
 
             Task<MetadataBuffer> queryTask = driveClient.query(query);
-            queryTask.addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
-                        @Override
-                        public void onSuccess(MetadataBuffer metadataBuffer) {
-                            if (metadataBuffer.getCount() != 0) {
-                                cloud_icon.setImageDrawable(cloudUploadedOn);
-                            } else {
-                                cloud_icon.setImageDrawable(cloudUploadedOff);
-                            }
-                        }
-                    });
+            queryTask.addOnSuccessListener(metadataBuffer -> {
+                if (metadataBuffer.getCount() != 0) {
+                    cloud_icon.setImageDrawable(cloudUploadedOn);
+                } else {
+                    cloud_icon.setImageDrawable(cloudUploadedOff);
+                }
+            });
 
                     viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
                         boolean recIsUploading = recordings.contains(recording.getId());
@@ -213,7 +209,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             boolean isSelected = actionModeCallback.selectItemAtPosition(position);
 
             final int LITEGRAY = Color.parseColor("#eeeeee");
-            final int DEEPBLUE = Color.parseColor("#129fe5");
+            final int DEEPBLUE = Color.parseColor("#304a60");
 
             int bgColor = (isSelected) ? DEEPBLUE : Color.WHITE;
             int textColor = (isSelected) ? Color.WHITE : Color.BLACK;
@@ -227,7 +223,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         }
 
         private void selectToPlay(boolean selected) {
-            int LITEGRAY = Color.parseColor("#eeeeee");
+            final int LITEGRAY = Color.parseColor("#eeeeee");
 
             int darkenedColor = UserInterfaceUtility.darkenColor(Color.parseColor(categoryColor), 0.7f);
             int bgColor = (selected) ? darkenedColor : Color.WHITE;
