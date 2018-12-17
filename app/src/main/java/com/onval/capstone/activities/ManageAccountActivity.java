@@ -2,8 +2,6 @@ package com.onval.capstone.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,15 +16,17 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ManageAccountActivity extends AppCompatActivity {
     public static final int SIGNIN_REQUEST_CODE = 1;
+    public static final String UPLOAD_FOLDER_NAME = "Recordings";
 
     private GoogleSignInClient googleSignInClient;
-    private GoogleSignInAccount googleSignInAccount;
 
     @BindView(R.id.account_name)
     public TextView accountName;
@@ -90,7 +90,6 @@ public class ManageAccountActivity extends AppCompatActivity {
     private void updateViewWithGoogleSignInAccountTask(Task<GoogleSignInAccount> task) {
         task.addOnSuccessListener(
                 googleSignInAccount -> {
-                    this.googleSignInAccount = googleSignInAccount;
                     String accountName = googleSignInAccount.getGivenName();
                     String accountLastName= googleSignInAccount.getFamilyName();
                     signedInName = accountName + " " + accountLastName;
@@ -139,41 +138,4 @@ public class ManageAccountActivity extends AppCompatActivity {
         task.addOnSuccessListener(o -> displayNoUser());
     }
 
-//    private void uploadRecordingToDrive(Record recording) {
-//        Uri uri = Utility.createUriFromRecording(this, recording);
-//        File recordingFile = new File(uri.toString());
-//
-//        DriveResourceClient resourceClient =  Drive.getDriveResourceClient(this, googleSignInAccount);
-//
-//        final Task<DriveFolder> rootFolderTask = resourceClient.getRootFolder();
-//        final Task<DriveContents> createContentsTask = resourceClient.createContents();
-//        Tasks.whenAll(rootFolderTask, createContentsTask)
-//                .continueWithTask(task -> {
-//                    DriveFolder parent = rootFolderTask.getResult();
-//                    DriveContents contents = createContentsTask.getResult();
-//
-//                    OutputStream outputStream = contents.getOutputStream();
-//                    FileInputStream inputStream = new FileInputStream(recordingFile);
-//                    int readByte;
-//                    while ((readByte = inputStream.read()) != -1) {
-//                        outputStream.write(readByte);
-//                    }
-//
-//                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-//                            .setTitle(uri.getPath())
-//                            .setMimeType("audio/mp4")
-//                            .build();
-//
-//                    return resourceClient.createFile(parent, changeSet, contents);
-//                })
-//                .addOnSuccessListener(this,
-//                        driveFile -> {
-//                            Log.e("derp", "File created successfully");
-//                            finish();
-//                        })
-//                .addOnFailureListener(this, e -> {
-//                    Log.e("derp", "Unable to create file", e);
-//                    finish();
-//                });
-//    }
 }

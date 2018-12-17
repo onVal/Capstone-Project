@@ -7,12 +7,18 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.onval.capstone.repository.DataModel;
@@ -28,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import static com.onval.capstone.activities.ManageAccountActivity.UPLOAD_FOLDER_NAME;
 
 public class UploadService extends IntentService {
     public static final String VALUE_ID = "value_id";
@@ -50,6 +58,23 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         isRunning = true;
         model = DataModel.getInstance(getApplication());
+        createFolderIfNotExists();
+    }
+
+    private void createFolderIfNotExists() {
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        DriveResourceClient resourceClient =  Drive.getDriveResourceClient(this, account);
+
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.TITLE, UPLOAD_FOLDER_NAME))
+                .build();
+
+        Task<MetadataBuffer> queryTask = resourceClient.query(query);
+        queryTask.addOnSuccessListener(metadata -> {
+            if (metadata.getCount() == 0) {
+                createFolder(UPLOAD_FOLDER_NAME);
+            }
+        });
     }
 
     public void uploadRecordingToDrive(Record recording, GoogleSignInAccount account) {
@@ -65,13 +90,27 @@ public class UploadService extends IntentService {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores *2,
                 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.TITLE, UPLOAD_FOLDER_NAME))
+                .build();
+
+        Task<MetadataBuffer> queryTask = resourceClient.query(query);
 
         final Task<DriveFolder> rootFolderTask = resourceClient.getRootFolder();
         final Task<DriveContents> createContentsTask = resourceClient.createContents();
-        Tasks.whenAll(rootFolderTask, createContentsTask)
+
+        Tasks.whenAll(rootFolderTask, createContentsTask, queryTask)
                 .continueWithTask(executor, task -> {
                     DriveFolder parent = rootFolderTask.getResult();
                     DriveContents contents = createContentsTask.getResult();
+                    MetadataBuffer metadata = queryTask.getResult();
+
+                    DriveId recFolderId = parent.getDriveId();
+                    if (metadata.getCount() != 0) {
+                        recFolderId = metadata.get(0).getDriveId();
+                    }
+
+                    DriveFolder recFolder = recFolderId.asDriveFolder();
 
                     OutputStream outputStream = contents.getOutputStream();
                     FileInputStream inputStream = new FileInputStream(recordingFile);
@@ -87,7 +126,7 @@ public class UploadService extends IntentService {
                             .setMimeType("audio/mp4")
                             .build();
 
-                    return resourceClient.createFile(parent, changeSet, contents);
+                    return resourceClient.createFile(recFolder, changeSet, contents);
                 })
                 .addOnSuccessListener(
                         driveFile -> {
@@ -99,6 +138,20 @@ public class UploadService extends IntentService {
                 .addOnFailureListener(e -> {
                     showToast("Unable to create recording " + recording.getName() + " in google Drive.");
                     unsetUploadingValues(recording.getId(), recording.getCategoryId());
+                });
+    }
+
+    private void createFolder(String name) {
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        DriveResourceClient resourceClient =  Drive.getDriveResourceClient(this, account);
+        resourceClient.getRootFolder()
+                .continueWithTask(task -> {
+                    DriveFolder parentFolder = task.getResult();
+                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                            .setTitle(name)
+                            .setMimeType(DriveFolder.MIME_TYPE)
+                            .build();
+                    return resourceClient.createFolder(parentFolder, changeSet);
                 });
     }
 
