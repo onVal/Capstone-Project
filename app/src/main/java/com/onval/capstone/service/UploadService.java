@@ -114,9 +114,11 @@ public class UploadService extends IntentService {
 
                     OutputStream outputStream = contents.getOutputStream();
                     FileInputStream inputStream = new FileInputStream(recordingFile);
-                    int readByte;
-                    while ((readByte = inputStream.read()) != -1) {
-                        outputStream.write(readByte);
+
+                    byte[] buffer = new byte[512];
+
+                    while (inputStream.read(buffer) != -1) {
+                        outputStream.write(buffer);
                     }
 
                     String title = uri.getLastPathSegment();
