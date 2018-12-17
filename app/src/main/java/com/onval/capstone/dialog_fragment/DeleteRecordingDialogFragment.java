@@ -5,8 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;

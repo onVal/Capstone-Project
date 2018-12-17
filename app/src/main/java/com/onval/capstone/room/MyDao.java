@@ -1,9 +1,14 @@
 package com.onval.capstone.room;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.*;
-
 import java.util.List;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
 
 @Dao
 public interface MyDao {
@@ -21,6 +26,15 @@ public interface MyDao {
 
     @Query("SELECT color FROM category WHERE id = :categoryId")
     LiveData<String> getCategoryColor(int categoryId);
+
+    @Query("SELECT auto_upload FROM category WHERE id = :categoryId")
+    LiveData<Boolean> categoryAutoupload(int categoryId);
+
+    @Update
+    void updateCategories(Category... categories);
+
+    @Update
+    void updateRecordings(Record... recordings);
 
     @Insert(onConflict =  OnConflictStrategy.IGNORE)
     long insertCategory(Category category);

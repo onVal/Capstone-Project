@@ -1,11 +1,12 @@
 package com.onval.capstone.room;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
+
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {Category.class, Record.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {

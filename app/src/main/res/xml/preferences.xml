@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="pref_account"
+        android:title="Google Account">
+        <intent
+            android:targetPackage="com.onval.capstone"
+            android:targetClass="com.onval.capstone.activities.ManageAccountActivity" />
+    </Preference>
     <ListPreference
         android:key="pref_sync"
         android:title="Data sync"
         android:summary="Wifi only or Mobile Data"
         android:entries="@array/data_sync"
         android:entryValues="@array/data_sync"
+        android:defaultValue="Wifi only"
         />
 
     <ListPreference

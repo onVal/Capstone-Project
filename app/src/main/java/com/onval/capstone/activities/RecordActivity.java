@@ -1,7 +1,6 @@
 package com.onval.capstone.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,33 +9,39 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.onval.capstone.dialog_fragment.DeleteRecordingDialogFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.ChooseCategoryDialogFragment;
+import com.onval.capstone.dialog_fragment.DeleteRecordingDialogFragment;
 import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
+import com.onval.capstone.room.Record;
 import com.onval.capstone.service.RecordingBinder;
 import com.onval.capstone.service.RecordingService;
 import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
+import com.onval.capstone.viewmodel.RecordingsViewModel;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,6 +69,9 @@ public class RecordActivity extends AppCompatActivity
 
     @Nullable Integer categoryId;
 
+    private CategoriesViewModel catViewModel;
+    private RecordingsViewModel recViewModel;
+
     private Intent intentService;
     private RecordingService service;
     private final ServiceConnection serviceConnection = new MyServiceConnection();
@@ -84,6 +92,9 @@ public class RecordActivity extends AppCompatActivity
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_record);
         ButterKnife.bind(this);
+
+        catViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        recViewModel = ViewModelProviders.of(this).get(RecordingsViewModel.class);
 
         registerTimerReceiver();
         registerUIReceiver();
@@ -196,16 +207,36 @@ public class RecordActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveRecording(long id, String name) {
+    public void onSaveRecording(Record recording) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             service.stopRecording();
-        String physicalName = id + "_" + name; //ex. 4_WednesdayMemo
+
+        String physicalName = recording.getId() + "_" + recording.getName(); //ex. 4_WednesdayMemo
         saveRecordingAs(physicalName);
 
-        String msg = "The recording " + name + " has been created.";
+        String msg = "The recording " + recording.getName() + " has been created.";
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
+        LiveData<Boolean> catAutoupload = catViewModel.isCategoryAutouploadOn(recording.getCategoryId());
+        catAutoupload.observeForever(new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean autouploadIsSet) {
+                if (autouploadIsSet)
+                    recViewModel.uploadRecording(recording);
+                catAutoupload.removeObserver(this);
+            }
+        });
+
         resetService();
+        finish();
+    }
+
+    private void saveRecordingAs(String newRecName) {
+        String externalPath = getExternalCacheDir().getAbsolutePath();
+        File rec = new File(externalPath + DEFAULT_REC_NAME);
+        String validName = newRecName.replace(":", "_");
+        File newName = new File(externalPath + "/" + validName + REC_EXTENSION);
+        rec.renameTo(newName);
     }
 
     @Override
@@ -223,13 +254,7 @@ public class RecordActivity extends AppCompatActivity
         timerTextView.setText(getString(R.string.starting_timer));
     }
 
-    private void saveRecordingAs(String newRecName) {
-        String externalPath = getExternalCacheDir().getAbsolutePath();
-        File rec = new File(externalPath + DEFAULT_REC_NAME);
-        String validName = newRecName.replace(":", "_");
-        File newName = new File(externalPath + "/" + validName + REC_EXTENSION);
-        rec.renameTo(newName);
-    }
+
 
     private class MyServiceConnection implements ServiceConnection {
         @Override

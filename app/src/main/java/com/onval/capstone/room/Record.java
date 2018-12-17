@@ -1,13 +1,13 @@
 package com.onval.capstone.room;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
-import static android.arch.persistence.room.ForeignKey.CASCADE;
+import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(indices = { @Index(value = "name", unique = true),
                     @Index(value = "category_id")},
@@ -16,8 +16,11 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
                                     childColumns = "category_id",
                                     onDelete = CASCADE))
 public class Record {
+    public static final String CLOUD_UPLOADED = "UPLOADED";
+    public static final String CLOUD_NOT_UPLOADED = "NOT UPLOADED";
+
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
     private String name;
     private String duration;
@@ -52,11 +55,11 @@ public class Record {
         this.categoryId = categoryId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

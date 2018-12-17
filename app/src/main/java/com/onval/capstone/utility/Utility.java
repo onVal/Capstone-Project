@@ -1,9 +1,10 @@
 package com.onval.capstone.utility;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.onval.capstone.room.Record;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
 public class Utility {
 
     public static Uri createUriFromRecording(Context context, Record recording) {
-        int recId = recording.getId();
+        long recId = recording.getId();
         String recName = recording.getName();
 
         String filePath =  context.getExternalCacheDir().getAbsolutePath();
@@ -19,14 +20,19 @@ public class Utility {
         return Uri.parse(filePath + recFullName);
     }
 
-    public static String getPathFromRecording(Context context, Record recording) {
+    private static String getPathFromRecording(Context context, Record recording) {
         Uri uri = createUriFromRecording(context, recording);
         return uri.toString();
     }
 
-    public static boolean deleteRecordingFromFilesystem(Context context, Record recording) {
+    public static void deleteRecordingFromFilesystem(Context context, Record recording) {
         String path = Utility.getPathFromRecording(context, recording);
         File file = new File(path);
-        return file.delete();
+        file.delete();
+    }
+
+    public static boolean isSignedIn(Context context) {
+        GoogleSignInAccount signedInAccount = GoogleSignIn.getLastSignedInAccount(context);
+        return signedInAccount != null;
     }
 }

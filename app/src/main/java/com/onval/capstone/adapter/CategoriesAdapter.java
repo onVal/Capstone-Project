@@ -2,35 +2,34 @@ package com.onval.capstone.adapter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -42,33 +41,15 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     private List<Category> categories;
     private CategoriesViewModel viewModel;
 
-    private boolean multiselect = false;
-    private List<Integer> selectedPositions;
-
-    private Category[] cArray;
-
-    private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add("Delete");
-            multiselect = true;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
+    private MyActionModeCallback actionModeCallback = new MyActionModeCallback() {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             ArrayList<Category> selectedCatList = new ArrayList<>();
 
-            for (Integer pos : selectedPositions) {
+            for (Integer pos : getSelectedPositions())
                 selectedCatList.add(categories.get(pos));
-            }
 
-            cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
+            Category[] cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
@@ -85,20 +66,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             mode.finish();
             return true;
         }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            multiselect = false;
-            selectedPositions.clear();
-            notifyDataSetChanged();
-        }
     };
 
     public CategoriesAdapter(Context context, CategoriesViewModel viewModel) {
         this.context = context;
         this.viewModel = viewModel;
         categories = Collections.emptyList();
-        selectedPositions = new ArrayList<>();
     }
 
     @NonNull
@@ -120,10 +93,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
-
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getString(R.string.prefs), Context.MODE_PRIVATE);
-
         notifyDataSetChanged();
     }
 
@@ -143,6 +112,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         @BindView(R.id.category_name) TextView categoryName;
         @BindView(R.id.category_subtext) TextView categorySubtext;
         @BindView(R.id.autoupload_icon) ImageView autouploadIcon;
+        @BindView(R.id.upload_progress) ProgressBar progressBar;
 
         final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
         final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
@@ -158,19 +128,28 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());
 
-            LiveData<Integer> recordings = viewModel.getRecNumberInCategory(category.getId());
-            recordings.observeForever((Integer r)->{
-                    String subtext = r + ((r == 1) ? " recording" : " recordings");
-                    categorySubtext.setText(subtext);
+            viewModel.getRecNumberInCategory(category.getId())
+                    .observeForever((Integer num) -> {
+                        String subtext = num + ((num == 1) ? " recording" : " recordings");
+                        categorySubtext.setText(subtext);
+                    });
+
+            viewModel.getUploadingCategoryIds().observeForever(catIds -> {
+                boolean categoryIsUploading = catIds.contains(category.getId());
+                showProgressBar(categoryIsUploading);
             });
 
-            if (category.isAutoUploading()) // todo: i need to check if g.drive is enabled as well
-                autouploadIcon.setImageDrawable(cloudAutouploadingIconOn);
-            else
-                autouploadIcon.setImageDrawable(cloudAutouploadingIconOff);
+
+//            GoogleSignInAccount
+            if (Utility.isSignedIn(context)) {
+                autouploadIcon.setImageDrawable(
+                        (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff);
+            } else {
+                autouploadIcon.setImageDrawable(null);
+            }
 
             // This is to prevent incorrect item selection when RecyclerView does its thing
-            if (selectedPositions.contains(position)) {
+            if (actionModeCallback.getSelectedPositions().contains(position)) {
                 layout.setBackgroundColor(Color.LTGRAY);
             } else {
                 layout.setBackgroundColor(Color.WHITE);
@@ -178,13 +157,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             //add listeners
             itemView.setOnLongClickListener(view -> {
-                ((AppCompatActivity) view.getContext()).startSupportActionMode(actionModeCallbacks);
+                ((AppCompatActivity) view.getContext()).startSupportActionMode(actionModeCallback);
                 selectItem(position);
                 return true;
             });
 
             itemView.setOnClickListener(view -> {
-                if (multiselect)
+                if (actionModeCallback.isMultiselect())
                     selectItem(position);
                 else {
                     Intent intent = new Intent(context, RecordingsActivity.class);
@@ -194,16 +173,43 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     context.startActivity(intent);
                 }
             });
+
+            autouploadIcon.setOnLongClickListener(view -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+                String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
+                                                            : "Turn on auto uploading for this category?";
+
+                builder.setTitle("Google Drive Sync")
+                        .setMessage(msg)
+                        .setPositiveButton(android.R.string.yes, (d, w) -> {
+                            boolean autouploadIsSet = !category.isAutoUploading();
+
+                            if (autouploadIsSet)
+                                viewModel.uploadRecordings(category.getId());
+
+                            //todo: this should be done after upload recording finishes
+                            category.setAutoUploading(autouploadIsSet);
+                            viewModel.updateCategories(category);
+
+                        })
+                        .setNegativeButton(android.R.string.no, null);
+
+                Dialog dialog = builder.create();
+                dialog.show();
+
+                return true;
+            });
         }
 
         private void selectItem(Integer position) {
-            if (selectedPositions.contains(position)) {
-                selectedPositions.remove(position);
-                layout.setBackgroundColor(Color.WHITE);
-            } else {
-                selectedPositions.add(position);
-                layout.setBackgroundColor(Color.LTGRAY);
-            }
+            boolean itemIsSelected = actionModeCallback.selectItemAtPosition(position);
+            layout.setBackgroundColor(itemIsSelected ? Color.LTGRAY : Color.WHITE );
+
+        }
+
+        private void showProgressBar(boolean show) {
+            progressBar.setVisibility((show) ? View.VISIBLE : View.INVISIBLE);
+            autouploadIcon.setVisibility((show) ? View.INVISIBLE : View.VISIBLE);
         }
     }
 }

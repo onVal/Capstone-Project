@@ -1,15 +1,8 @@
 package com.onval.capstone.fragment;
 
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,21 +10,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.onval.capstone.adapter.CategoriesAdapter;
-import com.onval.capstone.room.Category;
-import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.R;
+import com.onval.capstone.adapter.CategoriesAdapter;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import java.util.Collections;
-import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class CategoriesFragment extends Fragment {
-    private Context context;
     private CategoriesViewModel viewModel;
     private CategoriesAdapter adapter;
     private SharedPreferences prefs;
@@ -53,9 +48,6 @@ public class CategoriesFragment extends Fragment {
         setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
-        LiveData<List<Category>> liveCategories = viewModel.getCategories();
-
-        context = getContext();
         prefs = getActivity().getSharedPreferences(getString(R.string.prefs), MODE_PRIVATE);
 
         ButterKnife.bind(this, view);
@@ -65,10 +57,10 @@ public class CategoriesFragment extends Fragment {
 
         categories.setAdapter(adapter);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         categories.setLayoutManager(layoutManager);
 
-        liveCategories.observe(this,
+        viewModel.getCategories().observe(this,
                 cats -> {
                     adapter.setCategories(cats != null ? cats : Collections.EMPTY_LIST);
                     if (sortByName) adapter.sortCategoriesByName();
@@ -77,6 +69,12 @@ public class CategoriesFragment extends Fragment {
         );
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
