@@ -14,8 +14,6 @@
 
         android:elevation="4dp"
 
-        android:theme="@style/LightTheme.Toolbar"
-        app:popupTheme="@style/LightTheme.OverflowPopup"
         tools:ignore="UnusedAttribute" />
 
     <TextView
@@ -25,13 +23,15 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:textColor="#000"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar2"
         tools:text="Name Surname" />
+
+    <!--android:textColor="#000"-->
+
 
     <TextView
         android:id="@+id/account_email"
@@ -62,22 +62,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_email" />
 
-
-    <Button
-        android:id="@+id/hellobtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Hello!"
-        android:textColor="#000"
-        app:layout_constraintBottom_toTopOf="@+id/logout_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
     <Button
         android:id="@+id/logout_btn"
         android:layout_width="match_parent"
