@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
     tools:context=".activities.ManageAccountActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -30,16 +29,12 @@
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar2"
         tools:text="Name Surname" />
 
-    <!--android:textColor="#000"-->
-
-
     <TextView
         android:id="@+id/account_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:textColor="#444"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,11 +45,10 @@
         android:id="@+id/account_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:gravity="center"
-        android:textColor="#222"
         android:textSize="14sp"
         tools:text="@string/account_msg"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,9 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
 
-        android:background="#222"
         android:text="@string/logout_btn_txt"
-        android:textColor="#fff"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +76,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:textColor="#000"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

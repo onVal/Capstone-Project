@@ -6,10 +6,10 @@
     android:id="@+id/record_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
     tools:context=".activities.RecordActivity">
 
     <ImageView
+        android:theme="@style/LightTheme.StopRecButton"
         android:id="@+id/stop_recording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,10 +18,8 @@
         android:layout_marginTop="32dp"
         android:padding="4dp"
         android:elevation="8dp"
-        android:src="@drawable/ic_close_black_24dp"
-        android:background="@drawable/ic_close_black_24dp"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:tint="@color/colorPrimaryDark"
+        app:srcCompat="@drawable/ic_close_black_24dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"

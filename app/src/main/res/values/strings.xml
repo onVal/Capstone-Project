@@ -43,7 +43,8 @@
     <string name="signedin_txt">You are currently signed in as</string>
     <string name="manage_account_act_title">Manage Google Account</string>
     <string name="account_default_summary">Sign in with your Google Account</string>
-    <string name="account_msg">You can now upload your recordings\n in your Google Drive account</string>
+    <string name="account_msg">You can now upload your recordings\n in your Google Drive account\n\n
+        Long press the cloud icon next to each category\n to set autouploading option on.</string>
     <string name="logout_btn_txt">Sign out</string>
     <string name="sign_in_message">Sign in to upload your recordings to Google Drive</string>
     <string name="delete_cat_title">Delete</string>
