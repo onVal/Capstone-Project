@@ -31,6 +31,6 @@
         android:summary="Select a theme for the application"
         android:dialogTitle="Choose application theme"
         android:entries="@array/themes"
-        android:entryValues="@array/themes"
-        android:defaultValue="Light" />
+        android:entryValues="@array/theme_vals"
+        android:defaultValue="@string/default_theme" />
 </PreferenceScreen>

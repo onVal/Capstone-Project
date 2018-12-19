@@ -12,6 +12,7 @@ import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.AddCategoryDialogFragment;
 import com.onval.capstone.fragment.CategoriesFragment;
 import com.onval.capstone.fragment.EmptyFragment;
+import com.onval.capstone.utility.UserInterfaceUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import androidx.annotation.LayoutRes;
@@ -31,9 +32,15 @@ import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_C
 public class MainActivity extends AppCompatActivity implements Observer<Integer> {
     private CategoriesViewModel viewModel;
     private FragmentManager fm;
+    private String currentTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentTheme = UserInterfaceUtility.getTheme(this);
+        setTheme(currentTheme.equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
+
+//        UserInterfaceUtility.initCustomTheme(this);
+
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -49,6 +56,14 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
 
             viewModel.getNumOfCategories()
                     .observe(this, this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!currentTheme.equals(UserInterfaceUtility.getTheme(this))) {
+            recreate();
         }
     }
 

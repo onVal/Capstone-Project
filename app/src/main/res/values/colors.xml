@@ -5,6 +5,10 @@
     <color name="colorAccent">#d2124c</color>
     <color name="colorSubtext">#666</color>
 
+    <color name="darkPrimary">#424242</color>
+    <color name="darkPrimaryDark">#202020</color>
+    <color name="darkAccent">#551055</color>
+
     <string-array name="category_colors">
         <item>#ff1744</item>
         <item>#ffa000</item>

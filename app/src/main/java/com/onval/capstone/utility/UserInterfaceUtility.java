@@ -1,7 +1,12 @@
 package com.onval.capstone.utility;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+
+import com.onval.capstone.R;
 
 public class UserInterfaceUtility {
     public static int darkenColor(int color, float factor) {
@@ -27,5 +32,14 @@ public class UserInterfaceUtility {
             return String.format("%02d:%02d", mm, ss);
 
         return String.format("%02d:%02d:%02d", hh, mm, ss);
+    }
+
+    public static void initCustomTheme(Context context) {
+        context.setTheme(getTheme(context).equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
+    }
+
+    public static String getTheme(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getString("pref_theme", "Light");
     }
 }

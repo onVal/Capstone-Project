@@ -15,6 +15,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
+import com.onval.capstone.utility.UserInterfaceUtility;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -48,6 +49,8 @@ public class ManageAccountActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UserInterfaceUtility.initCustomTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_account);
         setToolbar();

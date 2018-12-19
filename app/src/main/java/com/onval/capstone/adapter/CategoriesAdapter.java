@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.utility.UserInterfaceUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
@@ -152,7 +153,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             if (actionModeCallback.getSelectedPositions().contains(position)) {
                 layout.setBackgroundColor(Color.LTGRAY);
             } else {
-                layout.setBackgroundColor(Color.WHITE);
+                switch (UserInterfaceUtility.getTheme(context)) {
+                    case "Light":
+                        layout.setBackgroundColor(Color.WHITE);
+                        break;
+                    case "Dark":
+                        layout.setBackgroundColor(Color.parseColor("#2a2a2b"));
+                        break;
+                }
             }
 
             //add listeners

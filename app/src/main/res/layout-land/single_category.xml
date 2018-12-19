@@ -11,6 +11,7 @@
     android:layout_marginBottom="8dp"
     android:layout_marginStart="100dp"
     android:layout_marginEnd="100dp"
+    android:background="@color/colorPrimaryDark"
 
     android:elevation="3dp"
     tools:ignore="UnusedAttribute">

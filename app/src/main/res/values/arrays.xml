@@ -5,6 +5,11 @@
         <item>Dark</item>
     </array>
 
+    <array name="theme_vals">
+        <item>Light</item>
+        <item>Dark</item>
+    </array>
+
     <array name="quality">
         <item>Normal quality</item>
         <item>High quality </item>

@@ -211,9 +211,22 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             final int LITEGRAY = Color.parseColor("#eeeeee");
             final int DEEPBLUE = Color.parseColor("#304a60");
 
-            int bgColor = (isSelected) ? DEEPBLUE : Color.WHITE;
-            int textColor = (isSelected) ? Color.WHITE : Color.BLACK;
-            int subColor = (isSelected) ? LITEGRAY : Color.DKGRAY;
+            int themedBackground; int themedTextColor; int themedSubColor;
+
+            if (UserInterfaceUtility.getTheme(context).equals("Light")) {
+                themedBackground = Color.WHITE;
+                themedTextColor = Color.BLACK;
+                themedSubColor = Color.DKGRAY;
+            } else {
+                themedBackground = Color.parseColor("#323232");
+                themedTextColor = Color.WHITE;
+                themedSubColor = LITEGRAY;
+            }
+
+
+            int bgColor = (isSelected) ? DEEPBLUE : themedBackground;
+            int textColor = (isSelected) ? Color.WHITE : themedTextColor;
+            int subColor = (isSelected) ? LITEGRAY : themedSubColor;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);
@@ -225,10 +238,23 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         private void selectToPlay(boolean selected) {
             final int LITEGRAY = Color.parseColor("#eeeeee");
 
+            int themedBackground; int themedTextColor; int themedSubColor;
+
+            if (UserInterfaceUtility.getTheme(context).equals("Light")) {
+                themedBackground = Color.WHITE;
+                themedTextColor = Color.BLACK;
+                themedSubColor = Color.DKGRAY;
+            } else {
+                themedBackground = Color.parseColor("#323232");
+                themedTextColor = Color.WHITE;
+                themedSubColor = LITEGRAY;
+            }
+
+            // sometimes it crashes here...for some reason
             int darkenedColor = UserInterfaceUtility.darkenColor(Color.parseColor(categoryColor), 0.7f);
-            int bgColor = (selected) ? darkenedColor : Color.WHITE;
-            int textColor = (selected) ? Color.WHITE : Color.BLACK;
-            int subColor = (selected) ? LITEGRAY : Color.DKGRAY;
+            int bgColor = (selected) ? darkenedColor : themedBackground;
+            int textColor = (selected) ? Color.WHITE : themedTextColor;
+            int subColor = (selected) ? LITEGRAY : themedSubColor;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);

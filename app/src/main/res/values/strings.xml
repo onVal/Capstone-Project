@@ -48,5 +48,6 @@
     <string name="logout_btn_txt">Sign out</string>
     <string name="sign_in_message">Sign in to upload your recordings to Google Drive</string>
     <string name="delete_cat_title">Delete</string>
+    <string name="default_theme">LightTheme</string>
 
 </resources>

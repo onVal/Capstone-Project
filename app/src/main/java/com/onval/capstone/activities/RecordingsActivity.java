@@ -1,28 +1,20 @@
 package com.onval.capstone.activities;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.IBinder;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.RecordingsAdapter;
 import com.onval.capstone.fragment.RecordingsFragment;
@@ -31,6 +23,11 @@ import com.onval.capstone.service.PlayerService;
 import com.onval.capstone.utility.UserInterfaceUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -107,6 +104,8 @@ public class RecordingsActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UserInterfaceUtility.initCustomTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
 
@@ -162,14 +161,6 @@ public class RecordingsActivity extends AppCompatActivity
             outState.putString(CATEGORY_NAME, playerService.getCategoryName());
         }
     }
-
-//    private void setInterfaceColor(String colorStr) {
-//        int color = Color.parseColor(colorStr);
-//        int darkenedColor = UserInterfaceUtility.darkenColor(color, 0.9f);
-
-//        fab.setBackgroundTintList(ColorStateList.valueOf(darkenedColor));
-//        toolbar.setBackgroundColor(darkenedColor);
-//    }
 
     @OnClick
     public void record(View view) {
