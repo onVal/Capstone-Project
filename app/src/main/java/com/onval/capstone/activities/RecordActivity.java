@@ -24,7 +24,7 @@ import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.service.RecordingBinder;
 import com.onval.capstone.service.RecordingService;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.viewmodel.RecordingsViewModel;
 
@@ -91,7 +91,7 @@ public class RecordActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        UserInterfaceUtility.initCustomTheme(this);
+        GuiUtility.initCustomTheme(this);
 
         super.onCreate(savedInstanceState);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
@@ -208,7 +208,7 @@ public class RecordActivity extends AppCompatActivity
         recInfoBundle = new Bundle();
         recInfoBundle.putString("REC_START_TIME", formattedTime);
         recInfoBundle.putString("REC_DATE", formattedDate);
-        recInfoBundle.putString("REC_DURATION", UserInterfaceUtility.timeFormatFromMills(service.getTimeElapsed(), true));
+        recInfoBundle.putString("REC_DURATION", GuiUtility.timeFormatFromMills(service.getTimeElapsed(), true));
     }
 
     @Override
@@ -279,7 +279,7 @@ public class RecordActivity extends AppCompatActivity
     private class TimerBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             long currentTimeMillis = intent.getExtras().getLong(CURRENT_TIME_EXTRA);
-            String currentTime = UserInterfaceUtility.timeFormatFromMills(currentTimeMillis, false);
+            String currentTime = GuiUtility.timeFormatFromMills(currentTimeMillis, false);
             timerTextView.setText(currentTime);
         }
     }

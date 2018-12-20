@@ -35,6 +35,9 @@
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
 
+        <activity android:name=".activities.ManageAccountActivity"
+            android:parentActivityName=".activities.SettingsActivity" />
+
         <service android:name=".service.RecordingService" />
         <service android:name=".service.PlayerService" />
         <service android:name=".service.UploadService" />
@@ -49,9 +52,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/player_app_widget_info" />
         </receiver>
-
-        <activity android:name=".activities.ManageAccountActivity"
-            android:parentActivityName=".activities.SettingsActivity" />
     </application>
 
 </manifest>

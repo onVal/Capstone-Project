@@ -12,7 +12,7 @@ import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.AddCategoryDialogFragment;
 import com.onval.capstone.fragment.CategoriesFragment;
 import com.onval.capstone.fragment.EmptyFragment;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import androidx.annotation.LayoutRes;
@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        currentTheme = UserInterfaceUtility.getTheme(this);
+        currentTheme = GuiUtility.getTheme(this);
         setTheme(currentTheme.equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
 
-//        UserInterfaceUtility.initCustomTheme(this);
+//        GuiUtility.initCustomTheme(this);
 
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
     @Override
     protected void onResume() {
         super.onResume();
-        if (!currentTheme.equals(UserInterfaceUtility.getTheme(this))) {
+        if (!currentTheme.equals(GuiUtility.getTheme(this))) {
             recreate();
         }
     }

@@ -20,7 +20,7 @@ import com.onval.capstone.adapter.RecordingsAdapter;
 import com.onval.capstone.fragment.RecordingsFragment;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.service.PlayerService;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -104,7 +104,7 @@ public class RecordingsActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        UserInterfaceUtility.initCustomTheme(this);
+        GuiUtility.initCustomTheme(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);

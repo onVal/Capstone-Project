@@ -75,9 +75,8 @@ public class RecordingsFragment extends Fragment
         LiveData<String> categoryColor = viewModel.getCategoryColor(categoryId);
         categoryColor.observe(this, (color) -> {
             adapter.setColor(color);
+            recordingsRv.setAdapter(adapter);
         });
-
-        recordingsRv.setAdapter(adapter);
 
         LiveData<List<Record>> liveRecordings = recViewModel.getRecordingsFromCategory(categoryId);
         liveRecordings.observe(this, (records -> adapter.setRecordings(records)));

@@ -81,10 +81,10 @@ public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAd
             categoryName.setText(category.getName());
 
             if (selected == position) {
-                categoryName.setTextColor(Color.WHITE);
-                itemView.setBackgroundColor(Color.GRAY);
+//                categoryName.setTextColor(Color.BLACK);
+                itemView.setBackgroundColor(context.getResources().getColor(R.color.lightSelectionGray));
             } else {
-                categoryName.setTextColor(Color.BLACK);
+//                categoryName.setTextColor(Color.BLACK);
                 itemView.setBackgroundColor(Color.WHITE);
             }
         }

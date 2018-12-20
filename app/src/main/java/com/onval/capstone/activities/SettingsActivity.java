@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.onval.capstone.R;
 import com.onval.capstone.fragment.SettingsFragment;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -14,7 +14,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if (UserInterfaceUtility.getTheme(this).equals("Light"))
+        if (GuiUtility.getTheme(this).equals("Light"))
             setTheme(R.style.SettingsTheme);
         else
             setTheme(R.style.SettingsDarkTheme);

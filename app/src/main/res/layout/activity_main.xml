@@ -16,6 +16,7 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:subtitleTextColor="#fff"
         android:elevation="4dp"
         tools:ignore="UnusedAttribute" />
 

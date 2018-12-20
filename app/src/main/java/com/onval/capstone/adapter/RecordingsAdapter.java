@@ -26,7 +26,7 @@ import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.RecordingsViewModel;
 
@@ -136,6 +136,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         @BindView(R.id.recording_name) TextView name;
         @BindView(R.id.recording_time) TextView time;
         @BindView(R.id.recording_duration) TextView duration;
+        @BindView(R.id.rec_color_label) View recLabel;
 
         final Drawable cloudUploadedOff =
                 ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
@@ -168,10 +169,10 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                 }
             });
 
-                    viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
-                        boolean recIsUploading = recordings.contains(recording.getId());
-                        showProgressBar(recIsUploading);
-                    });
+            viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
+                boolean recIsUploading = recordings.contains(recording.getId());
+                showProgressBar(recIsUploading);
+            });
 
             if (actionModeCallback.isMultiselect())
                 multiSelectItem(position);
@@ -208,59 +209,69 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         private void multiSelectItem(Integer position) {
             boolean isSelected = actionModeCallback.selectItemAtPosition(position);
 
-            final int LITEGRAY = Color.parseColor("#eeeeee");
-            final int DEEPBLUE = Color.parseColor("#304a60");
+            final int LITEGRAY = context.getResources().getColor(R.color.colorSubtextLight);
+            final int DARKGRAY = context.getResources().getColor(R.color.colorSubtextDark);
+
+            final int COLOR_ACCENT = context.getResources().getColor(R.color.colorAccent);
 
             int themedBackground; int themedTextColor; int themedSubColor;
 
-            if (UserInterfaceUtility.getTheme(context).equals("Light")) {
+            if (GuiUtility.isLightTheme(context)) {
                 themedBackground = Color.WHITE;
                 themedTextColor = Color.BLACK;
-                themedSubColor = Color.DKGRAY;
+                themedSubColor = DARKGRAY;
             } else {
-                themedBackground = Color.parseColor("#323232");
+                themedBackground = Color.parseColor("#2a2a2a");
                 themedTextColor = Color.WHITE;
                 themedSubColor = LITEGRAY;
             }
 
-
-            int bgColor = (isSelected) ? DEEPBLUE : themedBackground;
+            int bgColor = (isSelected) ? COLOR_ACCENT : themedBackground;
             int textColor = (isSelected) ? Color.WHITE : themedTextColor;
-            int subColor = (isSelected) ? LITEGRAY : themedSubColor;
+            int subColor = (isSelected) ? Color.WHITE : themedSubColor;
+            int cloudColor = (isSelected) ? Color.WHITE : themedSubColor;
+            int lblColor = (isSelected) ? COLOR_ACCENT : themedBackground;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);
             time.setTextColor(subColor);
             duration.setTextColor(subColor);
-            cloud_icon.setImageTintList(ColorStateList.valueOf(textColor));
+            cloud_icon.setImageTintList(ColorStateList.valueOf(cloudColor));
+            recLabel.setBackgroundColor(lblColor);
         }
 
         private void selectToPlay(boolean selected) {
-            final int LITEGRAY = Color.parseColor("#eeeeee");
+            final int SUBTEXT_LIGHT = context.getResources().getColor(R.color.colorSubtextLight);
+            final int EVENDARKER = Color.parseColor("#161616");
 
-            int themedBackground; int themedTextColor; int themedSubColor;
 
-            if (UserInterfaceUtility.getTheme(context).equals("Light")) {
+            int themedBackground, themedTextColor, themedSubColor, selThemedBackground;
+
+            if (GuiUtility.isLightTheme(context)) {
                 themedBackground = Color.WHITE;
                 themedTextColor = Color.BLACK;
-                themedSubColor = Color.DKGRAY;
+                themedSubColor = context.getResources().getColor(R.color.colorSubtextDark);
+                selThemedBackground = context.getResources().getColor(R.color.lightSelectionGray);
             } else {
-                themedBackground = Color.parseColor("#323232");
+                themedBackground = Color.parseColor("#2a2a2a");
                 themedTextColor = Color.WHITE;
-                themedSubColor = LITEGRAY;
+                themedSubColor = SUBTEXT_LIGHT;
+                selThemedBackground = EVENDARKER;
             }
 
-            // sometimes it crashes here...for some reason
-            int darkenedColor = UserInterfaceUtility.darkenColor(Color.parseColor(categoryColor), 0.7f);
-            int bgColor = (selected) ? darkenedColor : themedBackground;
-            int textColor = (selected) ? Color.WHITE : themedTextColor;
-            int subColor = (selected) ? LITEGRAY : themedSubColor;
+            int calCol = Color.parseColor(categoryColor);
+
+            int bgColor = (selected) ? selThemedBackground : themedBackground;
+            int textColor = themedTextColor;
+            int subColor = themedSubColor;
+            int lblColor = (selected) ? calCol : themedBackground;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);
             time.setTextColor(subColor);
             duration.setTextColor(subColor);
-            cloud_icon.setImageTintList(ColorStateList.valueOf(textColor));
+            recLabel.setBackgroundColor(lblColor);
+            cloud_icon.setImageTintList(ColorStateList.valueOf(subColor));
         }
     }
 }

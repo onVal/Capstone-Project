@@ -56,7 +56,7 @@
             android:id="@+id/category_subtext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorSubtext"
+            android:textColor="?android:textColorSecondary"
             tools:text="78 recordings" />
 
     </LinearLayout>

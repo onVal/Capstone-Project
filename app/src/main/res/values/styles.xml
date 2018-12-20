@@ -3,21 +3,31 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
         <item name="windowActionModeOverlay">true</item>
 
         <item name="android:colorForeground">#fff</item> <!-- this makes overflow btn white -->
         <item name="android:colorBackground">@color/colorPrimary</item> <!-- action mode bg color -->
+        <item name="android:colorControlNormal">#fff</item> <!-- makes back btn white -->
 
         <item name="android:textColor">#000</item>
+        <item name="android:textColorSecondary">@color/colorSubtextDark</item> <!-- somehow this also changes overflow btn -->
         <item name="android:windowBackground">@android:color/white</item>
 
         <item name="toolbarStyle">@style/LightTheme.Toolbar</item>
         <item name="buttonStyle">@style/LightTheme.Button</item>
+        <item name="actionOverflowButtonStyle">@style/LightTheme.OverflowButton</item>
     </style>
 
     <style name="LightTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="popupTheme">@style/LightTheme.OverflowPopup</item>
+    </style>
+
+    <style name="LightTheme.OverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">#fff</item>
+        <item name="android:textColorSecondary">#fff</item> <!-- somehow this also changes overflow btn -->
+
     </style>
 
     <style name="LightTheme.OverflowPopup" parent="ThemeOverlay.AppCompat.Light" />
@@ -42,6 +52,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/colorSubtextDark</item>
     </style>
 
     <style name="SettingsDarkTheme" parent="Theme.AppCompat">
@@ -49,6 +60,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">#fff</item>
+        <item name="android:textColorSecondary">@color/colorSubtextLight</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -63,9 +75,11 @@
         <item name="colorPrimary">@color/darkPrimary</item>
         <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
         <item name="colorAccent">@color/darkAccent</item>
+
         <item name="windowActionModeOverlay">true</item>
 
         <item name="android:textColor">#fff</item>
+        <item name="android:textColorSecondary">@color/colorSubtextLight</item>
         <item name="android:windowBackground">@color/darkPrimaryDark</item>
 
         <item name="android:colorForeground">#fff</item> <!-- this makes overflow btn white -->
@@ -73,6 +87,8 @@
 
         <item name="toolbarStyle">@style/DarkTheme.Toolbar</item>
         <item name="buttonStyle">@style/LightTheme.Button</item>
+
+        <item name="actionOverflowButtonStyle">@style/LightTheme.OverflowButton</item>
 
     </style>
 

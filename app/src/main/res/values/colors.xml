@@ -2,12 +2,18 @@
 <resources>
     <color name="colorPrimary">#616161</color>
     <color name="colorPrimaryDark">#424242</color>
-    <color name="colorAccent">#d2124c</color>
-    <color name="colorSubtext">#666</color>
+    <color name="colorAccent">#00acc1</color>
+
+    <color name="colorSubtextDark">#666</color>
+    <color name="colorSubtextLight">#aaa</color>
+
+    <color name="lightSelectionGray">#eee</color>
 
     <color name="darkPrimary">#424242</color>
     <color name="darkPrimaryDark">#202020</color>
-    <color name="darkAccent">#551055</color>
+    <color name="darkAccent">#d2124c</color>
+
+    <color name="itemBgDark">#2a2a2a</color>
 
     <string-array name="category_colors">
         <item>#ff1744</item>

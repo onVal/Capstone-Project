@@ -7,7 +7,7 @@ import android.os.Bundle;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.onval.capstone.R;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -52,7 +52,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void updateThemeSummary() {
         Preference pref = findPreference("pref_theme");
-        pref.setSummary(UserInterfaceUtility.getTheme(getContext()));
+        pref.setSummary(GuiUtility.getTheme(getContext()));
     }
 
     private void updateAccountSummary() {
@@ -73,7 +73,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals("pref_theme") &&
                     sharedPreferences.getString("pref_theme", "Light")
-                            .equals(UserInterfaceUtility.getTheme(context))) {
+                            .equals(GuiUtility.getTheme(context))) {
                 activity.recreate();
             }
         }

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
@@ -153,7 +154,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             if (actionModeCallback.getSelectedPositions().contains(position)) {
                 layout.setBackgroundColor(Color.LTGRAY);
             } else {
-                switch (UserInterfaceUtility.getTheme(context)) {
+                switch (GuiUtility.getTheme(context)) {
                     case "Light":
                         layout.setBackgroundColor(Color.WHITE);
                         break;
@@ -210,8 +211,35 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         }
 
         private void selectItem(Integer position) {
+//            final int BLURX = Color.parseColor("#00acc1");
+            final int BLURX;
+
             boolean itemIsSelected = actionModeCallback.selectItemAtPosition(position);
-            layout.setBackgroundColor(itemIsSelected ? Color.LTGRAY : Color.WHITE );
+
+            int bgColor, txtCol, secCol;
+
+            if (GuiUtility.isLightTheme(context)) {
+                bgColor = Color.WHITE;
+                txtCol = Color.BLACK;
+                secCol = context.getResources().getColor(R.color.colorSubtextDark);
+                BLURX = context.getResources().getColor(R.color.colorAccent);
+
+            }
+            else {
+                bgColor = GuiUtility.DARK_BG;
+                txtCol = Color.WHITE;
+                secCol = context.getResources().getColor(R.color.colorSubtextLight);
+                BLURX = context.getResources().getColor(R.color.darkAccent);
+            }
+
+            int catColor = Color.parseColor(categories.get(position).getColor());
+
+            layout.setBackgroundColor(itemIsSelected ? BLURX : bgColor );
+            categoryName.setTextColor(itemIsSelected ? Color.WHITE : txtCol);
+            categorySubtext.setTextColor(itemIsSelected ? Color.WHITE : secCol );
+            colorLabel.setBackgroundColor(itemIsSelected ? BLURX : catColor);
+            autouploadIcon.setImageTintList(itemIsSelected ? ColorStateList.valueOf(Color.WHITE)
+                    : ColorStateList.valueOf(secCol));
 
         }
 
