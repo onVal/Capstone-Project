@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
@@ -36,14 +37,14 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         currentTheme = GuiUtility.getTheme(this);
         setTheme(currentTheme.equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
-
-//        GuiUtility.initCustomTheme(this);
 
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);

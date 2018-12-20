@@ -9,7 +9,6 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
@@ -170,8 +169,8 @@ public class RecordingsActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_recs, menu);
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
         return true;
     }
 

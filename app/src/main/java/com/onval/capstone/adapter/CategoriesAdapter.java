@@ -1,8 +1,8 @@
 package com.onval.capstone.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -40,7 +41,7 @@ import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
-    private Context context;
+    private Activity activity;
     private List<Category> categories;
     private CategoriesViewModel viewModel;
 
@@ -60,7 +61,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             Category[] cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity, dialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
                         "inside the selected categories.";
 
@@ -77,8 +78,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         }
     };
 
-    public CategoriesAdapter(Context context, CategoriesViewModel viewModel) {
-        this.context = context;
+    public CategoriesAdapter(Activity activity, CategoriesViewModel viewModel) {
+        this.activity = activity;
         this.viewModel = viewModel;
         categories = Collections.emptyList();
         setThemedColors();
@@ -87,7 +88,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.single_category, parent, false);
+        View view = LayoutInflater.from(activity).inflate(R.layout.single_category, parent, false);
         return new CategoryViewHolder(view);
     }
 
@@ -117,9 +118,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     }
 
     private void setThemedColors() {
-        Resources resources = context.getResources();
+        Resources resources = activity.getResources();
 
-        if (GuiUtility.isLightTheme(context)) {
+        if (GuiUtility.isLightTheme(activity)) {
             themedBackgroundColor = Color.WHITE;
             themedPrimaryTextColor = Color.BLACK;
             themedSecondaryTextColor = resources.getColor(R.color.colorSubtextDark);
@@ -143,8 +144,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         @BindView(R.id.autoupload_icon) ImageView autouploadIcon;
         @BindView(R.id.upload_progress) ProgressBar progressBar;
 
-        final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
-        final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
+        final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(activity, R.drawable.ic_cloud_upload_on);
+        final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(activity, R.drawable.ic_cloud_upload_off);
 
         CategoryViewHolder(View itemView) {
             super(itemView);
@@ -171,7 +172,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
 
 //            GoogleSignInAccount
-            if (Utility.isSignedIn(context)) {
+            if (Utility.isSignedIn(activity)) {
                 autouploadIcon.setImageDrawable(
                         (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff);
             } else {
@@ -198,16 +199,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 if (actionModeCallback.isMultiselect())
                     selectItem(position);
                 else {
-                    Intent intent = new Intent(context, RecordingsActivity.class);
+                    Intent intent = new Intent(activity, RecordingsActivity.class);
                     intent.putExtra(CATEGORY_ID, category.getId());
                     intent.putExtra(CATEGORY_NAME, category.getName());
 
-                    context.startActivity(intent);
+                    activity.startActivity(intent,
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(activity)
+                            .toBundle());
                 }
             });
 
             autouploadIcon.setOnLongClickListener(view -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity, dialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
                                                             : "Turn on auto uploading for this category?";
 
