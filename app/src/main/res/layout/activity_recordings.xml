@@ -49,7 +49,7 @@
         android:layout_gravity="bottom|center"
 
         app:srcCompat="@drawable/ic_fab_dot"
-        app:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="?attr/fabColor"
         app:elevation="6dp"
 
         android:onClick="record"

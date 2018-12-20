@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.RecordingsViewModel;
 
 import androidx.annotation.NonNull;
@@ -53,12 +54,22 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         editText = new EditText(getActivity());
-        editText.setTextColor(Color.BLACK);
         String recStartTime = recInfoBundle.getString("REC_START_TIME");
         String recDate = recInfoBundle.getString("REC_DATE");
         editText.setText(String.format("Recording %s %s", recDate, recStartTime));
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+        int editTextColor, dialogTheme;
+        if (GuiUtility.isLightTheme(getContext())) {
+            editTextColor = Color.BLACK;
+            dialogTheme = R.style.DialogTheme;
+        } else {
+            editTextColor = Color.WHITE;
+            dialogTheme = R.style.DialogThemeDark;
+        }
+
+        editText.setTextColor(editTextColor);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setView(editText)
                 .setPositiveButton("Confirm", new SaveRecordingListener())
                 .setNeutralButton("Delete", new AskConfirmationListener(fm))

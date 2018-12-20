@@ -77,7 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
+        android:tint="?android:textColorSecondary"
         tools:src="@drawable/ic_cloud_upload_on"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

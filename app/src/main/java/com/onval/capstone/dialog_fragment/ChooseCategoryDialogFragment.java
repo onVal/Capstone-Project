@@ -2,22 +2,24 @@ package com.onval.capstone.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.onval.capstone.R;
+import com.onval.capstone.adapter.MiniCategoriesAdapter;
+import com.onval.capstone.utility.GuiUtility;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import com.onval.capstone.R;
-import com.onval.capstone.adapter.MiniCategoriesAdapter;
-import com.onval.capstone.viewmodel.CategoriesViewModel;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,7 +66,8 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+        int dialogTheme = (GuiUtility.isLightTheme(getContext()) ? R.style.DialogTheme : R.style.DialogThemeDark);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setView(layout)
                 .setPositiveButton("Save", new ChooseCategoryListener())
                 .setNeutralButton("Delete", new AskConfirmationListener(fm))

@@ -16,7 +16,6 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:subtitleTextColor="#fff"
         android:elevation="4dp"
         tools:ignore="UnusedAttribute" />
 
@@ -29,16 +28,18 @@
 </LinearLayout>
 
 <com.google.android.material.floatingactionbutton.FloatingActionButton
-android:id="@+id/main_fab"
-android:layout_width="@dimen/fab_size"
-android:layout_height="@dimen/fab_size"
+    android:id="@+id/main_fab"
+    android:layout_width="@dimen/fab_size"
+    android:layout_height="@dimen/fab_size"
+    app:fabCustomSize="@dimen/fab_size"
 
-android:layout_marginBottom="@dimen/default_fab_margin"
-android:layout_gravity="bottom|center"
+    android:layout_marginBottom="@dimen/default_fab_margin"
+    android:layout_gravity="bottom|center"
 
-app:srcCompat="@drawable/ic_fab_dot"
-app:backgroundTint="@color/colorPrimary"
-app:elevation="6dp"
-android:onClick="record" />
+    android:backgroundTint="?attr/fabColor"
+    app:srcCompat="@drawable/ic_fab_dot"
+
+    app:elevation="6dp"
+    android:onClick="record" />
 
 </FrameLayout>

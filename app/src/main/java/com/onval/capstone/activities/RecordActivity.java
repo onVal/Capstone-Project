@@ -299,7 +299,7 @@ public class RecordActivity extends AppCompatActivity
                 case PAUSE_ACTION:
                     drawableId = R.drawable.ic_pause_white_24dp;
                     animationView.setVisibility(View.VISIBLE);
-                    animationView.playAnimation();
+                    animationView.resumeAnimation();
                     break;
                 case RESET_ACTION:
                     drawableId = R.drawable.ic_fab_dot;

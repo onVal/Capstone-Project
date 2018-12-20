@@ -3,6 +3,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="fabColor">@color/colorPrimary</item>
 
         <item name="windowActionModeOverlay">true</item>
 
@@ -27,7 +28,6 @@
     <style name="LightTheme.OverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">#fff</item>
         <item name="android:textColorSecondary">#fff</item> <!-- somehow this also changes overflow btn -->
-
     </style>
 
     <style name="LightTheme.OverflowPopup" parent="ThemeOverlay.AppCompat.Light" />
@@ -56,9 +56,9 @@
     </style>
 
     <style name="SettingsDarkTheme" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/darkPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
+        <item name="colorAccent">@color/darkAccent</item>
         <item name="android:textColor">#fff</item>
         <item name="android:textColorSecondary">@color/colorSubtextLight</item>
     </style>
@@ -67,14 +67,20 @@
         <item name="android:textColor">#000</item>
     </style>
 
+    <style name="DialogThemeDark" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/darkPrimary</item>
+        <item name="android:textColor">#fff</item>
+    </style>
+
     <style name="ProgressBarTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/darkPrimary</item>
+        <item name="colorPrimary">@color/darkPrimaryDark</item>
         <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
         <item name="colorAccent">@color/darkAccent</item>
+        <item name="fabColor">@color/darkAccent</item>
 
         <item name="windowActionModeOverlay">true</item>
 
@@ -93,7 +99,7 @@
     </style>
 
     <style name="DarkTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
-        <item name="android:background">@color/darkPrimary</item>
+        <item name="android:background">@color/darkPrimaryDark </item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 

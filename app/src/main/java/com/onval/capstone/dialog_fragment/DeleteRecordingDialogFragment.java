@@ -5,11 +5,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
+import com.onval.capstone.utility.GuiUtility;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 public class DeleteRecordingDialogFragment extends DialogFragment {
     OnDeleteCallback callback;
@@ -26,7 +28,8 @@ public class DeleteRecordingDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+        int dialogTheme = (GuiUtility.isLightTheme(getContext()) ? R.style.DialogTheme : R.style.DialogThemeDark);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
 
         builder.setTitle("Delete Recording")
                 .setMessage(R.string.delete_rec_msg)

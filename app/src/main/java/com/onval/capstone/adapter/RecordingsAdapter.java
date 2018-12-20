@@ -212,7 +212,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             final int LITEGRAY = context.getResources().getColor(R.color.colorSubtextLight);
             final int DARKGRAY = context.getResources().getColor(R.color.colorSubtextDark);
 
-            final int COLOR_ACCENT = context.getResources().getColor(R.color.colorAccent);
+            int colorAccent = context.getResources().getColor(R.color.colorAccent);
 
             int themedBackground; int themedTextColor; int themedSubColor;
 
@@ -220,17 +220,19 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                 themedBackground = Color.WHITE;
                 themedTextColor = Color.BLACK;
                 themedSubColor = DARKGRAY;
+                colorAccent = context.getResources().getColor(R.color.colorAccent);
             } else {
                 themedBackground = Color.parseColor("#2a2a2a");
                 themedTextColor = Color.WHITE;
                 themedSubColor = LITEGRAY;
+                colorAccent = context.getResources().getColor(R.color.darkAccent);
             }
 
-            int bgColor = (isSelected) ? COLOR_ACCENT : themedBackground;
+            int bgColor = (isSelected) ? colorAccent : themedBackground;
             int textColor = (isSelected) ? Color.WHITE : themedTextColor;
             int subColor = (isSelected) ? Color.WHITE : themedSubColor;
             int cloudColor = (isSelected) ? Color.WHITE : themedSubColor;
-            int lblColor = (isSelected) ? COLOR_ACCENT : themedBackground;
+            int lblColor = (isSelected) ? colorAccent : themedBackground;
 
             itemView.setBackgroundColor(bgColor);
             name.setTextColor(textColor);

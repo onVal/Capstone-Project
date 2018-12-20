@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -43,6 +44,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     private List<Category> categories;
     private CategoriesViewModel viewModel;
 
+    private int themedBackgroundColor;
+    private int themedPrimaryTextColor;
+    private int themedSecondaryTextColor;
+    private int dialogTheme;
+    private int accentColor;
+
     private MyActionModeCallback actionModeCallback = new MyActionModeCallback() {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
@@ -53,7 +60,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             Category[] cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
                         "inside the selected categories.";
 
@@ -74,6 +81,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         this.context = context;
         this.viewModel = viewModel;
         categories = Collections.emptyList();
+        setThemedColors();
     }
 
     @NonNull
@@ -108,6 +116,25 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 (c1, c2) -> c1.getId() - (c2.getId()));
     }
 
+    private void setThemedColors() {
+        Resources resources = context.getResources();
+
+        if (GuiUtility.isLightTheme(context)) {
+            themedBackgroundColor = Color.WHITE;
+            themedPrimaryTextColor = Color.BLACK;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextDark);
+            dialogTheme = R.style.DialogTheme;
+            accentColor = resources.getColor(R.color.colorAccent);
+
+        } else {
+            themedBackgroundColor = resources.getColor(R.color.itemBgDark);
+            themedPrimaryTextColor = Color.WHITE;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextLight);
+            dialogTheme = R.style.DialogThemeDark;
+            accentColor = resources.getColor(R.color.darkAccent);
+        }
+    }
+
     class CategoryViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.constraint_layout) ConstraintLayout layout;
         @BindView(R.id.colorLabel) View colorLabel;
@@ -122,6 +149,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         CategoryViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            setThemedColors();
         }
 
         void bind(int position) {
@@ -152,16 +180,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             // This is to prevent incorrect item selection when RecyclerView does its thing
             if (actionModeCallback.getSelectedPositions().contains(position)) {
-                layout.setBackgroundColor(Color.LTGRAY);
+                layout.setBackgroundColor(accentColor);
+                colorLabel.setBackgroundColor(accentColor);
             } else {
-                switch (GuiUtility.getTheme(context)) {
-                    case "Light":
-                        layout.setBackgroundColor(Color.WHITE);
-                        break;
-                    case "Dark":
-                        layout.setBackgroundColor(Color.parseColor("#2a2a2b"));
-                        break;
-                }
+                layout.setBackgroundColor(themedBackgroundColor);
+                colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             }
 
             //add listeners
@@ -184,7 +207,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             });
 
             autouploadIcon.setOnLongClickListener(view -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
                                                             : "Turn on auto uploading for this category?";
 
@@ -211,36 +234,17 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         }
 
         private void selectItem(Integer position) {
-//            final int BLURX = Color.parseColor("#00acc1");
-            final int BLURX;
-
             boolean itemIsSelected = actionModeCallback.selectItemAtPosition(position);
 
-            int bgColor, txtCol, secCol;
+            int categoryLabelColor = Color.parseColor(categories.get(position).getColor());
 
-            if (GuiUtility.isLightTheme(context)) {
-                bgColor = Color.WHITE;
-                txtCol = Color.BLACK;
-                secCol = context.getResources().getColor(R.color.colorSubtextDark);
-                BLURX = context.getResources().getColor(R.color.colorAccent);
-
-            }
-            else {
-                bgColor = GuiUtility.DARK_BG;
-                txtCol = Color.WHITE;
-                secCol = context.getResources().getColor(R.color.colorSubtextLight);
-                BLURX = context.getResources().getColor(R.color.darkAccent);
-            }
-
-            int catColor = Color.parseColor(categories.get(position).getColor());
-
-            layout.setBackgroundColor(itemIsSelected ? BLURX : bgColor );
-            categoryName.setTextColor(itemIsSelected ? Color.WHITE : txtCol);
-            categorySubtext.setTextColor(itemIsSelected ? Color.WHITE : secCol );
-            colorLabel.setBackgroundColor(itemIsSelected ? BLURX : catColor);
-            autouploadIcon.setImageTintList(itemIsSelected ? ColorStateList.valueOf(Color.WHITE)
-                    : ColorStateList.valueOf(secCol));
-
+            layout.setBackgroundColor(itemIsSelected ? accentColor : themedBackgroundColor );
+            categoryName.setTextColor(itemIsSelected ? Color.WHITE : themedPrimaryTextColor);
+            categorySubtext.setTextColor(itemIsSelected ? Color.WHITE : themedSecondaryTextColor );
+            colorLabel.setBackgroundColor(itemIsSelected ? accentColor : categoryLabelColor);
+            autouploadIcon.setImageTintList(itemIsSelected ?
+                        ColorStateList.valueOf(Color.WHITE)
+                        : ColorStateList.valueOf(themedSecondaryTextColor));
         }
 
         private void showProgressBar(boolean show) {

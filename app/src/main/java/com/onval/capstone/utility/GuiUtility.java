@@ -3,14 +3,11 @@ package com.onval.capstone.utility;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 
 import com.onval.capstone.R;
 
 public class GuiUtility {
-    public final static int DARK_BG = Color.parseColor("#2a2a2a");
-
     @SuppressLint("DefaultLocale")
     public static String timeFormatFromMills(long millis, boolean forceLongFormat) {
         int seconds = (int) (millis / 1000);
