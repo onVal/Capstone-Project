@@ -15,6 +15,7 @@
     <color name="darkAccent">#d2124c</color>
 
     <color name="itemBgDark">#2a2a2a</color>
+    <color name="playSelectDark">#161616</color>
 
     <string-array name="category_colors">
         <item>#ff1744</item>

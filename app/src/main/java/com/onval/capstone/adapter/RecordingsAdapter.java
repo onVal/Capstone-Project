@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -51,6 +52,12 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private RecordingsViewModel viewModel;
 
     private String categoryColor;
+    private int themedBackgroundColor;
+    private int themedPrimaryTextColor;
+    private int themedSecondaryTextColor;
+    private int selThemedBackground;
+    private int dialogTheme;
+    private int accentColor;
 
     private RecordingListener listener;
     private DriveResourceClient driveClient;
@@ -65,7 +72,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
             Record[] rArray = selectedRecList.toArray(new Record[selectedRecList.size()]);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all selected recordings.";
 
             builder.setTitle("Delete Categories")
@@ -94,6 +101,8 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         recordings = Collections.emptyList();
         currentlySelected = selectedRecording;
 
+        setThemedColors();
+
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(context.getApplicationContext());
         driveClient = Drive.getDriveResourceClient(context, account);
@@ -119,6 +128,27 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     public void setRecordings(List<Record> recordings) {
         this.recordings = recordings;
         notifyDataSetChanged();
+    }
+
+    private void setThemedColors() {
+        Resources resources = context.getResources();
+
+        if (GuiUtility.isLightTheme(context)) {
+            themedBackgroundColor = Color.WHITE;
+            themedPrimaryTextColor = Color.BLACK;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextDark);
+            dialogTheme = R.style.DialogTheme;
+            accentColor = resources.getColor(R.color.colorAccent);
+            selThemedBackground = context.getResources().getColor(R.color.lightSelectionGray);
+
+        } else {
+            themedBackgroundColor = resources.getColor(R.color.itemBgDark);
+            themedPrimaryTextColor = Color.WHITE;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextLight);
+            dialogTheme = R.style.DialogThemeDark;
+            accentColor = resources.getColor(R.color.darkAccent);
+            selThemedBackground = context.getResources().getColor(R.color.playSelectDark);
+        }
     }
 
     public void setColor(String categoryColor) {
@@ -209,71 +239,27 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         private void multiSelectItem(Integer position) {
             boolean isSelected = actionModeCallback.selectItemAtPosition(position);
 
-            final int LITEGRAY = context.getResources().getColor(R.color.colorSubtextLight);
-            final int DARKGRAY = context.getResources().getColor(R.color.colorSubtextDark);
+            int secondaryColor = (isSelected) ? Color.WHITE : themedSecondaryTextColor;
+            int cloudColor = (isSelected) ? Color.WHITE : themedSecondaryTextColor;
 
-            int colorAccent = context.getResources().getColor(R.color.colorAccent);
-
-            int themedBackground; int themedTextColor; int themedSubColor;
-
-            if (GuiUtility.isLightTheme(context)) {
-                themedBackground = Color.WHITE;
-                themedTextColor = Color.BLACK;
-                themedSubColor = DARKGRAY;
-                colorAccent = context.getResources().getColor(R.color.colorAccent);
-            } else {
-                themedBackground = Color.parseColor("#2a2a2a");
-                themedTextColor = Color.WHITE;
-                themedSubColor = LITEGRAY;
-                colorAccent = context.getResources().getColor(R.color.darkAccent);
-            }
-
-            int bgColor = (isSelected) ? colorAccent : themedBackground;
-            int textColor = (isSelected) ? Color.WHITE : themedTextColor;
-            int subColor = (isSelected) ? Color.WHITE : themedSubColor;
-            int cloudColor = (isSelected) ? Color.WHITE : themedSubColor;
-            int lblColor = (isSelected) ? colorAccent : themedBackground;
-
-            itemView.setBackgroundColor(bgColor);
-            name.setTextColor(textColor);
-            time.setTextColor(subColor);
-            duration.setTextColor(subColor);
+            itemView.setBackgroundColor((isSelected) ? accentColor : themedBackgroundColor);
+            name.setTextColor((isSelected) ? Color.WHITE : themedPrimaryTextColor);
+            time.setTextColor(secondaryColor);
+            duration.setTextColor(secondaryColor);
+            recLabel.setBackgroundColor((isSelected) ? accentColor : themedBackgroundColor);
             cloud_icon.setImageTintList(ColorStateList.valueOf(cloudColor));
-            recLabel.setBackgroundColor(lblColor);
         }
 
         private void selectToPlay(boolean selected) {
-            final int SUBTEXT_LIGHT = context.getResources().getColor(R.color.colorSubtextLight);
-            final int EVENDARKER = Color.parseColor("#161616");
 
+            int catColor = Color.parseColor(categoryColor);
 
-            int themedBackground, themedTextColor, themedSubColor, selThemedBackground;
-
-            if (GuiUtility.isLightTheme(context)) {
-                themedBackground = Color.WHITE;
-                themedTextColor = Color.BLACK;
-                themedSubColor = context.getResources().getColor(R.color.colorSubtextDark);
-                selThemedBackground = context.getResources().getColor(R.color.lightSelectionGray);
-            } else {
-                themedBackground = Color.parseColor("#2a2a2a");
-                themedTextColor = Color.WHITE;
-                themedSubColor = SUBTEXT_LIGHT;
-                selThemedBackground = EVENDARKER;
-            }
-
-            int calCol = Color.parseColor(categoryColor);
-
-            int bgColor = (selected) ? selThemedBackground : themedBackground;
-            int textColor = themedTextColor;
-            int subColor = themedSubColor;
-            int lblColor = (selected) ? calCol : themedBackground;
-
-            itemView.setBackgroundColor(bgColor);
-            name.setTextColor(textColor);
-            time.setTextColor(subColor);
-            duration.setTextColor(subColor);
-            recLabel.setBackgroundColor(lblColor);
-            cloud_icon.setImageTintList(ColorStateList.valueOf(subColor));
+            itemView.setBackgroundColor((selected) ? selThemedBackground : themedBackgroundColor);
+            name.setTextColor(themedPrimaryTextColor);
+            time.setTextColor(themedSecondaryTextColor);
+            duration.setTextColor(themedSecondaryTextColor);
+            recLabel.setBackgroundColor((selected) ? catColor : themedBackgroundColor);
+            cloud_icon.setImageTintList(ColorStateList.valueOf(themedSecondaryTextColor));
         }
     }
 }
