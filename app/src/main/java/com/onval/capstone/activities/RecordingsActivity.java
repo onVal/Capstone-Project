@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
@@ -58,6 +60,8 @@ public class RecordingsActivity extends AppCompatActivity
     @BindView(R.id.ctrl_rec_name) TextView recNameView;
     @BindView(R.id.ctrl_cat_name) TextView catNameView;
     @BindView(R.id.my_rec_toolbar) Toolbar toolbar;
+    @BindView(R.id.exo_progress)
+    DefaultTimeBar exoProgressBar;
 
     private int categoryId;
     private String categoryName;
@@ -130,14 +134,17 @@ public class RecordingsActivity extends AppCompatActivity
         ViewCompat.setTransitionName(fab, FAB_NAME_TRANSITION);
         ViewCompat.setTransitionName(toolbar, TOOLBAR_NAME_TRANSITION);
 
-
-
         IntentFilter filter = new IntentFilter(UPDATE_PLAYER_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
         CategoriesViewModel viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         categoryColor = viewModel.getCategoryColor(categoryId);
-//        categoryColor.observe(this, this::setInterfaceColor);
+        categoryColor.observe(this, colorStr -> {
+            int color = Color.parseColor(colorStr);
+            int darkColor = GuiUtility.darkenColor(color, 0.7f);
+            exoProgressBar.setPlayedColor(darkColor);
+            exoProgressBar.setScrubberColor(color);
+        });
 
         if (PlayerService.isRunning) {
             if (PlayerService.selectedRec != null)
@@ -192,6 +199,13 @@ public class RecordingsActivity extends AppCompatActivity
         serviceIntent = new Intent(this, RecordActivity.class);
         serviceIntent.putExtra(CATEGORY_ID, categoryId);
         startActivity(serviceIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (PlayerService.isRunning)
+            showPlayer(true);
     }
 
     @Override

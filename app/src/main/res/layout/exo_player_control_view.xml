@@ -5,15 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:background="@color/colorPrimary"
     >
 
     <ImageView
         android:id="@+id/close_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
+        android:padding="16dp"
         android:onClick="closePlayer"
         app:layout_constraintBottom_toTopOf="@+id/ctrl_rec_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +51,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
         app:bar_height="5dp"
+        app:scrubber_color="#fff"
         app:buffered_color="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_container"

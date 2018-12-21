@@ -44,6 +44,7 @@
         android:id="@+id/recording_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
+        app:fabSize="normal"
 
         android:layout_marginBottom="@dimen/default_fab_margin"
         android:layout_gravity="bottom|center"

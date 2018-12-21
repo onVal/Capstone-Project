@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.service.PlayerService;
 import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
@@ -207,14 +208,17 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     intent.putExtra(CATEGORY_ID, category.getId());
                     intent.putExtra(CATEGORY_NAME, category.getName());
 
+                    List<Pair<View, String>> pairs = new ArrayList<>();
+                    pairs.add(Pair.create(activity.findViewById(R.id.main_toolbar), TOOLBAR_NAME_TRANSITION));
+
+                    if (!PlayerService.isRunning)
+                        pairs.add(Pair.create(activity.findViewById(R.id.main_fab),FAB_NAME_TRANSITION));
+
                     Bundle activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            activity,
-                            Pair.create(activity.findViewById(R.id.main_fab),FAB_NAME_TRANSITION),
-                            Pair.create(activity.findViewById(R.id.main_toolbar), TOOLBAR_NAME_TRANSITION)
-                            ).toBundle();
+                            activity, pairs.toArray(new Pair[pairs.size()]))
+                            .toBundle();
 
                     activity.startActivity(intent, activityOptions);
-                    activity.getWindow().setAllowEnterTransitionOverlap(true);
                 }
             });
 
