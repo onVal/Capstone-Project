@@ -2,6 +2,8 @@ package com.onval.capstone.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,16 +39,17 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         currentTheme = GuiUtility.getTheme(this);
         setTheme(currentTheme.equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setAnimation();
 
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
-        Toolbar toolbar = findViewById(R.id.my_toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
@@ -58,6 +61,15 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
             viewModel.getNumOfCategories()
                     .observe(this, this);
         }
+    }
+
+    private void setAnimation() {
+        Slide slide = new Slide();
+        slide.setSlideEdge(Gravity.START);
+        slide.excludeTarget(android.R.id.statusBarBackground, true);
+        slide.excludeTarget(android.R.id.navigationBarBackground, true);
+        getWindow().setEnterTransition(slide);
+        getWindow().setExitTransition(slide);
     }
 
     @Override

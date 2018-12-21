@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,12 +34,15 @@ import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
+import static com.onval.capstone.activities.RecordingsActivity.FAB_NAME_TRANSITION;
+import static com.onval.capstone.activities.RecordingsActivity.TOOLBAR_NAME_TRANSITION;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
     private Activity activity;
@@ -203,9 +207,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     intent.putExtra(CATEGORY_ID, category.getId());
                     intent.putExtra(CATEGORY_NAME, category.getName());
 
-                    activity.startActivity(intent,
-                            ActivityOptionsCompat.makeSceneTransitionAnimation(activity)
-                            .toBundle());
+                    Bundle activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            activity,
+                            Pair.create(activity.findViewById(R.id.main_fab),FAB_NAME_TRANSITION),
+                            Pair.create(activity.findViewById(R.id.main_toolbar), TOOLBAR_NAME_TRANSITION)
+                            ).toBundle();
+
+                    activity.startActivity(intent, activityOptions);
+                    activity.getWindow().setAllowEnterTransitionOverlap(true);
                 }
             });
 

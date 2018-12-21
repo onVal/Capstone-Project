@@ -7,9 +7,6 @@
 
         <item name="windowActionModeOverlay">true</item>
 
-        <item name="android:windowEnterTransition">@android:transition/slide_right</item>
-        <item name="android:windowExitTransition">@android:transition/slide_left</item>
-
         <item name="android:colorForeground">#fff</item> <!-- this makes overflow btn white -->
         <item name="android:colorBackground">@color/colorPrimary</item> <!-- action mode bg color -->
         <item name="android:colorControlNormal">#fff</item> <!-- makes back btn white -->
@@ -22,11 +19,6 @@
         <item name="buttonStyle">@style/LightTheme.Button</item>
         <item name="actionOverflowButtonStyle">@style/LightTheme.OverflowButton</item>
     </style>
-
-    <!--<style name="TransitionTheme">-->
-        <!--<item name="android:windowEnterTransition">@android:transition/slide_right</item>-->
-        <!--<item name="android:windowExitTransition">@android:transition/slide_left</item>-->
-    <!--</style>-->
 
     <style name="LightTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/colorPrimary</item>

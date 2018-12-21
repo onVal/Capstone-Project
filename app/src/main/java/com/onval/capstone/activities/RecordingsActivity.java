@@ -9,7 +9,10 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -24,6 +27,7 @@ import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -43,12 +47,17 @@ public class RecordingsActivity extends AppCompatActivity
     public static final String SELECTED_REC = "selected-rec-extra";
     public static final String FRAGMENT_TAG = "rec-fragment";
 
+    public static final String FAB_NAME_TRANSITION = "recording:fab";
+    public static final String TOOLBAR_NAME_TRANSITION = "recording:toolbar";
+
+
     public static final String UPDATE_PLAYER_ACTION = "com.onval.capstone.UPDATE_PLAYER";
 
     @BindView(R.id.exo_player) PlayerView playerView;
     @BindView(R.id.recording_fab) FloatingActionButton fab;
     @BindView(R.id.ctrl_rec_name) TextView recNameView;
     @BindView(R.id.ctrl_cat_name) TextView catNameView;
+    @BindView(R.id.my_rec_toolbar) Toolbar toolbar;
 
     private int categoryId;
     private String categoryName;
@@ -105,6 +114,9 @@ public class RecordingsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         GuiUtility.initCustomTheme(this);
 
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setAnimation();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
 
@@ -114,6 +126,11 @@ public class RecordingsActivity extends AppCompatActivity
         setToolbar();
 
         ButterKnife.bind(this);
+
+        ViewCompat.setTransitionName(fab, FAB_NAME_TRANSITION);
+        ViewCompat.setTransitionName(toolbar, TOOLBAR_NAME_TRANSITION);
+
+
 
         IntentFilter filter = new IntentFilter(UPDATE_PLAYER_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
@@ -133,6 +150,15 @@ public class RecordingsActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment(), FRAGMENT_TAG)
                 .commit();
+    }
+
+    private void setAnimation() {
+        Slide slide = new Slide();
+        slide.setSlideEdge(Gravity.END);
+        slide.excludeTarget(android.R.id.statusBarBackground, true);
+        slide.excludeTarget(android.R.id.navigationBarBackground, true);
+        getWindow().setEnterTransition(slide);
+        getWindow().setExitTransition(slide);
     }
 
     private void setToolbar() {
