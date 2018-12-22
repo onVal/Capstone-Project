@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.onval.capstone.R;
@@ -57,6 +58,12 @@ public class SaveRecordingDialogFragment extends DialogFragment {
         String recStartTime = recInfoBundle.getString("REC_START_TIME");
         String recDate = recInfoBundle.getString("REC_DATE");
         editText.setText(String.format("Recording %s %s", recDate, recStartTime));
+        editText.setSelection(0, editText.length());
+
+        editText.requestFocus();
+
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         int editTextColor, dialogTheme;
         if (GuiUtility.isLightTheme(getContext())) {
