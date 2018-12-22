@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 
 import com.onval.capstone.R;
@@ -41,13 +40,11 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
     protected void onCreate(Bundle savedInstanceState) {
         currentTheme = GuiUtility.getTheme(this);
         setTheme(currentTheme.equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setAnimation();
 
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -63,6 +60,14 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!currentTheme.equals(GuiUtility.getTheme(this))) {
+            recreate();
+        }
+    }
+
     private void setAnimation() {
         Slide slide = new Slide();
         slide.setSlideEdge(Gravity.START);
@@ -70,14 +75,6 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         slide.excludeTarget(android.R.id.navigationBarBackground, true);
         getWindow().setEnterTransition(slide);
         getWindow().setExitTransition(slide);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!currentTheme.equals(GuiUtility.getTheme(this))) {
-            recreate();
-        }
     }
 
     @OnClick(R.id.main_fab)

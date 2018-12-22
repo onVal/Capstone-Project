@@ -28,7 +28,6 @@ import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -47,10 +46,6 @@ public class RecordingsActivity extends AppCompatActivity
     public static final String CATEGORY_NAME = "category-name-extra";
     public static final String SELECTED_REC = "selected-rec-extra";
     public static final String FRAGMENT_TAG = "rec-fragment";
-
-    public static final String FAB_NAME_TRANSITION = "recording:fab";
-    public static final String TOOLBAR_NAME_TRANSITION = "recording:toolbar";
-
 
     public static final String UPDATE_PLAYER_ACTION = "com.onval.capstone.UPDATE_PLAYER";
 
@@ -117,7 +112,6 @@ public class RecordingsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         GuiUtility.initCustomTheme(this);
-
         setAnimation();
 
         super.onCreate(savedInstanceState);
@@ -129,9 +123,6 @@ public class RecordingsActivity extends AppCompatActivity
         setToolbar();
 
         ButterKnife.bind(this);
-
-        ViewCompat.setTransitionName(fab, FAB_NAME_TRANSITION);
-        ViewCompat.setTransitionName(toolbar, TOOLBAR_NAME_TRANSITION);
 
         IntentFilter filter = new IntentFilter(UPDATE_PLAYER_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
@@ -165,7 +156,6 @@ public class RecordingsActivity extends AppCompatActivity
         slide.excludeTarget(android.R.id.statusBarBackground, true);
         slide.excludeTarget(android.R.id.navigationBarBackground, true);
         getWindow().setEnterTransition(slide);
-//        getWindow().setExitTransition(slide);
     }
 
     private void setToolbar() {

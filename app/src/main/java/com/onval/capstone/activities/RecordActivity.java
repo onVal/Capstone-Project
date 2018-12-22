@@ -39,6 +39,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -60,6 +61,8 @@ public class RecordActivity extends AppCompatActivity
     @BindView(R.id.record_fab) FloatingActionButton fab;
     @BindView(R.id.rec_animation)
     LottieAnimationView animationView;
+
+    public static final String REC_FAB_TRANSITION = "rec:transition";
 
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
 
@@ -101,6 +104,8 @@ public class RecordActivity extends AppCompatActivity
         catViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         recViewModel = ViewModelProviders.of(this).get(RecordingsViewModel.class);
 
+        ViewCompat.setTransitionName(fab, REC_FAB_TRANSITION);
+
         registerTimerReceiver();
         registerUIReceiver();
 
@@ -115,12 +120,10 @@ public class RecordActivity extends AppCompatActivity
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION)
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
-        if (permissionToRecordAccepted) {
+        if (permissionToRecordAccepted)
             kickStartService();
-        }
-        else {
+        else
             finish();
-        }
     }
 
     private void kickStartService() {

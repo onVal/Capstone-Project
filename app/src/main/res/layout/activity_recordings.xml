@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
+            android:transitionName="toolbar_transition"
             tools:ignore="UnusedAttribute" />
 
         <FrameLayout
@@ -48,6 +49,8 @@
 
         android:layout_marginBottom="@dimen/default_fab_margin"
         android:layout_gravity="bottom|center"
+
+        android:transitionName="fab_transition"
 
         app:srcCompat="@drawable/ic_fab_dot"
         android:backgroundTint="?attr/fabColor"

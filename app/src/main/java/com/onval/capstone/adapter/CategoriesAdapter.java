@@ -42,8 +42,6 @@ import butterknife.ButterKnife;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
-import static com.onval.capstone.activities.RecordingsActivity.FAB_NAME_TRANSITION;
-import static com.onval.capstone.activities.RecordingsActivity.TOOLBAR_NAME_TRANSITION;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
     private Activity activity;
@@ -209,10 +207,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                     intent.putExtra(CATEGORY_NAME, category.getName());
 
                     List<Pair<View, String>> pairs = new ArrayList<>();
-                    pairs.add(Pair.create(activity.findViewById(R.id.main_toolbar), TOOLBAR_NAME_TRANSITION));
+                    pairs.add(Pair.create(activity.findViewById(R.id.main_toolbar), "toolbar_transition"));
 
                     if (!PlayerService.isRunning)
-                        pairs.add(Pair.create(activity.findViewById(R.id.main_fab),FAB_NAME_TRANSITION));
+                        pairs.add(Pair.create(activity.findViewById(R.id.main_fab),"fab_transition"));
 
                     Bundle activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
                             activity, pairs.toArray(new Pair[pairs.size()]))
