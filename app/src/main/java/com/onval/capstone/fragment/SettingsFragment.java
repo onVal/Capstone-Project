@@ -74,8 +74,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(getString(R.string.pref_theme_str)) &&
-                    sharedPreferences.getString(getString(R.string.pref_theme_str), getString(R.string.light_theme_name))
+            if (key.equals(context.getString(R.string.pref_theme_str)) &&
+                    sharedPreferences.getString(context.getString(R.string.pref_theme_str), context.getString(R.string.light_theme_name))
                             .equals(GuiUtility.getTheme(context))) {
                 activity.recreate();
             }

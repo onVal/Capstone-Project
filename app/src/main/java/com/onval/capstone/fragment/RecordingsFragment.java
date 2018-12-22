@@ -66,8 +66,11 @@ public class RecordingsFragment extends Fragment
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(getContext());
-        DriveClient driveClient = Drive.getDriveClient(getContext(), account);
-        driveClient.requestSync();
+
+        if (account != null) {
+            DriveClient driveClient = Drive.getDriveClient(getContext(), account);
+            driveClient.requestSync();
+        }
 
         recordingsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RecordingsAdapter(getContext(), selectedRec, recViewModel);

@@ -105,7 +105,8 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(context.getApplicationContext());
-        driveClient = Drive.getDriveResourceClient(context, account);
+        if (account != null)
+            driveClient = Drive.getDriveResourceClient(context, account);
     }
 
     @NonNull
@@ -191,14 +192,17 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
                             Filters.eq(SearchableField.TRASHED, false)))
                     .build();
 
-            Task<MetadataBuffer> queryTask = driveClient.query(query);
-            queryTask.addOnSuccessListener(metadataBuffer -> {
-                if (metadataBuffer.getCount() != 0) {
-                    cloud_icon.setImageDrawable(cloudUploadedOn);
-                } else {
-                    cloud_icon.setImageDrawable(cloudUploadedOff);
-                }
-            });
+            if (driveClient != null) {
+                Task<MetadataBuffer> queryTask = driveClient.query(query);
+
+                queryTask.addOnSuccessListener(metadataBuffer -> {
+                    if (metadataBuffer.getCount() != 0) {
+                        cloud_icon.setImageDrawable(cloudUploadedOn);
+                    } else {
+                        cloud_icon.setImageDrawable(cloudUploadedOff);
+                    }
+                });
+            }
 
             viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
                 boolean recIsUploading = recordings.contains(recording.getId());
