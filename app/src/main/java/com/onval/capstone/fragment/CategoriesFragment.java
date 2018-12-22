@@ -32,6 +32,7 @@ public class CategoriesFragment extends Fragment {
     private SharedPreferences prefs;
 
     @BindView(R.id.categories) public RecyclerView categories;
+    private RecyclerView.LayoutManager layoutManager;
 
     public CategoriesFragment() {
         // Required empty public constructor
@@ -57,8 +58,10 @@ public class CategoriesFragment extends Fragment {
 
         categories.setAdapter(adapter);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        categories.setLayoutManager(layoutManager);
+        if (layoutManager == null) {
+            layoutManager = new LinearLayoutManager(getActivity());
+            categories.setLayoutManager(layoutManager);
+        }
 
         viewModel.getCategories().observe(this,
                 cats -> {
