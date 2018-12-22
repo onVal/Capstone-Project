@@ -22,7 +22,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Context context;
 
     private SharedPreferences sharedPreferences;
-
+    private PrefChangeListener listener;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -34,15 +34,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        PrefChangeListener listener = new PrefChangeListener();
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         updateSummaries();
+
+        if (sharedPreferences == null) {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            listener = new PrefChangeListener();
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+        }
     }
 
     private void updateSummaries() {

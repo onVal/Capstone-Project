@@ -14,7 +14,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if (GuiUtility.getTheme(this).equals("Light"))
+        if (GuiUtility.isLightTheme(getApplicationContext()))
             setTheme(R.style.SettingsTheme);
         else
             setTheme(R.style.SettingsDarkTheme);
