@@ -187,6 +187,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
             Query query = new Query.Builder()
                     .addFilter(Filters.and(Filters.contains(SearchableField.TITLE, String.valueOf(recording.getId())),
+                            Filters.contains(SearchableField.TITLE, String.valueOf(recording.getName())),
                             Filters.eq(SearchableField.TRASHED, false)))
                     .build();
 
