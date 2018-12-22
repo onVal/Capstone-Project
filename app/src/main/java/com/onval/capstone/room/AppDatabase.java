@@ -2,6 +2,8 @@ package com.onval.capstone.room;
 
 import android.content.Context;
 
+import com.onval.capstone.R;
+
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -17,7 +19,7 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "onrec_database")
+                            AppDatabase.class, context.getString(R.string.database_name))
                             .build();
                 }
             }

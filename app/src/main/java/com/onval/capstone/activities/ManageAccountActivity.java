@@ -101,7 +101,7 @@ public class ManageAccountActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(
                         e -> {
-                            Toast.makeText(this, "Sign in failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.fail_sign_in_msg, Toast.LENGTH_SHORT).show();
                             displayNoUser();
                         });
     }

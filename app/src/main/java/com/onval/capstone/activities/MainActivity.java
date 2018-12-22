@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         currentTheme = GuiUtility.getTheme(this);
-        setTheme(currentTheme.equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
+        setTheme(currentTheme.equals(getString(R.string.light_theme_name)) ? R.style.LightTheme : R.style.DarkTheme);
         setAnimation();
 
         AndroidInjection.inject(this);

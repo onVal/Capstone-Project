@@ -73,9 +73,9 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
             Record[] rArray = selectedRecList.toArray(new Record[selectedRecList.size()]);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
-            String msg = "CAUTION: You will lose PERMANENTLY all selected recordings.";
+            String msg = context.getString(R.string.caution_del_recs);
 
-            builder.setTitle("Delete Categories")
+            builder.setTitle(R.string.del_categories_title)
                     .setMessage(msg)
                     .setPositiveButton(android.R.string.yes, (d, w)-> {
                         viewModel.deleteRecordings(rArray);

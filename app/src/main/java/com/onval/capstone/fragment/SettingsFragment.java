@@ -54,12 +54,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void updateThemeSummary() {
-        Preference pref = findPreference("pref_theme");
+        Preference pref = findPreference(getString(R.string.pref_theme_str));
         pref.setSummary(GuiUtility.getTheme(getContext()));
     }
 
     private void updateAccountSummary() {
-        Preference pref = findPreference("pref_account");
+        Preference pref = findPreference(getString(R.string.pref_account_str));
         pref.setSummary(R.string.account_default_summary);
 
         GoogleSignInAccount googleAccount = GoogleSignIn.getLastSignedInAccount(getActivity());
@@ -74,8 +74,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals("pref_theme") &&
-                    sharedPreferences.getString("pref_theme", "Light")
+            if (key.equals(getString(R.string.pref_theme_str)) &&
+                    sharedPreferences.getString(getString(R.string.pref_theme_str), getString(R.string.light_theme_name))
                             .equals(GuiUtility.getTheme(context))) {
                 activity.recreate();
             }

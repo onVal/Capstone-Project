@@ -68,6 +68,7 @@ public class RecordActivity extends AppCompatActivity
 
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
 
+    public static final String START_SERVICE_ACTION = "START-SERVICE";
     public static final String PAUSE_ACTION = "com.onval.capstone.PAUSE";
     public static final String PLAY_ACTION = "com.onval.capstone.PLAY";
     public static final String RESET_ACTION = "com.onval.capstone.RESET";
@@ -136,7 +137,7 @@ public class RecordActivity extends AppCompatActivity
 
     private void kickStartService() {
         intentService = new Intent(this, RecordingService.class);
-        intentService.setAction("START-SERVICE");
+        intentService.setAction(START_SERVICE_ACTION);
         startService(intentService);
         bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -263,7 +264,7 @@ public class RecordActivity extends AppCompatActivity
     public void onDeleteRecording() {
         resetService();
 
-        Toast.makeText(this, "The recording has been deleted.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.rec_delete_msg, Toast.LENGTH_SHORT).show();
 
         if (interstitialAd.isLoaded())
             interstitialAd.show();

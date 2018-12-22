@@ -52,8 +52,8 @@ public class AddCategoryDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setTitle(R.string.add_category)
                 .setView(editText)
-                .setPositiveButton("Confirm", new AddCategoriesListener())
-                .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
+                .setPositiveButton(R.string.confirm_btn, new AddCategoriesListener())
+                .setNegativeButton(R.string.cancel_btn, (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
     }

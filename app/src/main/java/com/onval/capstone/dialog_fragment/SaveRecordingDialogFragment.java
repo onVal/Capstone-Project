@@ -71,9 +71,9 @@ public class SaveRecordingDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setView(editText)
-                .setPositiveButton("Confirm", new SaveRecordingListener())
-                .setNeutralButton("Delete", new AskConfirmationListener(fm))
-                .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
+                .setPositiveButton(R.string.confirm_btn, new SaveRecordingListener())
+                .setNeutralButton(R.string.delete_btn, new AskConfirmationListener(fm))
+                .setNegativeButton(R.string.cancel_btn, (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
     }

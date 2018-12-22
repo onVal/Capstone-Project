@@ -233,7 +233,7 @@ public class RecordingsActivity extends AppCompatActivity
 
     private void updatePlayerText(String recName, String catName) {
         recNameView.setText(recName);
-        catNameView.setText("from " + catName);
+        catNameView.setText(getString(R.string.from_cat_txt, catName));
     }
 
     public void closePlayer(View view) {

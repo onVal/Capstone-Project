@@ -105,8 +105,8 @@ public class RecordingService extends Service {
         Intent intent = new Intent(this, RecordActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Record")
-                .setContentText("You are recording a voice memo")
+                .setContentTitle(getString(R.string.record_title))
+                .setContentText(getString(R.string.record_content_txt))
                 .setSmallIcon(R.drawable.ic_mic_black_24dp)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {0L})
@@ -116,7 +116,7 @@ public class RecordingService extends Service {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    "RecordChannel", NotificationManager.IMPORTANCE_LOW);
+                    getString(R.string.record_channel), NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
             channel.setSound(null, null);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);

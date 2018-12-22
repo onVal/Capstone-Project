@@ -71,9 +71,9 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         int dialogTheme = (GuiUtility.isLightTheme(getContext()) ? R.style.DialogTheme : R.style.DialogThemeDark);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setView(layout)
-                .setPositiveButton("Save", new ChooseCategoryListener())
-                .setNeutralButton("Delete", new AskConfirmationListener(fm))
-                .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
+                .setPositiveButton(R.string.save_btn, new ChooseCategoryListener())
+                .setNeutralButton(R.string.delete_btn, new AskConfirmationListener(fm))
+                .setNegativeButton(R.string.cancel_btn, (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
     }

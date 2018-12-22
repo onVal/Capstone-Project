@@ -36,15 +36,15 @@ public class GuiUtility {
     }
 
     public static void initCustomTheme(Context context) {
-        context.setTheme(getTheme(context).equals("Light") ? R.style.LightTheme : R.style.DarkTheme);
+        context.setTheme(getTheme(context).equals(context.getString(R.string.light_theme_name)) ? R.style.LightTheme : R.style.DarkTheme);
     }
 
     public static String getTheme(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return pref.getString("pref_theme", "Light");
+        return pref.getString(context.getString(R.string.pref_theme_str), context.getString(R.string.light_theme_name));
     }
 
     public static boolean isLightTheme(Context context) {
-        return getTheme(context).equals("Light");
+        return getTheme(context).equals(context.getString(R.string.light_theme_name));
     }
 }

@@ -57,5 +57,22 @@
     <string name="autoupload_content_desc">Autoupload</string>
     <string name="cloud_icon_content_desc">Cloud icon</string>
     <string name="bear_content_desc">Bear</string>
+    <string name="caution_del_recs">CAUTION: You will lose PERMANENTLY all selected recordings.</string>
+    <string name="del_categories_title">Delete Categories</string>
+    <string name="fail_sign_in_msg">Sign in failed</string>
+    <string name="light_theme_name">Light</string>
+    <string name="rec_delete_msg">The recording has been deleted.</string>
+    <string name="from_cat_txt">from %s</string>
+    <string name="drive_sync_title">Google Drive Sync</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="delete_btn">Delete</string>
+    <string name="save_btn">Save</string>
+    <string name="pref_theme_str">pref_theme</string>
+    <string name="pref_account_str">pref_account</string>
+    <string name="database_name">onrec_database</string>
+    <string name="record_title">Record</string>
+    <string name="record_content_txt">You are recording a voice memo</string>
+    <string name="record_channel">RecordChannel</string>
 
 </resources>

@@ -225,7 +225,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
                                                             : "Turn on auto uploading for this category?";
 
-                builder.setTitle("Google Drive Sync")
+                builder.setTitle(R.string.drive_sync_title)
                         .setMessage(msg)
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
                             boolean autouploadIsSet = !category.isAutoUploading();
