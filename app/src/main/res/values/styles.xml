@@ -39,8 +39,7 @@
         <item name="android:background">#222</item>
     </style>
 
-    <style name="LightTheme.TextAppearance">
-        <item name="android:textColor">@color/colorPrimary</item>
+    <style name="MyTextAppearance">
         <item name="android:textSize">18sp</item>
     </style>
 

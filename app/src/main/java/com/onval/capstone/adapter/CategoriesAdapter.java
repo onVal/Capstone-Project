@@ -233,7 +233,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                             if (autouploadIsSet)
                                 viewModel.uploadRecordings(category.getId());
 
-                            //todo: this should be done after upload recording finishes
                             category.setAutoUploading(autouploadIsSet);
                             viewModel.updateCategories(category);
 

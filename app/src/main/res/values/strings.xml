@@ -56,5 +56,6 @@
     <string name="play_widget_content_desc">Play</string>
     <string name="autoupload_content_desc">Autoupload</string>
     <string name="cloud_icon_content_desc">Cloud icon</string>
+    <string name="bear_content_desc">Bear</string>
 
 </resources>

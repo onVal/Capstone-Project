@@ -209,7 +209,6 @@ public class RecordingsActivity extends AppCompatActivity
         playingRecordingUri = recUri;
         String recName = recording.getName();
         String recDuration = recording.getDuration();
-        //todo: sometimes this is null and app crashes - can't rely on it
         String catColor = categoryColor.getValue();
 
         Intent intent = new Intent(this, PlayerService.class);

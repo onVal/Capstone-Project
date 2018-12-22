@@ -9,10 +9,12 @@
         android:layout_width="97dp"
         android:layout_height="120dp"
         app:srcCompat="@drawable/bear"
+
+        android:tint="?android:textColorSecondary"
         app:layout_constraintBottom_toTopOf="@+id/msg_part_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        android:contentDescription="@string/bear_content_desc" />
 
 <LinearLayout
     android:id="@+id/msg_part_1"
@@ -30,9 +32,10 @@
     app:layout_constraintTop_toTopOf="parent">
 
     <TextView
-        style="@style/LightTheme.TextAppearance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="?android:textColorSecondary"
         android:text="@string/no_categories_msg_1" />
 
     <ImageView
@@ -42,12 +45,16 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
 
+        android:tint="?android:textColorSecondary"
+
         android:contentDescription="@string/add_category_icon_content_desc"
 
         app:srcCompat="@drawable/add_category_black" />
 
     <TextView
-        style="@style/LightTheme.TextAppearance"
+        android:textSize="18sp"
+        android:textColor="?android:textColorSecondary"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/no_categories_msg_2" />
@@ -55,9 +62,12 @@
 </LinearLayout>
 
     <TextView
-        style="@style/LightTheme.TextAppearance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="?android:textColorSecondary"
+
+
         android:text="@string/no_categories_msg_3"
 
         app:layout_constraintEnd_toEndOf="parent"
