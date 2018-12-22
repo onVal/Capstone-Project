@@ -78,6 +78,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:tint="?android:textColorSecondary"
-        tools:src="@drawable/ic_cloud_upload_on"/>
+        tools:src="@drawable/ic_cloud_upload_on"
+        android:contentDescription="@string/autoupload_content_desc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

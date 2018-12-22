@@ -49,5 +49,12 @@
     <string name="sign_in_message">Sign in to upload your recordings to Google Drive</string>
     <string name="delete_cat_title">Delete</string>
     <string name="default_theme">LightTheme</string>
+    <string name="stop_recording_content_desc">Stop recording</string>
+    <string name="add_category_content_desc">add category</string>
+    <string name="add_category_icon_content_desc">add category icon</string>
+    <string name="close_player_content_desc">close player</string>
+    <string name="play_widget_content_desc">Play</string>
+    <string name="autoupload_content_desc">Autoupload</string>
+    <string name="cloud_icon_content_desc">Cloud icon</string>
 
 </resources>

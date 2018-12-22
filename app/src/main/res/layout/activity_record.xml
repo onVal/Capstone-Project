@@ -24,7 +24,7 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        android:contentDescription="@string/stop_recording_content_desc" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/rec_animation"

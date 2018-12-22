@@ -40,7 +40,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_cloud_upload_off"
-        android:foregroundTint="@color/colorAccent" />
+        tools:foregroundTint="@color/colorAccent"
+        android:contentDescription="@string/cloud_icon_content_desc"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"

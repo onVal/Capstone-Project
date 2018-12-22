@@ -25,8 +25,8 @@
         android:padding="8dp"
         android:onClick="closePlayer"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp" />
-    />
+        app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp"
+        android:contentDescription="@string/close_player_content_desc" />
 
     <TextView
         android:id="@+id/ctrl_rec_name"
@@ -105,13 +105,15 @@
             android:id="@id/exo_play"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp" />
+            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
+            android:contentDescription="@string/exo_controls_play_description" />
 
         <ImageView
             android:id="@id/exo_pause"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp" />
+            app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp"
+            android:contentDescription="@string/exo_controls_pause_description" />
 
     </FrameLayout>
 

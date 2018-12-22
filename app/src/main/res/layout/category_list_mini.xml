@@ -26,7 +26,9 @@
         android:tint="?android:textColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/add_category_black" />
+        app:srcCompat="@drawable/add_category_black"
+        android:contentDescription="@string/add_category_content_desc"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mini_cat_rv"
