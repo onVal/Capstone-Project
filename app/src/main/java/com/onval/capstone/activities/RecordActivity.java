@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.ChooseCategoryDialogFragment;
@@ -85,6 +87,8 @@ public class RecordActivity extends AppCompatActivity
 
     private Bundle recInfoBundle;
 
+    private PublisherInterstitialAd interstitialAd;
+
     private BroadcastReceiver timerReceiver = new TimerBroadcastReceiver();
     private BroadcastReceiver uiReceiver = new UIBroadcastReceiver();
 
@@ -111,6 +115,10 @@ public class RecordActivity extends AppCompatActivity
 
         Bundle extras = getIntent().getExtras();
         categoryId = (extras != null) ? extras.getInt(CATEGORY_ID) : null;
+
+        interstitialAd = new PublisherInterstitialAd(this);
+        interstitialAd.setAdUnitId("/6499/example/interstitial");
+        interstitialAd.loadAd(new PublisherAdRequest.Builder().build());
     }
 
     @Override
@@ -236,6 +244,10 @@ public class RecordActivity extends AppCompatActivity
         });
 
         resetService();
+
+        if (interstitialAd.isLoaded())
+            interstitialAd.show();
+
         finish();
     }
 
@@ -250,7 +262,11 @@ public class RecordActivity extends AppCompatActivity
     @Override
     public void onDeleteRecording() {
         resetService();
+
         Toast.makeText(this, "The recording has been deleted.", Toast.LENGTH_SHORT).show();
+
+        if (interstitialAd.isLoaded())
+            interstitialAd.show();
     }
 
     private void resetService() {
