@@ -19,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAdapter.MiniViewHolder> {
+    public static final int NO_CATEGORIES = -1;
     private Context context;
     private List<Category> categories;
     private int selected, lastSelected;
@@ -61,7 +62,10 @@ public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAd
     }
 
     public int getSelectedCategoryId() {
-        return categories.get(selected).getId();
+        if (categories.size() != 0)
+            return categories.get(selected).getId();
+        else
+            return NO_CATEGORIES;
     }
 
     class MiniViewHolder extends RecyclerView.ViewHolder {

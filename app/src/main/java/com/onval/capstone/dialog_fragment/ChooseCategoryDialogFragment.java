@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.MiniCategoriesAdapter;
@@ -25,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
+import static com.onval.capstone.adapter.MiniCategoriesAdapter.NO_CATEGORIES;
 import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
 
@@ -80,11 +82,18 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             int categoryId = adapter.getSelectedCategoryId();
-            recInfoBundle.putInt(CATEGORY_ID, categoryId);
 
-            SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
-            saveRecording.setArguments(recInfoBundle);
-            saveRecording.show(fm, SAVE_RECORDING_TAG);
+            if (categoryId != NO_CATEGORIES) {
+                recInfoBundle.putInt(CATEGORY_ID, categoryId);
+
+                SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
+                saveRecording.setArguments(recInfoBundle);
+                saveRecording.show(fm, SAVE_RECORDING_TAG);
+            } else {
+                Toast.makeText(getContext(),
+                        "Create a category in order to save a recording",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
