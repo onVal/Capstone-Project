@@ -8,17 +8,25 @@
     tools:background="@color/colorPrimary"
     >
 
+    <View
+        android:id="@+id/colorBar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="0dp"
+        android:padding="16dp"
+        tools:background="#f00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/close_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:padding="16dp"
+        android:padding="8dp"
         android:onClick="closePlayer"
-        app:layout_constraintBottom_toTopOf="@+id/ctrl_rec_name"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp" />
+    />
 
     <TextView
         android:id="@+id/ctrl_rec_name"

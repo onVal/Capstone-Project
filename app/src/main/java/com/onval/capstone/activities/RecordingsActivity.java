@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.transition.Slide;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
@@ -62,6 +61,7 @@ public class RecordingsActivity extends AppCompatActivity
     @BindView(R.id.my_rec_toolbar) Toolbar toolbar;
     @BindView(R.id.exo_progress)
     DefaultTimeBar exoProgressBar;
+    @BindView(R.id.colorBar) View exoColorBar;
 
     private int categoryId;
     private String categoryName;
@@ -118,7 +118,6 @@ public class RecordingsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         GuiUtility.initCustomTheme(this);
 
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setAnimation();
 
         super.onCreate(savedInstanceState);
@@ -144,6 +143,7 @@ public class RecordingsActivity extends AppCompatActivity
             int darkColor = GuiUtility.darkenColor(color, 0.7f);
             exoProgressBar.setPlayedColor(darkColor);
             exoProgressBar.setScrubberColor(color);
+            exoColorBar.setBackgroundColor(color);
         });
 
         if (PlayerService.isRunning) {
@@ -165,7 +165,7 @@ public class RecordingsActivity extends AppCompatActivity
         slide.excludeTarget(android.R.id.statusBarBackground, true);
         slide.excludeTarget(android.R.id.navigationBarBackground, true);
         getWindow().setEnterTransition(slide);
-        getWindow().setExitTransition(slide);
+//        getWindow().setExitTransition(slide);
     }
 
     private void setToolbar() {
