@@ -5,6 +5,9 @@ import android.net.Uri;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
 import com.onval.capstone.room.Record;
 
 import java.io.File;
@@ -34,5 +37,14 @@ public class Utility {
     public static boolean isSignedIn(Context context) {
         GoogleSignInAccount signedInAccount = GoogleSignIn.getLastSignedInAccount(context);
         return signedInAccount != null;
+    }
+
+    public static Query matchRecordingDriveQuery(long recId, String recName) {
+        return new Query.Builder()
+                .addFilter(Filters.and(
+                        Filters.contains(SearchableField.TITLE, String.valueOf(recId)),
+                        Filters.contains(SearchableField.TITLE, recName),
+                        Filters.eq(SearchableField.TRASHED, false)))
+                .build();
     }
 }

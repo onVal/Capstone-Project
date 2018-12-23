@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.onval.capstone.R;
@@ -31,8 +31,6 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     private Bundle recInfoBundle;
     private OnSaveCallback callback;
     private FragmentManager fm;
-
-    InputMethodManager imm;
 
     public interface OnSaveCallback {
         void onSaveRecording(Record recording);
@@ -59,7 +57,7 @@ public class SaveRecordingDialogFragment extends DialogFragment {
         editText = new EditText(getActivity());
         String recStartTime = recInfoBundle.getString("REC_START_TIME");
         String recDate = recInfoBundle.getString("REC_DATE");
-        editText.append(String.format("Recording %s %s", recDate, recStartTime));
+        editText.setText(String.format("Recording %s %s", recDate, recStartTime));
         editText.setSelectAllOnFocus(true);
 
         int editTextColor, dialogTheme;
@@ -79,7 +77,17 @@ public class SaveRecordingDialogFragment extends DialogFragment {
                 .setNeutralButton(R.string.delete_btn, new AskConfirmationListener(fm))
                 .setNegativeButton(R.string.cancel_btn, (dialogInterface, i) -> getDialog().cancel());
 
-        return builder.create();
+        Dialog dialog = builder.create();
+
+        //This nonsense is because on physical phone the edittext doesn't pop up the keyboard
+        //even though the dialog window gets focused
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        });
+
+        return dialog;
     }
 
 

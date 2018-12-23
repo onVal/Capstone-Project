@@ -1,15 +1,14 @@
 package com.onval.capstone.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.drive.MetadataBuffer;
-import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.repository.DataModel;
 import com.onval.capstone.room.Category;
@@ -69,11 +68,7 @@ public class CategoriesViewModel extends AndroidViewModel {
                 @Override
                 public void onChanged(List<Record> recordings) {
                     for (Record rec : recordings) {
-                        Query query = new Query.Builder()
-                                //There is a bug here, rec.getId could be part of the file name
-                                .addFilter(Filters.and(Filters.contains(SearchableField.TITLE, String.valueOf(rec.getId())),
-                                        Filters.eq(SearchableField.TRASHED, false)))
-                                .build();
+                        Query query = Utility.matchRecordingDriveQuery(rec.getId(), rec.getName());
 
                         Task<MetadataBuffer> queryTask = resourceClient.query(query);
                         queryTask.addOnSuccessListener(metadataBuffer -> {
@@ -82,7 +77,7 @@ public class CategoriesViewModel extends AndroidViewModel {
                                         (uploadService -> uploadService.uploadRecordingToDrive(rec, account))
                                 );
                             }
-                        });
+                        }).addOnFailureListener(e -> Log.d("debug", "failed to query"));
                     }
                     recordingsLiveData.removeObserver(this);
                 }

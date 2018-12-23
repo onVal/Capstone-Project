@@ -16,6 +16,7 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
 import com.onval.capstone.utility.GuiUtility;
+import com.onval.capstone.utility.Utility;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -57,7 +58,15 @@ public class ManageAccountActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        signIn();
+        if (!Utility.isSignedIn(this))
+            signIn();
+        else {
+            googleSignInClient = buildGoogleSignInClient();
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+            signedInName = account.getDisplayName();
+            signedInEmail = account.getEmail();
+            displaySignedInUser();
+        }
     }
 
     private void signIn() {
