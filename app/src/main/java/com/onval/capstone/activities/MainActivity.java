@@ -1,16 +1,9 @@
 package com.onval.capstone.activities;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,8 +14,18 @@ import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.AddCategoryDialogFragment;
 import com.onval.capstone.fragment.CategoriesFragment;
 import com.onval.capstone.fragment.EmptyFragment;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 
@@ -31,14 +34,19 @@ import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_C
 public class MainActivity extends AppCompatActivity implements Observer<Integer> {
     private CategoriesViewModel viewModel;
     private FragmentManager fm;
+    private String currentTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentTheme = GuiUtility.getTheme(this);
+        setTheme(currentTheme.equals(getString(R.string.light_theme_name)) ? R.style.LightTheme : R.style.DarkTheme);
+        setAnimation();
+
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.my_toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
@@ -50,6 +58,23 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
             viewModel.getNumOfCategories()
                     .observe(this, this);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!currentTheme.equals(GuiUtility.getTheme(this))) {
+            recreate();
+        }
+    }
+
+    private void setAnimation() {
+        Slide slide = new Slide();
+        slide.setSlideEdge(Gravity.START);
+        slide.excludeTarget(android.R.id.statusBarBackground, true);
+        slide.excludeTarget(android.R.id.navigationBarBackground, true);
+        getWindow().setEnterTransition(slide);
+        getWindow().setExitTransition(slide);
     }
 
     @OnClick(R.id.main_fab)

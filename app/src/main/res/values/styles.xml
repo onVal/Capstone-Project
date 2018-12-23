@@ -3,36 +3,106 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:colorBackground">@color/colorPrimary</item>
-        <item name="android:colorForeground">@android:color/white</item>
+        <item name="fabColor">@color/colorPrimary</item>
+
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+
+        <item name="android:colorForeground">#fff</item> <!-- this makes overflow btn white -->
+        <item name="android:colorBackground">@color/colorPrimary</item> <!-- action mode bg color -->
+        <item name="android:colorControlNormal">#fff</item> <!-- makes back btn white -->
+
+        <item name="android:textColor">#000</item>
+        <item name="android:textColorSecondary">@color/colorSubtextDark</item> <!-- somehow this also changes overflow btn -->
+        <item name="android:windowBackground">@android:color/white</item>
+
+        <item name="toolbarStyle">@style/LightTheme.Toolbar</item>
+        <item name="buttonStyle">@style/LightTheme.Button</item>
+        <item name="actionOverflowButtonStyle">@style/LightTheme.OverflowButton</item>
     </style>
 
-    <style name="LightTheme.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
+    <style name="LightTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/colorPrimary</item>
+        <item name="popupTheme">@style/LightTheme.OverflowPopup</item>
     </style>
 
-    <style name="LightTheme.OverflowPopup" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:background">@android:color/white</item>
-        <item name="android:textColor">@android:color/black</item>
+    <style name="LightTheme.OverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">#fff</item>
+        <item name="android:textColorSecondary">#fff</item> <!-- somehow this also changes overflow btn -->
     </style>
 
-    <style name="LightTheme.TextAppearance">
-        <item name="android:textColor">@color/colorPrimary</item>
+    <style name="LightTheme.OverflowPopup" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="LightTheme.Button" parent="Widget.AppCompat.Button" >
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">#222</item>
+    </style>
+
+    <style name="MyTextAppearance">
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="LightTheme.StopRecButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@drawable/ic_close_black_24dp</item>
+        <item name="android:backgroundTint">@color/colorPrimaryDark</item>
+        <item name="android:tint">@color/colorPrimaryDark</item>
     </style>
 
     <style name="SettingsTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/colorSubtextDark</item>
+    </style>
+
+    <style name="SettingsDarkTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/darkPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
+        <item name="colorAccent">@color/darkAccent</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:textColorSecondary">@color/colorSubtextLight</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:textColor">#000</item>
     </style>
 
+    <style name="DialogThemeDark" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/darkPrimary</item>
+        <item name="android:textColor">#fff</item>
+    </style>
+
     <style name="ProgressBarTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/darkPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
+        <item name="colorAccent">@color/darkAccent</item>
+        <item name="fabColor">@color/darkAccent</item>
+
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="android:textColor">#fff</item>
+        <item name="android:textColorSecondary">@color/colorSubtextLight</item>
+        <item name="android:windowBackground">@color/darkPrimaryDark</item>
+
+        <item name="android:colorForeground">#fff</item> <!-- this makes overflow btn white -->
+        <item name="android:colorBackground">@color/colorPrimary</item> <!-- action mode bg color -->
+
+        <item name="toolbarStyle">@style/DarkTheme.Toolbar</item>
+        <item name="buttonStyle">@style/LightTheme.Button</item>
+
+        <item name="actionOverflowButtonStyle">@style/LightTheme.OverflowButton</item>
+
+    </style>
+
+    <style name="DarkTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/darkPrimaryDark </item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 
 </resources>

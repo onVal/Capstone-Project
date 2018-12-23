@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
-        android:key="pref_account"
+        android:key="@string/pref_account_str"
         android:title="Google Account">
         <intent
             android:targetPackage="com.onval.capstone"
@@ -26,11 +26,11 @@
         />
 
     <ListPreference
-        android:key="pref_theme"
+        android:key="@string/pref_theme_str"
         android:title="Theme"
         android:summary="Select a theme for the application"
         android:dialogTitle="Choose application theme"
         android:entries="@array/themes"
-        android:entryValues="@array/themes"
-        android:defaultValue="Light" />
+        android:entryValues="@array/theme_vals"
+        android:defaultValue="@string/light_theme_name" />
 </PreferenceScreen>

@@ -1,36 +1,36 @@
 package com.onval.capstone.activities;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.IBinder;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
-import android.view.Menu;
+import android.os.IBinder;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
 import com.onval.capstone.adapter.RecordingsAdapter;
 import com.onval.capstone.fragment.RecordingsFragment;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.service.PlayerService;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -53,6 +53,10 @@ public class RecordingsActivity extends AppCompatActivity
     @BindView(R.id.recording_fab) FloatingActionButton fab;
     @BindView(R.id.ctrl_rec_name) TextView recNameView;
     @BindView(R.id.ctrl_cat_name) TextView catNameView;
+    @BindView(R.id.my_rec_toolbar) Toolbar toolbar;
+    @BindView(R.id.exo_progress)
+    DefaultTimeBar exoProgressBar;
+    @BindView(R.id.colorBar) View exoColorBar;
 
     private int categoryId;
     private String categoryName;
@@ -78,8 +82,6 @@ public class RecordingsActivity extends AppCompatActivity
             }
         }
     };
-
-    Toolbar toolbar;
 
     private RecordingsFragment fragment;
     private LiveData<String> categoryColor;
@@ -109,23 +111,31 @@ public class RecordingsActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GuiUtility.initCustomTheme(this);
+        setAnimation();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
 
-        toolbar = findViewById(R.id.my_rec_toolbar);
-        setSupportActionBar(toolbar);
+        categoryId = getIntent().getExtras().getInt(CATEGORY_ID);
+        categoryName = getIntent().getExtras().getString(CATEGORY_NAME);
+
+        setToolbar();
 
         ButterKnife.bind(this);
 
         IntentFilter filter = new IntentFilter(UPDATE_PLAYER_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
-        categoryId = getIntent().getExtras().getInt(CATEGORY_ID);
-        categoryName = getIntent().getExtras().getString(CATEGORY_NAME);
-
         CategoriesViewModel viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         categoryColor = viewModel.getCategoryColor(categoryId);
-        categoryColor.observe(this, this::setInterfaceColor);
+        categoryColor.observe(this, colorStr -> {
+            int color = Color.parseColor(colorStr);
+            int darkColor = GuiUtility.darkenColor(color, 0.7f);
+            exoProgressBar.setPlayedColor(darkColor);
+            exoProgressBar.setScrubberColor(color);
+            exoColorBar.setBackgroundColor(color);
+        });
 
         if (PlayerService.isRunning) {
             if (PlayerService.selectedRec != null)
@@ -138,6 +148,22 @@ public class RecordingsActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.category_container, new RecordingsFragment(), FRAGMENT_TAG)
                 .commit();
+    }
+
+    private void setAnimation() {
+        Slide slide = new Slide();
+        slide.setSlideEdge(Gravity.END);
+        slide.excludeTarget(android.R.id.statusBarBackground, true);
+        slide.excludeTarget(android.R.id.navigationBarBackground, true);
+        getWindow().setEnterTransition(slide);
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = findViewById(R.id.my_rec_toolbar);
+        toolbar.setTitle(categoryName);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
@@ -158,14 +184,6 @@ public class RecordingsActivity extends AppCompatActivity
         }
     }
 
-    private void setInterfaceColor(String colorStr) {
-        int color = Color.parseColor(colorStr);
-        int darkenedColor = UserInterfaceUtility.darkenColor(color, 0.9f);
-
-        fab.setBackgroundTintList(ColorStateList.valueOf(darkenedColor));
-        toolbar.setBackgroundColor(darkenedColor);
-    }
-
     @OnClick
     public void record(View view) {
         serviceIntent = new Intent(this, RecordActivity.class);
@@ -174,8 +192,15 @@ public class RecordingsActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_recs, menu);
+    protected void onResume() {
+        super.onResume();
+        if (PlayerService.isRunning)
+            showPlayer(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
         return true;
     }
 
@@ -184,7 +209,6 @@ public class RecordingsActivity extends AppCompatActivity
         playingRecordingUri = recUri;
         String recName = recording.getName();
         String recDuration = recording.getDuration();
-        //todo: sometimes this is null and app crashes - can't rely on it
         String catColor = categoryColor.getValue();
 
         Intent intent = new Intent(this, PlayerService.class);
@@ -209,7 +233,7 @@ public class RecordingsActivity extends AppCompatActivity
 
     private void updatePlayerText(String recName, String catName) {
         recNameView.setText(recName);
-        catNameView.setText("from " + catName);
+        catNameView.setText(getString(R.string.from_cat_txt, catName));
     }
 
     public void closePlayer(View view) {

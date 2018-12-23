@@ -2,27 +2,31 @@ package com.onval.capstone.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.onval.capstone.R;
+import com.onval.capstone.adapter.MiniCategoriesAdapter;
+import com.onval.capstone.utility.GuiUtility;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import com.onval.capstone.R;
-import com.onval.capstone.adapter.MiniCategoriesAdapter;
-import com.onval.capstone.viewmodel.CategoriesViewModel;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
+import static com.onval.capstone.adapter.MiniCategoriesAdapter.NO_CATEGORIES;
 import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
 
@@ -64,11 +68,12 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+        int dialogTheme = (GuiUtility.isLightTheme(getContext()) ? R.style.DialogTheme : R.style.DialogThemeDark);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setView(layout)
-                .setPositiveButton("Save", new ChooseCategoryListener())
-                .setNeutralButton("Delete", new AskConfirmationListener(fm))
-                .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
+                .setPositiveButton(R.string.save_btn, new ChooseCategoryListener())
+                .setNeutralButton(R.string.delete_btn, new AskConfirmationListener(fm))
+                .setNegativeButton(R.string.cancel_btn, (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
     }
@@ -77,11 +82,18 @@ public class ChooseCategoryDialogFragment extends DialogFragment {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             int categoryId = adapter.getSelectedCategoryId();
-            recInfoBundle.putInt(CATEGORY_ID, categoryId);
 
-            SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
-            saveRecording.setArguments(recInfoBundle);
-            saveRecording.show(fm, SAVE_RECORDING_TAG);
+            if (categoryId != NO_CATEGORIES) {
+                recInfoBundle.putInt(CATEGORY_ID, categoryId);
+
+                SaveRecordingDialogFragment saveRecording = new SaveRecordingDialogFragment();
+                saveRecording.setArguments(recInfoBundle);
+                saveRecording.show(fm, SAVE_RECORDING_TAG);
+            } else {
+                Toast.makeText(getContext(),
+                        "Create a category in order to save a recording",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

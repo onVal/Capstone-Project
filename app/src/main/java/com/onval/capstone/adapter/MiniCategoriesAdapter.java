@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.utility.GuiUtility;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAdapter.MiniViewHolder> {
+    public static final int NO_CATEGORIES = -1;
     private Context context;
     private List<Category> categories;
     private int selected, lastSelected;
@@ -37,16 +39,13 @@ public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAd
 
     @Override
     public void onBindViewHolder(@NonNull MiniViewHolder holder, final int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selected != position) {
-                    lastSelected = selected;
-                    selected = position;
+        holder.itemView.setOnClickListener(v -> {
+            if (selected != position) {
+                lastSelected = selected;
+                selected = position;
 
-                    notifyItemChanged(lastSelected);
-                    notifyItemChanged(selected);
-                }
+                notifyItemChanged(lastSelected);
+                notifyItemChanged(selected);
             }
         });
         holder.bind(position);
@@ -63,7 +62,10 @@ public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAd
     }
 
     public int getSelectedCategoryId() {
-        return categories.get(selected).getId();
+        if (categories.size() != 0)
+            return categories.get(selected).getId();
+        else
+            return NO_CATEGORIES;
     }
 
     class MiniViewHolder extends RecyclerView.ViewHolder {
@@ -80,12 +82,17 @@ public class MiniCategoriesAdapter extends RecyclerView.Adapter<MiniCategoriesAd
             colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             categoryName.setText(category.getName());
 
+            int bgColor = GuiUtility.isLightTheme(context) ? Color.WHITE : context.getResources().getColor(R.color.darkPrimary);
+            int selectedBgColor = GuiUtility.isLightTheme(context) ?
+                    context.getResources().getColor(R.color.lightSelectionGray)
+                    : context.getResources().getColor(R.color.darkPrimaryDark);
+
             if (selected == position) {
-                categoryName.setTextColor(Color.WHITE);
-                itemView.setBackgroundColor(Color.GRAY);
+//                categoryName.setTextColor(Color.BLACK);
+                itemView.setBackgroundColor(selectedBgColor);
             } else {
-                categoryName.setTextColor(Color.BLACK);
-                itemView.setBackgroundColor(Color.WHITE);
+//                categoryName.setTextColor(Color.BLACK);
+                itemView.setBackgroundColor(bgColor);
             }
         }
     }

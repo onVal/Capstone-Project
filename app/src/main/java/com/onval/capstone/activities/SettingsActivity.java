@@ -1,18 +1,27 @@
 package com.onval.capstone.activities;
 
 import android.os.Bundle;
+
+import com.onval.capstone.R;
+import com.onval.capstone.fragment.SettingsFragment;
+import com.onval.capstone.utility.GuiUtility;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import com.onval.capstone.fragment.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (GuiUtility.isLightTheme(getApplicationContext()))
+            setTheme(R.style.SettingsTheme);
+        else
+            setTheme(R.style.SettingsDarkTheme);
+
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
 
@@ -32,6 +41,4 @@ public class SettingsActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
-
-
 }

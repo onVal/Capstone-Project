@@ -15,6 +15,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
+import com.onval.capstone.utility.GuiUtility;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -48,6 +49,8 @@ public class ManageAccountActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GuiUtility.initCustomTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_account);
         setToolbar();
@@ -98,7 +101,7 @@ public class ManageAccountActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(
                         e -> {
-                            Toast.makeText(this, "Sign in failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.fail_sign_in_msg, Toast.LENGTH_SHORT).show();
                             displayNoUser();
                         });
     }

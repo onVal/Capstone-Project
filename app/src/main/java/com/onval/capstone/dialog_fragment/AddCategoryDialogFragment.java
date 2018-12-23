@@ -2,21 +2,23 @@ package com.onval.capstone.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import android.widget.EditText;
 
 import com.onval.capstone.R;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProviders;
 
 public class AddCategoryDialogFragment extends DialogFragment {
     public static final String ADD_CATEGORY_TAG = "ADD_CATEGORY";
@@ -34,13 +36,24 @@ public class AddCategoryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         editText = new EditText(getActivity());
-        editText.setTextColor(Color.BLACK);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+        int dialogTheme, editTextColor;
+
+        if (GuiUtility.isLightTheme(getContext())) {
+            dialogTheme = R.style.DialogTheme;
+            editTextColor = Color.BLACK;
+        } else {
+            dialogTheme = R.style.DialogThemeDark;
+            editTextColor = Color.WHITE;
+        }
+
+        editText.setTextColor(editTextColor);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), dialogTheme);
         builder.setTitle(R.string.add_category)
                 .setView(editText)
-                .setPositiveButton("Confirm", new AddCategoriesListener())
-                .setNegativeButton("Cancel", (dialogInterface, i) -> getDialog().cancel());
+                .setPositiveButton(R.string.confirm_btn, new AddCategoriesListener())
+                .setNegativeButton(R.string.cancel_btn, (dialogInterface, i) -> getDialog().cancel());
 
         return builder.create();
     }

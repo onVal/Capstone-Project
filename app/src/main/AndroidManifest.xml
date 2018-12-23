@@ -13,7 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/LightTheme">
-        <activity android:name=".activities.MainActivity">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true"/>
+
+        <activity android:name=".activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -24,17 +30,19 @@
         <activity
             android:name=".activities.RecordActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".activities.RecordingsActivity"
             android:label="@string/recording_activity_title"
             android:launchMode="singleTask"
-            android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/SettingsTheme" />
+            android:label="@string/title_activity_settings" />
+
+        <activity android:name=".activities.ManageAccountActivity"
+            android:parentActivityName=".activities.SettingsActivity" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.PlayerService" />
@@ -50,9 +58,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/player_app_widget_info" />
         </receiver>
-
-        <activity android:name=".activities.ManageAccountActivity"
-            android:parentActivityName=".activities.SettingsActivity" />
     </application>
 
 </manifest>

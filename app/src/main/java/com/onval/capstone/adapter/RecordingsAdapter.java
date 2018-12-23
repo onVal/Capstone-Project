@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -23,11 +24,10 @@ import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.onval.capstone.R;
 import com.onval.capstone.room.Record;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.RecordingsViewModel;
 
@@ -52,6 +52,12 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
     private RecordingsViewModel viewModel;
 
     private String categoryColor;
+    private int themedBackgroundColor;
+    private int themedPrimaryTextColor;
+    private int themedSecondaryTextColor;
+    private int selThemedBackground;
+    private int dialogTheme;
+    private int accentColor;
 
     private RecordingListener listener;
     private DriveResourceClient driveClient;
@@ -66,10 +72,10 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
             Record[] rArray = selectedRecList.toArray(new Record[selectedRecList.size()]);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
-            String msg = "CAUTION: You will lose PERMANENTLY all selected recordings.";
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, dialogTheme);
+            String msg = context.getString(R.string.caution_del_recs);
 
-            builder.setTitle("Delete Categories")
+            builder.setTitle(R.string.del_categories_title)
                     .setMessage(msg)
                     .setPositiveButton(android.R.string.yes, (d, w)-> {
                         viewModel.deleteRecordings(rArray);
@@ -95,9 +101,12 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         recordings = Collections.emptyList();
         currentlySelected = selectedRecording;
 
+        setThemedColors();
+
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(context.getApplicationContext());
-        driveClient = Drive.getDriveResourceClient(context, account);
+        if (account != null)
+            driveClient = Drive.getDriveResourceClient(context, account);
     }
 
     @NonNull
@@ -122,6 +131,27 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         notifyDataSetChanged();
     }
 
+    private void setThemedColors() {
+        Resources resources = context.getResources();
+
+        if (GuiUtility.isLightTheme(context)) {
+            themedBackgroundColor = Color.WHITE;
+            themedPrimaryTextColor = Color.BLACK;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextDark);
+            dialogTheme = R.style.DialogTheme;
+            accentColor = resources.getColor(R.color.colorAccent);
+            selThemedBackground = context.getResources().getColor(R.color.lightSelectionGray);
+
+        } else {
+            themedBackgroundColor = resources.getColor(R.color.itemBgDark);
+            themedPrimaryTextColor = Color.WHITE;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextLight);
+            dialogTheme = R.style.DialogThemeDark;
+            accentColor = resources.getColor(R.color.darkAccent);
+            selThemedBackground = context.getResources().getColor(R.color.playSelectDark);
+        }
+    }
+
     public void setColor(String categoryColor) {
         this.categoryColor = categoryColor;
     }
@@ -137,6 +167,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         @BindView(R.id.recording_name) TextView name;
         @BindView(R.id.recording_time) TextView time;
         @BindView(R.id.recording_duration) TextView duration;
+        @BindView(R.id.rec_color_label) View recLabel;
 
         final Drawable cloudUploadedOff =
                 ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
@@ -157,25 +188,26 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
 
             Query query = new Query.Builder()
                     .addFilter(Filters.and(Filters.contains(SearchableField.TITLE, String.valueOf(recording.getId())),
+                            Filters.contains(SearchableField.TITLE, String.valueOf(recording.getName())),
                             Filters.eq(SearchableField.TRASHED, false)))
                     .build();
 
-            Task<MetadataBuffer> queryTask = driveClient.query(query);
-            queryTask.addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
-                        @Override
-                        public void onSuccess(MetadataBuffer metadataBuffer) {
-                            if (metadataBuffer.getCount() != 0) {
-                                cloud_icon.setImageDrawable(cloudUploadedOn);
-                            } else {
-                                cloud_icon.setImageDrawable(cloudUploadedOff);
-                            }
-                        }
-                    });
+            if (driveClient != null) {
+                Task<MetadataBuffer> queryTask = driveClient.query(query);
 
-                    viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
-                        boolean recIsUploading = recordings.contains(recording.getId());
-                        showProgressBar(recIsUploading);
-                    });
+                queryTask.addOnSuccessListener(metadataBuffer -> {
+                    if (metadataBuffer.getCount() != 0) {
+                        cloud_icon.setImageDrawable(cloudUploadedOn);
+                    } else {
+                        cloud_icon.setImageDrawable(cloudUploadedOff);
+                    }
+                });
+            }
+
+            viewModel.getUploadingRecordingsIds().observeForever(recordings -> {
+                boolean recIsUploading = recordings.contains(recording.getId());
+                showProgressBar(recIsUploading);
+            });
 
             if (actionModeCallback.isMultiselect())
                 multiSelectItem(position);
@@ -212,33 +244,27 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.Re
         private void multiSelectItem(Integer position) {
             boolean isSelected = actionModeCallback.selectItemAtPosition(position);
 
-            final int LITEGRAY = Color.parseColor("#eeeeee");
-            final int DEEPBLUE = Color.parseColor("#129fe5");
+            int secondaryColor = (isSelected) ? Color.WHITE : themedSecondaryTextColor;
+            int cloudColor = (isSelected) ? Color.WHITE : themedSecondaryTextColor;
 
-            int bgColor = (isSelected) ? DEEPBLUE : Color.WHITE;
-            int textColor = (isSelected) ? Color.WHITE : Color.BLACK;
-            int subColor = (isSelected) ? LITEGRAY : Color.DKGRAY;
-
-            itemView.setBackgroundColor(bgColor);
-            name.setTextColor(textColor);
-            time.setTextColor(subColor);
-            duration.setTextColor(subColor);
-            cloud_icon.setImageTintList(ColorStateList.valueOf(textColor));
+            itemView.setBackgroundColor((isSelected) ? accentColor : themedBackgroundColor);
+            name.setTextColor((isSelected) ? Color.WHITE : themedPrimaryTextColor);
+            time.setTextColor(secondaryColor);
+            duration.setTextColor(secondaryColor);
+            recLabel.setBackgroundColor((isSelected) ? accentColor : themedBackgroundColor);
+            cloud_icon.setImageTintList(ColorStateList.valueOf(cloudColor));
         }
 
         private void selectToPlay(boolean selected) {
-            int LITEGRAY = Color.parseColor("#eeeeee");
 
-            int darkenedColor = UserInterfaceUtility.darkenColor(Color.parseColor(categoryColor), 0.7f);
-            int bgColor = (selected) ? darkenedColor : Color.WHITE;
-            int textColor = (selected) ? Color.WHITE : Color.BLACK;
-            int subColor = (selected) ? LITEGRAY : Color.DKGRAY;
+            int catColor = Color.parseColor(categoryColor);
 
-            itemView.setBackgroundColor(bgColor);
-            name.setTextColor(textColor);
-            time.setTextColor(subColor);
-            duration.setTextColor(subColor);
-            cloud_icon.setImageTintList(ColorStateList.valueOf(textColor));
+            itemView.setBackgroundColor((selected) ? selThemedBackground : themedBackgroundColor);
+            name.setTextColor(themedPrimaryTextColor);
+            time.setTextColor(themedSecondaryTextColor);
+            duration.setTextColor(themedSecondaryTextColor);
+            recLabel.setBackgroundColor((selected) ? catColor : themedBackgroundColor);
+            cloud_icon.setImageTintList(ColorStateList.valueOf(themedSecondaryTextColor));
         }
     }
 }

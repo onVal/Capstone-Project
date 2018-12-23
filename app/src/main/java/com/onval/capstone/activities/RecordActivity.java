@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onval.capstone.R;
 import com.onval.capstone.dialog_fragment.ChooseCategoryDialogFragment;
@@ -23,7 +26,7 @@ import com.onval.capstone.dialog_fragment.SaveRecordingDialogFragment;
 import com.onval.capstone.room.Record;
 import com.onval.capstone.service.RecordingBinder;
 import com.onval.capstone.service.RecordingService;
-import com.onval.capstone.utility.UserInterfaceUtility;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.viewmodel.RecordingsViewModel;
 
@@ -38,6 +41,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -57,9 +61,14 @@ public class RecordActivity extends AppCompatActivity
 
     @BindView(R.id.timer_tv) TextView timerTextView;
     @BindView(R.id.record_fab) FloatingActionButton fab;
+    @BindView(R.id.rec_animation)
+    LottieAnimationView animationView;
+
+    public static final String REC_FAB_TRANSITION = "rec:transition";
 
     public static final String UPDATE_TIMER_ACTION = "com.onval.capstone.UPDATE_TIMER";
 
+    public static final String START_SERVICE_ACTION = "START-SERVICE";
     public static final String PAUSE_ACTION = "com.onval.capstone.PAUSE";
     public static final String PLAY_ACTION = "com.onval.capstone.PLAY";
     public static final String RESET_ACTION = "com.onval.capstone.RESET";
@@ -79,6 +88,8 @@ public class RecordActivity extends AppCompatActivity
 
     private Bundle recInfoBundle;
 
+    private PublisherInterstitialAd interstitialAd;
+
     private BroadcastReceiver timerReceiver = new TimerBroadcastReceiver();
     private BroadcastReceiver uiReceiver = new UIBroadcastReceiver();
 
@@ -88,6 +99,8 @@ public class RecordActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GuiUtility.initCustomTheme(this);
+
         super.onCreate(savedInstanceState);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_record);
@@ -96,11 +109,17 @@ public class RecordActivity extends AppCompatActivity
         catViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
         recViewModel = ViewModelProviders.of(this).get(RecordingsViewModel.class);
 
+        ViewCompat.setTransitionName(fab, REC_FAB_TRANSITION);
+
         registerTimerReceiver();
         registerUIReceiver();
 
         Bundle extras = getIntent().getExtras();
         categoryId = (extras != null) ? extras.getInt(CATEGORY_ID) : null;
+
+        interstitialAd = new PublisherInterstitialAd(this);
+        interstitialAd.setAdUnitId("/6499/example/interstitial");
+        interstitialAd.loadAd(new PublisherAdRequest.Builder().build());
     }
 
     @Override
@@ -110,17 +129,15 @@ public class RecordActivity extends AppCompatActivity
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION)
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
-        if (permissionToRecordAccepted) {
+        if (permissionToRecordAccepted)
             kickStartService();
-        }
-        else {
+        else
             finish();
-        }
     }
 
     private void kickStartService() {
         intentService = new Intent(this, RecordingService.class);
-        intentService.setAction("START-SERVICE");
+        intentService.setAction(START_SERVICE_ACTION);
         startService(intentService);
         bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -203,7 +220,7 @@ public class RecordActivity extends AppCompatActivity
         recInfoBundle = new Bundle();
         recInfoBundle.putString("REC_START_TIME", formattedTime);
         recInfoBundle.putString("REC_DATE", formattedDate);
-        recInfoBundle.putString("REC_DURATION", UserInterfaceUtility.timeFormatFromMills(service.getTimeElapsed(), true));
+        recInfoBundle.putString("REC_DURATION", GuiUtility.timeFormatFromMills(service.getTimeElapsed(), true));
     }
 
     @Override
@@ -228,6 +245,10 @@ public class RecordActivity extends AppCompatActivity
         });
 
         resetService();
+
+        if (interstitialAd.isLoaded())
+            interstitialAd.show();
+
         finish();
     }
 
@@ -242,7 +263,11 @@ public class RecordActivity extends AppCompatActivity
     @Override
     public void onDeleteRecording() {
         resetService();
-        Toast.makeText(this, "The recording has been deleted.", Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, R.string.rec_delete_msg, Toast.LENGTH_SHORT).show();
+
+        if (interstitialAd.isLoaded())
+            interstitialAd.show();
     }
 
     private void resetService() {
@@ -274,7 +299,7 @@ public class RecordActivity extends AppCompatActivity
     private class TimerBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             long currentTimeMillis = intent.getExtras().getLong(CURRENT_TIME_EXTRA);
-            String currentTime = UserInterfaceUtility.timeFormatFromMills(currentTimeMillis, false);
+            String currentTime = GuiUtility.timeFormatFromMills(currentTimeMillis, false);
             timerTextView.setText(currentTime);
         }
     }
@@ -288,12 +313,18 @@ public class RecordActivity extends AppCompatActivity
             switch (action) {
                 case PLAY_ACTION:
                     drawableId = R.drawable.ic_play_white_24dp;
+                    animationView.pauseAnimation();
+                    animationView.setVisibility(View.VISIBLE);
                     break;
                 case PAUSE_ACTION:
                     drawableId = R.drawable.ic_pause_white_24dp;
+                    animationView.setVisibility(View.VISIBLE);
+                    animationView.resumeAnimation();
                     break;
                 case RESET_ACTION:
                     drawableId = R.drawable.ic_fab_dot;
+                    animationView.setVisibility(View.INVISIBLE);
+                    animationView.cancelAnimation();
                     break;
             }
 

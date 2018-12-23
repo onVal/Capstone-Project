@@ -11,11 +11,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -29,6 +24,11 @@ import com.google.android.exoplayer2.util.Util;
 import com.onval.capstone.PlayerAppWidget;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.onval.capstone.PlayerAppWidget.CATEGORY_COLOR;
 import static com.onval.capstone.PlayerAppWidget.PLAYER_STATUS;
@@ -149,7 +149,7 @@ public class PlayerService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(recName)
-                .setContentText("from " + categoryName)
+                .setContentText(getString(R.string.from_cat_txt, categoryName))
                 .setSmallIcon(R.drawable.ic_play_circle_filled_white_24dp)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {0L})

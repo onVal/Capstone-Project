@@ -5,10 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:background="#fff"
     android:elevation="3dp"
     android:layout_marginBottom="1dp"
     tools:ignore="UnusedAttribute" >
+
+    <View
+        android:id="@+id/rec_color_label"
+        android:layout_width="@dimen/color_label"
+        android:layout_height="match_parent"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#ff0000"
+        />
 
     <ProgressBar
         android:id="@+id/upload_progress_rec"
@@ -30,7 +40,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_cloud_upload_off"
-        android:foregroundTint="@color/colorAccent" />
+        tools:foregroundTint="@color/colorAccent"
+        android:contentDescription="@string/cloud_icon_content_desc"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -49,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textColor="@color/colorSubtext"
+            android:textColor="?android:textColorSecondary"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:textColor="@color/colorSubtext"
+        android:textColor="?android:textColorSecondary"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

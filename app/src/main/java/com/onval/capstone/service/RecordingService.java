@@ -12,10 +12,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
@@ -23,6 +19,11 @@ import com.onval.capstone.activities.RecordActivity;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.onval.capstone.activities.RecordActivity.PAUSE_ACTION;
 import static com.onval.capstone.activities.RecordActivity.PLAY_ACTION;
@@ -81,7 +82,6 @@ public class RecordingService extends Service {
                                     getString(R.string.normal_quality));
         int bitrate = Integer.parseInt(bitrateString);
 
-        //todo there is a bug here
         fileName = getExternalCacheDir().getAbsolutePath();
         fileName += DEFAULT_REC_NAME;
 
@@ -105,8 +105,8 @@ public class RecordingService extends Service {
         Intent intent = new Intent(this, RecordActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         foregroundNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Record")
-                .setContentText("You are recording a voice memo")
+                .setContentTitle(getString(R.string.record_title))
+                .setContentText(getString(R.string.record_content_txt))
                 .setSmallIcon(R.drawable.ic_mic_black_24dp)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {0L})
@@ -116,7 +116,7 @@ public class RecordingService extends Service {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    "RecordChannel", NotificationManager.IMPORTANCE_LOW);
+                    getString(R.string.record_channel), NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
             channel.setSound(null, null);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -201,6 +201,8 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        updateUIButton(RESET_ACTION);
+
         if (recorder != null) {
             recorder.release();
             recorder = null;

@@ -5,20 +5,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:background="@color/colorPrimary"
     >
+
+    <View
+        android:id="@+id/colorBar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="0dp"
+        android:padding="16dp"
+        tools:background="#f00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/close_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
+        android:padding="8dp"
         android:onClick="closePlayer"
-        app:layout_constraintBottom_toTopOf="@+id/ctrl_rec_name"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp" />
+        app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp"
+        android:contentDescription="@string/close_player_content_desc" />
 
     <TextView
         android:id="@+id/ctrl_rec_name"
@@ -51,6 +59,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
         app:bar_height="5dp"
+        app:scrubber_color="#fff"
         app:buffered_color="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_container"
@@ -96,13 +105,15 @@
             android:id="@id/exo_play"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp" />
+            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
+            android:contentDescription="@string/exo_controls_play_description" />
 
         <ImageView
             android:id="@id/exo_pause"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp" />
+            app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp"
+            android:contentDescription="@string/exo_controls_pause_description" />
 
     </FrameLayout>
 

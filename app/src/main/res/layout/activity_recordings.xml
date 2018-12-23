@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
-            app:titleTextColor="#fff"
-            app:popupTheme="@style/LightTheme.OverflowPopup"
+            android:transitionName="toolbar_transition"
             tools:ignore="UnusedAttribute" />
 
         <FrameLayout
@@ -32,13 +31,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="bottom|center"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:visibility="gone"
             app:use_artwork="false"
             app:hide_on_touch="false"
             app:surface_type="none"
             app:show_timeout="0"
-            app:shutter_background_color="@color/colorPrimary" />
+            app:shutter_background_color="?attr/colorPrimary" />
     </LinearLayout>
 
 
@@ -46,12 +45,15 @@
         android:id="@+id/recording_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
+        app:fabSize="normal"
 
         android:layout_marginBottom="@dimen/default_fab_margin"
         android:layout_gravity="bottom|center"
 
+        android:transitionName="fab_transition"
+
         app:srcCompat="@drawable/ic_fab_dot"
-        app:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="?attr/fabColor"
         app:elevation="6dp"
 
         android:onClick="record"

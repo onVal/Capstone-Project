@@ -1,11 +1,14 @@
 package com.onval.capstone.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordingsActivity;
 import com.onval.capstone.room.Category;
+import com.onval.capstone.service.PlayerService;
+import com.onval.capstone.utility.GuiUtility;
 import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 
@@ -28,7 +33,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,9 +44,15 @@ import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_ID;
 import static com.onval.capstone.activities.RecordingsActivity.CATEGORY_NAME;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
-    private Context context;
+    private Activity activity;
     private List<Category> categories;
     private CategoriesViewModel viewModel;
+
+    private int themedBackgroundColor;
+    private int themedPrimaryTextColor;
+    private int themedSecondaryTextColor;
+    private int dialogTheme;
+    private int accentColor;
 
     private MyActionModeCallback actionModeCallback = new MyActionModeCallback() {
         @Override
@@ -51,7 +64,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             Category[] cArray = selectedCatList.toArray(new Category[selectedCatList.size()]);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity, dialogTheme);
             String msg = "CAUTION: You will lose PERMANENTLY all recordings " +
                         "inside the selected categories.";
 
@@ -68,16 +81,17 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         }
     };
 
-    public CategoriesAdapter(Context context, CategoriesViewModel viewModel) {
-        this.context = context;
+    public CategoriesAdapter(Activity activity, CategoriesViewModel viewModel) {
+        this.activity = activity;
         this.viewModel = viewModel;
         categories = Collections.emptyList();
+        setThemedColors();
     }
 
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.single_category, parent, false);
+        View view = LayoutInflater.from(activity).inflate(R.layout.single_category, parent, false);
         return new CategoryViewHolder(view);
     }
 
@@ -106,6 +120,25 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 (c1, c2) -> c1.getId() - (c2.getId()));
     }
 
+    private void setThemedColors() {
+        Resources resources = activity.getResources();
+
+        if (GuiUtility.isLightTheme(activity)) {
+            themedBackgroundColor = Color.WHITE;
+            themedPrimaryTextColor = Color.BLACK;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextDark);
+            dialogTheme = R.style.DialogTheme;
+            accentColor = resources.getColor(R.color.colorAccent);
+
+        } else {
+            themedBackgroundColor = resources.getColor(R.color.itemBgDark);
+            themedPrimaryTextColor = Color.WHITE;
+            themedSecondaryTextColor = resources.getColor(R.color.colorSubtextLight);
+            dialogTheme = R.style.DialogThemeDark;
+            accentColor = resources.getColor(R.color.darkAccent);
+        }
+    }
+
     class CategoryViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.constraint_layout) ConstraintLayout layout;
         @BindView(R.id.colorLabel) View colorLabel;
@@ -114,12 +147,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         @BindView(R.id.autoupload_icon) ImageView autouploadIcon;
         @BindView(R.id.upload_progress) ProgressBar progressBar;
 
-        final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_on);
-        final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(context, R.drawable.ic_cloud_upload_off);
+        final Drawable cloudAutouploadingIconOn = ContextCompat.getDrawable(activity, R.drawable.ic_cloud_upload_on);
+        final Drawable cloudAutouploadingIconOff = ContextCompat.getDrawable(activity, R.drawable.ic_cloud_upload_off);
 
         CategoryViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            setThemedColors();
         }
 
         void bind(int position) {
@@ -141,7 +175,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
 
 //            GoogleSignInAccount
-            if (Utility.isSignedIn(context)) {
+            if (Utility.isSignedIn(activity)) {
                 autouploadIcon.setImageDrawable(
                         (category.isAutoUploading()) ? cloudAutouploadingIconOn : cloudAutouploadingIconOff);
             } else {
@@ -150,9 +184,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
             // This is to prevent incorrect item selection when RecyclerView does its thing
             if (actionModeCallback.getSelectedPositions().contains(position)) {
-                layout.setBackgroundColor(Color.LTGRAY);
+                layout.setBackgroundColor(accentColor);
+                colorLabel.setBackgroundColor(accentColor);
             } else {
-                layout.setBackgroundColor(Color.WHITE);
+                layout.setBackgroundColor(themedBackgroundColor);
+                colorLabel.setBackgroundColor(Color.parseColor(category.getColor()));
             }
 
             //add listeners
@@ -166,20 +202,30 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 if (actionModeCallback.isMultiselect())
                     selectItem(position);
                 else {
-                    Intent intent = new Intent(context, RecordingsActivity.class);
+                    Intent intent = new Intent(activity, RecordingsActivity.class);
                     intent.putExtra(CATEGORY_ID, category.getId());
                     intent.putExtra(CATEGORY_NAME, category.getName());
 
-                    context.startActivity(intent);
+                    List<Pair<View, String>> pairs = new ArrayList<>();
+                    pairs.add(Pair.create(activity.findViewById(R.id.main_toolbar), "toolbar_transition"));
+
+                    if (!PlayerService.isRunning)
+                        pairs.add(Pair.create(activity.findViewById(R.id.main_fab),"fab_transition"));
+
+                    Bundle activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            activity, pairs.toArray(new Pair[pairs.size()]))
+                            .toBundle();
+
+                    activity.startActivity(intent, activityOptions);
                 }
             });
 
             autouploadIcon.setOnLongClickListener(view -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity, dialogTheme);
                 String msg =  (category.isAutoUploading()) ? "Turn off auto uploading for this category?"
                                                             : "Turn on auto uploading for this category?";
 
-                builder.setTitle("Google Drive Sync")
+                builder.setTitle(R.string.drive_sync_title)
                         .setMessage(msg)
                         .setPositiveButton(android.R.string.yes, (d, w) -> {
                             boolean autouploadIsSet = !category.isAutoUploading();
@@ -187,7 +233,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                             if (autouploadIsSet)
                                 viewModel.uploadRecordings(category.getId());
 
-                            //todo: this should be done after upload recording finishes
                             category.setAutoUploading(autouploadIsSet);
                             viewModel.updateCategories(category);
 
@@ -203,8 +248,16 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         private void selectItem(Integer position) {
             boolean itemIsSelected = actionModeCallback.selectItemAtPosition(position);
-            layout.setBackgroundColor(itemIsSelected ? Color.LTGRAY : Color.WHITE );
 
+            int categoryLabelColor = Color.parseColor(categories.get(position).getColor());
+
+            layout.setBackgroundColor(itemIsSelected ? accentColor : themedBackgroundColor );
+            categoryName.setTextColor(itemIsSelected ? Color.WHITE : themedPrimaryTextColor);
+            categorySubtext.setTextColor(itemIsSelected ? Color.WHITE : themedSecondaryTextColor );
+            colorLabel.setBackgroundColor(itemIsSelected ? accentColor : categoryLabelColor);
+            autouploadIcon.setImageTintList(itemIsSelected ?
+                        ColorStateList.valueOf(Color.WHITE)
+                        : ColorStateList.valueOf(themedSecondaryTextColor));
         }
 
         private void showProgressBar(boolean show) {

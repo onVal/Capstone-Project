@@ -57,6 +57,7 @@ public class RecordingsFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view =  inflater.inflate(R.layout.fragment_recordings, container, false);
         ButterKnife.bind(this, view);
 
@@ -65,8 +66,11 @@ public class RecordingsFragment extends Fragment
 
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(getContext());
-        DriveClient driveClient = Drive.getDriveClient(getContext(), account);
-        driveClient.requestSync();
+
+        if (account != null) {
+            DriveClient driveClient = Drive.getDriveClient(getContext(), account);
+            driveClient.requestSync();
+        }
 
         recordingsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RecordingsAdapter(getContext(), selectedRec, recViewModel);
@@ -75,9 +79,8 @@ public class RecordingsFragment extends Fragment
         LiveData<String> categoryColor = viewModel.getCategoryColor(categoryId);
         categoryColor.observe(this, (color) -> {
             adapter.setColor(color);
+            recordingsRv.setAdapter(adapter);
         });
-
-        recordingsRv.setAdapter(adapter);
 
         LiveData<List<Record>> liveRecordings = recViewModel.getRecordingsFromCategory(categoryId);
         liveRecordings.observe(this, (records -> adapter.setRecordings(records)));

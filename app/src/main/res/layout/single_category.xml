@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="72dp"
     android:layout_margin="8dp"
-    android:background="#fff"
     android:elevation="3dp"
     tools:ignore="UnusedAttribute">
 
@@ -21,6 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="#ff0000"
         />
+
 
 
     <LinearLayout
@@ -39,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:textColor="#000"
             android:textSize="16sp"
 
             app:layout_constraintBottom_toBottomOf="parent"
@@ -52,7 +51,7 @@
             android:id="@+id/category_subtext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorSubtext"
+            android:textColor="?android:textColorSecondary"
             tools:text="78 recordings" />
 
     </LinearLayout>
@@ -78,7 +77,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
-        tools:src="@drawable/ic_cloud_upload_on"/>
+        android:tint="?android:textColorSecondary"
+        tools:src="@drawable/ic_cloud_upload_on"
+        android:contentDescription="@string/autoupload_content_desc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

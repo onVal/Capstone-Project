@@ -43,9 +43,36 @@
     <string name="signedin_txt">You are currently signed in as</string>
     <string name="manage_account_act_title">Manage Google Account</string>
     <string name="account_default_summary">Sign in with your Google Account</string>
-    <string name="account_msg">You can now upload your recordings\n in your Google Drive account</string>
+    <string name="account_msg">You can now upload your recordings\n in your Google Drive account\n\n
+        Long press the cloud icon next to each category\n to set autouploading option on.</string>
     <string name="logout_btn_txt">Sign out</string>
     <string name="sign_in_message">Sign in to upload your recordings to Google Drive</string>
     <string name="delete_cat_title">Delete</string>
+    <string name="default_theme">LightTheme</string>
+    <string name="stop_recording_content_desc">Stop recording</string>
+    <string name="add_category_content_desc">add category</string>
+    <string name="add_category_icon_content_desc">add category icon</string>
+    <string name="close_player_content_desc">close player</string>
+    <string name="play_widget_content_desc">Play</string>
+    <string name="autoupload_content_desc">Autoupload</string>
+    <string name="cloud_icon_content_desc">Cloud icon</string>
+    <string name="bear_content_desc">Bear</string>
+    <string name="caution_del_recs">CAUTION: You will lose PERMANENTLY all selected recordings.</string>
+    <string name="del_categories_title">Delete Categories</string>
+    <string name="fail_sign_in_msg">Sign in failed</string>
+    <string name="light_theme_name">Light</string>
+    <string name="rec_delete_msg">The recording has been deleted.</string>
+    <string name="from_cat_txt">from %s</string>
+    <string name="drive_sync_title">Google Drive Sync</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="delete_btn">Delete</string>
+    <string name="save_btn">Save</string>
+    <string name="pref_theme_str">pref_theme</string>
+    <string name="pref_account_str">pref_account</string>
+    <string name="database_name">onrec_database</string>
+    <string name="record_title">Record</string>
+    <string name="record_content_txt">You are recording a voice memo</string>
+    <string name="record_channel">RecordChannel</string>
 
 </resources>
