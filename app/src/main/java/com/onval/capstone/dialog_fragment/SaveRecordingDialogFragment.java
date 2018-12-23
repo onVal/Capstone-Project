@@ -32,6 +32,8 @@ public class SaveRecordingDialogFragment extends DialogFragment {
     private OnSaveCallback callback;
     private FragmentManager fm;
 
+    InputMethodManager imm;
+
     public interface OnSaveCallback {
         void onSaveRecording(Record recording);
     }
@@ -57,13 +59,8 @@ public class SaveRecordingDialogFragment extends DialogFragment {
         editText = new EditText(getActivity());
         String recStartTime = recInfoBundle.getString("REC_START_TIME");
         String recDate = recInfoBundle.getString("REC_DATE");
-        editText.setText(String.format("Recording %s %s", recDate, recStartTime));
-        editText.setSelection(0, editText.length());
-
-        editText.requestFocus();
-
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        editText.append(String.format("Recording %s %s", recDate, recStartTime));
+        editText.setSelectAllOnFocus(true);
 
         int editTextColor, dialogTheme;
         if (GuiUtility.isLightTheme(getContext())) {
