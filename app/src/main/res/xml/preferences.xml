@@ -2,23 +2,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
         android:key="@string/pref_account_str"
-        android:title="Google Account">
+        android:title="Google Account"
+        android:icon="@drawable/ic_account_circle_32dp">
         <intent
             android:targetPackage="com.onval.capstone"
             android:targetClass="com.onval.capstone.activities.ManageAccountActivity" />
     </Preference>
-    <ListPreference
-        android:key="pref_sync"
-        android:title="Data sync"
-        android:summary="Wifi only or Mobile Data"
-        android:entries="@array/data_sync"
-        android:entryValues="@array/data_sync"
-        android:defaultValue="Wifi only"
-        />
 
     <ListPreference
         android:key="@string/pref_save_quality"
         android:title="Audio Quality"
+        android:icon="@drawable/ic_music_note_32dp"
         android:summary="Choose the most appropriate audio quality"
         android:entries="@array/quality"
         android:entryValues="@array/quality_values"
@@ -28,9 +22,11 @@
     <ListPreference
         android:key="@string/pref_theme_str"
         android:title="Theme"
+        android:icon="@drawable/ic_color_lens_32dp"
         android:summary="Select a theme for the application"
         android:dialogTitle="Choose application theme"
         android:entries="@array/themes"
         android:entryValues="@array/theme_vals"
-        android:defaultValue="@string/light_theme_name" />
+        android:defaultValue="@string/light_theme_name"
+        />
 </PreferenceScreen>
