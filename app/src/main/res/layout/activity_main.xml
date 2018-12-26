@@ -37,7 +37,7 @@
     android:layout_marginBottom="@dimen/default_fab_margin"
     android:layout_gravity="bottom|center"
 
-    android:backgroundTint="?attr/fabColor"
+    app:backgroundTint="?attr/fabColor"
     app:srcCompat="@drawable/ic_fab_dot"
 
     android:transitionName="fab_trans"

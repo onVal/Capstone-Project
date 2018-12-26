@@ -52,12 +52,10 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
 
         fm = getSupportFragmentManager();
 
-        if (savedInstanceState == null) {
-            viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-            viewModel.getNumOfCategories()
-                    .observe(this, this);
-        }
+        viewModel.getNumOfCategories()
+                .observe(this, this);
     }
 
     @Override
