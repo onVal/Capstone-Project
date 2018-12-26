@@ -2,6 +2,7 @@ package com.onval.capstone.utility;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,7 +49,15 @@ public class Utility {
                 .build();
     }
 
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
     public static String getRecordingAbsolutePath(Context context) {
-        return context.getExternalFilesDir("Recordings").getAbsolutePath();
+        if (isExternalStorageWritable())
+            return context.getExternalFilesDir("Recordings").getAbsolutePath();
+        else
+            return context.getFilesDir().getAbsolutePath(); //use internal storage
     }
 }
