@@ -18,7 +18,7 @@ public class Utility {
         long recId = recording.getId();
         String recName = recording.getName();
 
-        String filePath =  context.getExternalCacheDir().getAbsolutePath();
+        String filePath =  getRecordingAbsolutePath(context);
         String recFullName = "/" + recId + "_" + recName.replace(":", "_") + ".mp4";
         return Uri.parse(filePath + recFullName);
     }
@@ -46,5 +46,9 @@ public class Utility {
                         Filters.contains(SearchableField.TITLE, recName),
                         Filters.eq(SearchableField.TRASHED, false)))
                 .build();
+    }
+
+    public static String getRecordingAbsolutePath(Context context) {
+        return context.getExternalFilesDir("Recordings").getAbsolutePath();
     }
 }

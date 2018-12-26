@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.onval.capstone.room.Record;
 import com.onval.capstone.service.RecordingBinder;
 import com.onval.capstone.service.RecordingService;
 import com.onval.capstone.utility.GuiUtility;
+import com.onval.capstone.utility.Utility;
 import com.onval.capstone.viewmodel.CategoriesViewModel;
 import com.onval.capstone.viewmodel.RecordingsViewModel;
 
@@ -253,7 +255,8 @@ public class RecordActivity extends AppCompatActivity
     }
 
     private void saveRecordingAs(String newRecName) {
-        String externalPath = getExternalCacheDir().getAbsolutePath();
+        String externalPath = Utility.getRecordingAbsolutePath(this);
+        Log.d("debug", externalPath);
         File rec = new File(externalPath + DEFAULT_REC_NAME);
         String validName = newRecName.replace(":", "_");
         File newName = new File(externalPath + "/" + validName + REC_EXTENSION);

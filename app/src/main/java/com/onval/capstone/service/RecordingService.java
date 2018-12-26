@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 
 import com.onval.capstone.R;
 import com.onval.capstone.activities.RecordActivity;
+import com.onval.capstone.utility.Utility;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -82,7 +83,7 @@ public class RecordingService extends Service {
                                     getString(R.string.normal_quality));
         int bitrate = Integer.parseInt(bitrateString);
 
-        fileName = getExternalCacheDir().getAbsolutePath();
+        fileName = Utility.getRecordingAbsolutePath(this);
         fileName += DEFAULT_REC_NAME;
 
         recorder = new MediaRecorder();
