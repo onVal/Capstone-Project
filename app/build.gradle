@@ -28,25 +28,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
+        debug {
+            applicationIdSuffix '.debug'
+        }
     }
 
     flavorDimensions "version"
 
     productFlavors {
-        localVersion {
-            applicationIdSuffix '.local'
+        free {
+            applicationIdSuffix '.free'
         }
-        completeVersion {
-            applicationIdSuffix '.complete'
+        paid {
+            applicationIdSuffix '.paid'
         }
     }
 
     variantFilter { variant ->
         def names = variant.flavors*.name
-        // To check for a certain build type, use variant.buildType.name == "<buildType>"
-        if (names.contains("localVersion") && variant.buildType.name == "release" ||
-                names.contains("completeVersion") && variant.buildType.name == "debug") {
-            // Gradle ignores any variants that satisfy the conditions above.
+        if (names.contains("free") && variant.buildType.name == "release") {
             setIgnore(true)
         }
     }
