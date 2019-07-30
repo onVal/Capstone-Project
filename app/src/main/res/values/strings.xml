@@ -74,5 +74,6 @@
     <string name="record_title">Record</string>
     <string name="record_content_txt">You are recording a voice memo</string>
     <string name="record_channel">RecordChannel</string>
+    <string name="main_toolbar_title">onrec</string>
 
 </resources>

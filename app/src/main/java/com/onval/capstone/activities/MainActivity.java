@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(resource, null);
 
-        ((TextView)view.findViewById(R.id.title)).setText(getTitle());
+        ((TextView)view.findViewById(R.id.title)).setText(getString(R.string.main_toolbar_title));
         actionBar.setCustomView(view);
     }
 
