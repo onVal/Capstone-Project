@@ -2,6 +2,10 @@ package com.onval.capstone.di;
 
 import android.content.Context;
 
+import androidx.fragment.app.FragmentManager;
+
+import com.onval.capstone.activities.MainActivity;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -9,14 +13,14 @@ import dagger.Provides;
 
 @Module
 public class AppModule {
-    private Context context;
 
-    public AppModule(Context context) {
-        this.context = context;
+    @Provides
+    static FragmentManager provideFragmentManager(MainActivity activity) {
+        return activity.getSupportFragmentManager();
     }
 
-    @Provides @Singleton
-    public Context provideContext() {
-        return context;
+    @Provides
+    static String provideString() {
+        return "bubu is real, and injected leell";
     }
 }

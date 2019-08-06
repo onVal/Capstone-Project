@@ -36,11 +36,14 @@ import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_C
 
 public class MainActivity extends DaggerAppCompatActivity implements Observer<Integer> {
     private CategoriesViewModel viewModel;
-    private FragmentManager fm;
-    private String currentTheme;
 
     @Inject
-    String bubu;
+    FragmentManager fm;
+
+    @Inject
+    String hey;
+
+    private String currentTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +54,13 @@ public class MainActivity extends DaggerAppCompatActivity implements Observer<In
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("bubu", bubu);
+        Log.d("hey", hey);
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
 
-        fm = getSupportFragmentManager();
+//        fm = getSupportFragmentManager();
 
         viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
