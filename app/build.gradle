@@ -58,7 +58,7 @@ android {
 }
 
 dependencies {
-    def dagger_version = "2.16"
+    def dagger_version = "2.22"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.media:media:1.0.0'

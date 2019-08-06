@@ -3,6 +3,7 @@ package com.onval.capstone.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,21 +21,26 @@ import com.onval.capstone.viewmodel.CategoriesViewModel;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import javax.inject.Inject;
+
 import butterknife.OnClick;
-import dagger.android.AndroidInjection;
+import dagger.android.support.DaggerAppCompatActivity;
 
 import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
-public class MainActivity extends AppCompatActivity implements Observer<Integer> {
+public class MainActivity extends DaggerAppCompatActivity implements Observer<Integer> {
     private CategoriesViewModel viewModel;
     private FragmentManager fm;
     private String currentTheme;
+
+    @Inject
+    String bubu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +48,10 @@ public class MainActivity extends AppCompatActivity implements Observer<Integer>
         setTheme(currentTheme.equals(getString(R.string.light_theme_name)) ? R.style.LightTheme : R.style.DarkTheme);
         setAnimation();
 
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("bubu", bubu);
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
