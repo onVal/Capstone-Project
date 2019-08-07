@@ -35,13 +35,11 @@ import dagger.android.support.DaggerAppCompatActivity;
 import static com.onval.capstone.dialog_fragment.AddCategoryDialogFragment.ADD_CATEGORY_TAG;
 
 public class MainActivity extends DaggerAppCompatActivity implements Observer<Integer> {
-    private CategoriesViewModel viewModel;
+    @Inject
+    CategoriesViewModel viewModel;
 
     @Inject
     FragmentManager fm;
-
-    @Inject
-    String hey;
 
     private String currentTheme;
 
@@ -54,15 +52,9 @@ public class MainActivity extends DaggerAppCompatActivity implements Observer<In
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("hey", hey);
-
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setCustomTitle(R.layout.actionbar_title);
-
-//        fm = getSupportFragmentManager();
-
-        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
         viewModel.getNumOfCategories()
                 .observe(this, this);

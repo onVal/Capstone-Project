@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.onval.capstone.application.ProductionApplication;
 
+import javax.inject.Singleton;
+
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;

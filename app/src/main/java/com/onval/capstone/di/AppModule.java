@@ -3,8 +3,11 @@ package com.onval.capstone.di;
 import android.content.Context;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.onval.capstone.activities.MainActivity;
+import com.onval.capstone.viewmodel.CategoriesViewModel;
 
 import javax.inject.Singleton;
 
@@ -20,7 +23,7 @@ public class AppModule {
     }
 
     @Provides
-    static String provideString() {
-        return "bubu is real, and injected leell";
+    static CategoriesViewModel provideCategoriesViewModel(MainActivity activity) {
+        return ViewModelProviders.of(activity).get(CategoriesViewModel.class);
     }
 }
